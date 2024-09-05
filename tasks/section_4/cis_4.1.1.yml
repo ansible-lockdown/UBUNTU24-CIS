@@ -40,4 +40,3 @@
         - discovered_enabled_firewalls.stdout|int >= 2
       ansible.builtin.import_tasks:
         file: warning_facts.yml
-
