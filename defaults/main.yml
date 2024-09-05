@@ -899,6 +899,13 @@ ubtu24cis_sudo_package: "sudo"
 ## Control 5.2.3
 # This variable defines the path and file name of the sudo log file.
 ubtu24cis_sudo_logfile: "/var/log/sudo.log"
+
+## control 5.2.4 sudoers NOPASSWD
+# This will leave NOPASSWD intact for these users
+ubtu24cis_sudoers_exclude_nopasswd_list:
+  - ec2-user
+  - vagrant
+
 ##  Control 5.2.6
 # This variable sets the duration (in minutes) during which a user's authentication credentials
 # are cached after successfully authenticating using "sudo". This allows the user to execute
