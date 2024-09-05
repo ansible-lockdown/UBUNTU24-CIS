@@ -1,0 +1,8 @@
+## Ansible controlled file
+# Added as part of ansible-lockdown CIS baseline
+# provided by MindPointGroup LLC
+
+cat <<EOF
+set superusers="{{ ubtu24cis_grub_user }}"
+password_pbkdf2 {{ ubtu24cis_grub_user }} {{ ubtu24cis_bootloader_password_hash }}
+EOF

@@ -1,0 +1,743 @@
+## metadata for Audit benchmark
+benchmark_version: {{ benchmark_version }}
+
+#  timeout for each command to run where set - default = 10seconds/10000ms
+timeout_ms: {{ audit_cmd_timeout }}
+
+ubtu24cis_section1: {{ ubtu24cis_section1 }}
+ubtu24cis_section2: {{ ubtu24cis_section2 }}
+ubtu24cis_section3: {{ ubtu24cis_section3 }}
+ubtu24cis_section4: {{ ubtu24cis_section4 }}
+ubtu24cis_section5: {{ ubtu24cis_section5 }}
+ubtu24cis_section6: {{ ubtu24cis_section6 }}
+ubtu24cis_section7: {{ ubtu24cis_section7 }}
+
+ubtu24cis_level_1: {{ ubtu24cis_level_1 }}
+ubtu24cis_level_2: {{ ubtu24cis_level_2 }}
+
+
+#  to enable rules that may have IO impact on a system e.g. full filesystem scans or CPU heavy
+run_heavy_tests: {{ audit_run_heavy_tests }}
+
+#  True is BIOS based system else set to false
+ubtu24_legacy_boot: true
+
+##
+## Rule-specific switches
+##
+## Use the switches below to disable specific rules independently of the chosen profile
+##
+
+## Section 1 Fixes
+# Section 1 is Initial setup (FileSystem Configuration, Configure Software Updates, Filesystem Integrity Checking, Secure Boot Settings,
+# Additional Process Hardening, Mandatory Access Control, Command Line Warning Banners, and GNOME Display Manager)
+
+# 1.1 Filesystems
+# 1.1.1 Configure Filesystem Kernel Modules
+ubtu24cis_rule_1_1_1_1: {{ ubtu24cis_rule_1_1_1_1 }}
+ubtu24cis_rule_1_1_1_2: {{ ubtu24cis_rule_1_1_1_2 }}
+ubtu24cis_rule_1_1_1_3: {{ ubtu24cis_rule_1_1_1_3 }}
+ubtu24cis_rule_1_1_1_4: {{ ubtu24cis_rule_1_1_1_4 }}
+ubtu24cis_rule_1_1_1_5: {{ ubtu24cis_rule_1_1_1_5 }}
+ubtu24cis_rule_1_1_1_6: {{ ubtu24cis_rule_1_1_1_6 }}
+ubtu24cis_rule_1_1_1_7: {{ ubtu24cis_rule_1_1_1_7 }}
+ubtu24cis_rule_1_1_1_8: {{ ubtu24cis_rule_1_1_1_8 }}
+ubtu24cis_rule_1_1_1_9: {{ ubtu24cis_rule_1_1_1_9 }}
+ubtu24cis_rule_1_1_1_10: {{ ubtu24cis_rule_1_1_1_10 }}
+
+# 1.1.2 Configure Filesystem Partitions
+# /tmp
+ubtu24cis_rule_1_1_2_1_1: {{ ubtu24cis_rule_1_1_2_1_1 }}
+ubtu24cis_rule_1_1_2_1_2: {{ ubtu24cis_rule_1_1_2_1_2 }}
+ubtu24cis_rule_1_1_2_1_3: {{ ubtu24cis_rule_1_1_2_1_3 }}
+ubtu24cis_rule_1_1_2_1_4: {{ ubtu24cis_rule_1_1_2_1_4 }}
+
+# /dev/shm
+ubtu24cis_rule_1_1_2_2_1: {{ ubtu24cis_rule_1_1_2_2_1 }}
+ubtu24cis_rule_1_1_2_2_2: {{ ubtu24cis_rule_1_1_2_2_2 }}
+ubtu24cis_rule_1_1_2_2_3: {{ ubtu24cis_rule_1_1_2_2_3 }}
+ubtu24cis_rule_1_1_2_2_4: {{ ubtu24cis_rule_1_1_2_2_4 }}
+
+# /home
+ubtu24cis_rule_1_1_2_3_1: {{ ubtu24cis_rule_1_1_2_3_1 }}
+ubtu24cis_rule_1_1_2_3_2: {{ ubtu24cis_rule_1_1_2_3_2 }}
+ubtu24cis_rule_1_1_2_3_3: {{ ubtu24cis_rule_1_1_2_3_3 }}
+
+# /var
+ubtu24cis_rule_1_1_2_4_1: {{ ubtu24cis_rule_1_1_2_4_1 }}
+ubtu24cis_rule_1_1_2_4_2: {{ ubtu24cis_rule_1_1_2_4_2 }}
+ubtu24cis_rule_1_1_2_4_3: {{ ubtu24cis_rule_1_1_2_4_3 }}
+
+# /var/tmp
+ubtu24cis_rule_1_1_2_5_1: {{ ubtu24cis_rule_1_1_2_5_1 }}
+ubtu24cis_rule_1_1_2_5_2: {{ ubtu24cis_rule_1_1_2_5_2 }}
+ubtu24cis_rule_1_1_2_5_3: {{ ubtu24cis_rule_1_1_2_5_3 }}
+ubtu24cis_rule_1_1_2_5_4: {{ ubtu24cis_rule_1_1_2_5_4 }}
+
+# /var/log
+ubtu24cis_rule_1_1_2_6_1: {{ ubtu24cis_rule_1_1_2_6_1 }}
+ubtu24cis_rule_1_1_2_6_2: {{ ubtu24cis_rule_1_1_2_6_2 }}
+ubtu24cis_rule_1_1_2_6_3: {{ ubtu24cis_rule_1_1_2_6_3 }}
+ubtu24cis_rule_1_1_2_6_4: {{ ubtu24cis_rule_1_1_2_6_4 }}
+
+# /var/log/audit
+ubtu24cis_rule_1_1_2_7_1: {{ ubtu24cis_rule_1_1_2_7_1 }}
+ubtu24cis_rule_1_1_2_7_2: {{ ubtu24cis_rule_1_1_2_7_2 }}
+ubtu24cis_rule_1_1_2_7_3: {{ ubtu24cis_rule_1_1_2_7_3 }}
+ubtu24cis_rule_1_1_2_7_4: {{ ubtu24cis_rule_1_1_2_7_4 }}
+
+# 1.2 Package mgmt
+# 1.2.1 Configure Package repositories
+ubtu24cis_rule_1_2_1_1: {{ ubtu24cis_rule_1_2_1_1 }}
+ubtu24cis_rule_1_2_1_2: {{ ubtu24cis_rule_1_2_1_2 }}
+# 1.2.2 Configure Package updates
+ubtu24cis_rule_1_2_2_1: {{ ubtu24cis_rule_1_2_2_1 }}
+
+# 1.3 Mandatory Access Control
+## 1.3.1 Configure AppArmor
+ubtu24cis_rule_1_3_1_1: {{ ubtu24cis_rule_1_3_1_1 }}
+ubtu24cis_rule_1_3_1_2: {{ ubtu24cis_rule_1_3_1_2 }}
+ubtu24cis_rule_1_3_1_3: {{ ubtu24cis_rule_1_3_1_3 }}
+ubtu24cis_rule_1_3_1_4: {{ ubtu24cis_rule_1_3_1_4 }}
+
+# 1.4 Configure Bootloader
+ubtu24cis_rule_1_4_1: {{ ubtu24cis_rule_1_4_1 }}
+ubtu24cis_rule_1_4_2: {{ ubtu24cis_rule_1_4_2 }}
+
+# 1.5 Configure additional Process Hardening
+ubtu24cis_rule_1_5_1: {{ ubtu24cis_rule_1_5_1 }}
+ubtu24cis_rule_1_5_2: {{ ubtu24cis_rule_1_5_2 }}
+ubtu24cis_rule_1_5_3: {{ ubtu24cis_rule_1_5_3 }}
+ubtu24cis_rule_1_5_4: {{ ubtu24cis_rule_1_5_4 }}
+ubtu24cis_rule_1_5_5: {{ ubtu24cis_rule_1_5_5 }}
+
+# 1.6 Configure Command Line Warning Banners
+ubtu24cis_rule_1_6_1: {{ ubtu24cis_rule_1_6_1 }}
+ubtu24cis_rule_1_6_2: {{ ubtu24cis_rule_1_6_2 }}
+ubtu24cis_rule_1_6_3: {{ ubtu24cis_rule_1_6_3 }}
+ubtu24cis_rule_1_6_4: {{ ubtu24cis_rule_1_6_4 }}
+ubtu24cis_rule_1_6_5: {{ ubtu24cis_rule_1_6_5 }}
+ubtu24cis_rule_1_6_6: {{ ubtu24cis_rule_1_6_6 }}
+
+# 1.7 Configure GNOME Display Manager
+ubtu24cis_rule_1_7_1: {{ ubtu24cis_rule_1_7_1 }}
+ubtu24cis_rule_1_7_2: {{ ubtu24cis_rule_1_7_2 }}
+ubtu24cis_rule_1_7_3: {{ ubtu24cis_rule_1_7_3 }}
+ubtu24cis_rule_1_7_4: {{ ubtu24cis_rule_1_7_4 }}
+ubtu24cis_rule_1_7_5: {{ ubtu24cis_rule_1_7_5 }}
+ubtu24cis_rule_1_7_6: {{ ubtu24cis_rule_1_7_6 }}
+ubtu24cis_rule_1_7_7: {{ ubtu24cis_rule_1_7_7 }}
+ubtu24cis_rule_1_7_8: {{ ubtu24cis_rule_1_7_8 }}
+ubtu24cis_rule_1_7_9: {{ ubtu24cis_rule_1_7_9 }}
+ubtu24cis_rule_1_7_10: {{ ubtu24cis_rule_1_7_10 }}
+
+## Section 2 Fixes
+# Section 2 is Services (Special Purpose Services, and service clients)
+
+# 2.1 Configure Server Services
+ubtu24cis_rule_2_1_1: {{ ubtu24cis_rule_2_1_1 }}
+ubtu24cis_rule_2_1_2: {{ ubtu24cis_rule_2_1_2 }}
+ubtu24cis_rule_2_1_3: {{ ubtu24cis_rule_2_1_3 }}
+ubtu24cis_rule_2_1_4: {{ ubtu24cis_rule_2_1_4 }}
+ubtu24cis_rule_2_1_5: {{ ubtu24cis_rule_2_1_5 }}
+ubtu24cis_rule_2_1_6: {{ ubtu24cis_rule_2_1_6 }}
+ubtu24cis_rule_2_1_7: {{ ubtu24cis_rule_2_1_7 }}
+ubtu24cis_rule_2_1_8: {{ ubtu24cis_rule_2_1_8 }}
+ubtu24cis_rule_2_1_9: {{ ubtu24cis_rule_2_1_9 }}
+ubtu24cis_rule_2_1_10: {{ ubtu24cis_rule_2_1_10 }}
+ubtu24cis_rule_2_1_11: {{ ubtu24cis_rule_2_1_11 }}
+ubtu24cis_rule_2_1_12: {{ ubtu24cis_rule_2_1_12 }}
+ubtu24cis_rule_2_1_13: {{ ubtu24cis_rule_2_1_13 }}
+ubtu24cis_rule_2_1_14: {{ ubtu24cis_rule_2_1_14 }}
+ubtu24cis_rule_2_1_15: {{ ubtu24cis_rule_2_1_15 }}
+ubtu24cis_rule_2_1_16: {{ ubtu24cis_rule_2_1_16 }}
+ubtu24cis_rule_2_1_17: {{ ubtu24cis_rule_2_1_17 }}
+ubtu24cis_rule_2_1_18: {{ ubtu24cis_rule_2_1_18 }}
+ubtu24cis_rule_2_1_19: {{ ubtu24cis_rule_2_1_19 }}
+ubtu24cis_rule_2_1_20: {{ ubtu24cis_rule_2_1_20 }}
+ubtu24cis_rule_2_1_21: {{ ubtu24cis_rule_2_1_21 }}
+ubtu24cis_rule_2_1_22: {{ ubtu24cis_rule_2_1_22 }}
+
+# 2.2 Configure client services
+ubtu24cis_rule_2_2_1: {{ ubtu24cis_rule_2_2_1 }}
+ubtu24cis_rule_2_2_2: {{ ubtu24cis_rule_2_2_2 }}
+ubtu24cis_rule_2_2_3: {{ ubtu24cis_rule_2_2_3 }}
+ubtu24cis_rule_2_2_4: {{ ubtu24cis_rule_2_2_4 }}
+ubtu24cis_rule_2_2_5: {{ ubtu24cis_rule_2_2_5 }}
+ubtu24cis_rule_2_2_6: {{ ubtu24cis_rule_2_2_6 }}
+
+# Ensure time synchronization is in use
+ubtu24cis_rule_2_3_1_1: {{ ubtu24cis_rule_2_3_1_1 }}
+# Configure systemd-timesyncd
+ubtu24cis_rule_2_3_2_1: {{ ubtu24cis_rule_2_3_2_1 }}
+ubtu24cis_rule_2_3_2_2: {{ ubtu24cis_rule_2_3_2_2 }}
+# Configure Chrony
+ubtu24cis_rule_2_3_3_1: {{ ubtu24cis_rule_2_3_3_1 }}
+ubtu24cis_rule_2_3_3_2: {{ ubtu24cis_rule_2_3_3_2 }}
+ubtu24cis_rule_2_3_3_3: {{ ubtu24cis_rule_2_3_3_3 }}
+
+# 2.4 Job Schedulers
+# 2.4.1 Configure Cron
+ubtu24cis_rule_2_4_1_1: {{ ubtu24cis_rule_2_4_1_1 }}
+ubtu24cis_rule_2_4_1_2: {{ ubtu24cis_rule_2_4_1_2 }}
+ubtu24cis_rule_2_4_1_3: {{ ubtu24cis_rule_2_4_1_3 }}
+ubtu24cis_rule_2_4_1_4: {{ ubtu24cis_rule_2_4_1_4 }}
+ubtu24cis_rule_2_4_1_5: {{ ubtu24cis_rule_2_4_1_5 }}
+ubtu24cis_rule_2_4_1_6: {{ ubtu24cis_rule_2_4_1_6 }}
+ubtu24cis_rule_2_4_1_7: {{ ubtu24cis_rule_2_4_1_7 }}
+ubtu24cis_rule_2_4_1_8: {{ ubtu24cis_rule_2_4_1_8 }}
+# Configure At
+ubtu24cis_rule_2_4_2_1: {{ ubtu24cis_rule_2_4_2_1 }}
+
+## Section 3 Network Configuration
+# 3.1 Configure Network Devices
+ubtu24cis_rule_3_1_1: {{ ubtu24cis_rule_3_1_1 }}
+ubtu24cis_rule_3_1_2: {{ ubtu24cis_rule_3_1_2 }}
+ubtu24cis_rule_3_1_3: {{ ubtu24cis_rule_3_1_3 }}
+# 3.2 Configure Network Kernel Modules (Host Only)
+ubtu24cis_rule_3_2_1: {{ ubtu24cis_rule_3_2_1 }}
+ubtu24cis_rule_3_2_2: {{ ubtu24cis_rule_3_2_2 }}
+ubtu24cis_rule_3_2_3: {{ ubtu24cis_rule_3_2_3 }}
+ubtu24cis_rule_3_2_4: {{ ubtu24cis_rule_3_2_4 }}
+# 3.3 Configure Network Kernel Parameters (Host and Router)
+ubtu24cis_rule_3_3_1: {{ ubtu24cis_rule_3_3_1 }}
+ubtu24cis_rule_3_3_2: {{ ubtu24cis_rule_3_3_2 }}
+ubtu24cis_rule_3_3_3: {{ ubtu24cis_rule_3_3_3 }}
+ubtu24cis_rule_3_3_4: {{ ubtu24cis_rule_3_3_4 }}
+ubtu24cis_rule_3_3_5: {{ ubtu24cis_rule_3_3_5 }}
+ubtu24cis_rule_3_3_6: {{ ubtu24cis_rule_3_3_6 }}
+ubtu24cis_rule_3_3_7: {{ ubtu24cis_rule_3_3_7 }}
+ubtu24cis_rule_3_3_8: {{ ubtu24cis_rule_3_3_8 }}
+ubtu24cis_rule_3_3_9: {{ ubtu24cis_rule_3_3_9 }}
+ubtu24cis_rule_3_3_10: {{ ubtu24cis_rule_3_3_10 }}
+ubtu24cis_rule_3_3_11: {{ ubtu24cis_rule_3_3_11 }}
+
+## Section 4 Host Based Firewall
+# 4.1 Single firewall
+ubtu24cis_rule_4_1_1: {{ ubtu24cis_rule_4_1_1 }}
+# 4.2 Configure Uncomplicated Firewall
+ubtu24cis_rule_4_2_1: {{ ubtu24cis_rule_4_2_1 }}
+ubtu24cis_rule_4_2_2: {{ ubtu24cis_rule_4_2_2 }}
+ubtu24cis_rule_4_2_3: {{ ubtu24cis_rule_4_2_3 }}
+ubtu24cis_rule_4_2_4: {{ ubtu24cis_rule_4_2_4 }}
+ubtu24cis_rule_4_2_5: {{ ubtu24cis_rule_4_2_5 }}
+ubtu24cis_rule_4_2_6: {{ ubtu24cis_rule_4_2_6 }}
+ubtu24cis_rule_4_2_7: {{ ubtu24cis_rule_4_2_7 }}
+# 4.3 nftables
+ubtu24cis_rule_4_3_1: {{ ubtu24cis_rule_4_3_1 }}
+ubtu24cis_rule_4_3_2: {{ ubtu24cis_rule_4_3_2 }}
+ubtu24cis_rule_4_3_3: {{ ubtu24cis_rule_4_3_3 }}
+ubtu24cis_rule_4_3_4: {{ ubtu24cis_rule_4_3_4 }}
+ubtu24cis_rule_4_3_5: {{ ubtu24cis_rule_4_3_5 }}
+ubtu24cis_rule_4_3_6: {{ ubtu24cis_rule_4_3_6 }}
+ubtu24cis_rule_4_3_7: {{ ubtu24cis_rule_4_3_7 }}
+ubtu24cis_rule_4_3_8: {{ ubtu24cis_rule_4_3_8 }}
+ubtu24cis_rule_4_3_9: {{ ubtu24cis_rule_4_3_9 }}
+ubtu24cis_rule_4_3_10: {{ ubtu24cis_rule_4_3_10 }}
+
+# Configure iptables software
+ubtu24cis_rule_4_4_1_1: {{ ubtu24cis_rule_4_4_1_1 }}
+ubtu24cis_rule_4_4_1_2: {{ ubtu24cis_rule_4_4_1_2 }}
+ubtu24cis_rule_4_4_1_3: {{ ubtu24cis_rule_4_4_1_3 }}
+
+# Configure IPv4 iptables
+ubtu24cis_rule_4_4_2_1: {{ ubtu24cis_rule_4_4_2_1 }}
+ubtu24cis_rule_4_4_2_2: {{ ubtu24cis_rule_4_4_2_2 }}
+ubtu24cis_rule_4_4_2_3: {{ ubtu24cis_rule_4_4_2_3 }}
+ubtu24cis_rule_4_4_2_4: {{ ubtu24cis_rule_4_4_2_4 }}
+
+# Configure IPv6 iptables
+ubtu24cis_rule_4_4_3_1: {{ ubtu24cis_rule_4_4_3_1 }}
+ubtu24cis_rule_4_4_3_2: {{ ubtu24cis_rule_4_4_3_2 }}
+ubtu24cis_rule_4_4_3_3: {{ ubtu24cis_rule_4_4_3_3 }}
+ubtu24cis_rule_4_4_3_4: {{ ubtu24cis_rule_4_4_3_4 }}
+
+## Section 5 Access Control
+# 5.1 Configure SSH Server
+ubtu24cis_rule_5_1_1: {{ ubtu24cis_rule_5_1_1 }}
+ubtu24cis_rule_5_1_2: {{ ubtu24cis_rule_5_1_2 }}
+ubtu24cis_rule_5_1_3: {{ ubtu24cis_rule_5_1_3 }}
+ubtu24cis_rule_5_1_4: {{ ubtu24cis_rule_5_1_4 }}
+ubtu24cis_rule_5_1_5: {{ ubtu24cis_rule_5_1_5 }}
+ubtu24cis_rule_5_1_6: {{ ubtu24cis_rule_5_1_6 }}
+ubtu24cis_rule_5_1_7: {{ ubtu24cis_rule_5_1_7 }}
+ubtu24cis_rule_5_1_8: {{ ubtu24cis_rule_5_1_8 }}
+ubtu24cis_rule_5_1_9: {{ ubtu24cis_rule_5_1_9 }}
+ubtu24cis_rule_5_1_10: {{ ubtu24cis_rule_5_1_10 }}
+ubtu24cis_rule_5_1_11: {{ ubtu24cis_rule_5_1_11 }}
+ubtu24cis_rule_5_1_12: {{ ubtu24cis_rule_5_1_12 }}
+ubtu24cis_rule_5_1_13: {{ ubtu24cis_rule_5_1_13 }}
+ubtu24cis_rule_5_1_14: {{ ubtu24cis_rule_5_1_14 }}
+ubtu24cis_rule_5_1_15: {{ ubtu24cis_rule_5_1_15 }}
+ubtu24cis_rule_5_1_16: {{ ubtu24cis_rule_5_1_16 }}
+ubtu24cis_rule_5_1_17: {{ ubtu24cis_rule_5_1_17 }}
+ubtu24cis_rule_5_1_18: {{ ubtu24cis_rule_5_1_18 }}
+ubtu24cis_rule_5_1_19: {{ ubtu24cis_rule_5_1_19 }}
+ubtu24cis_rule_5_1_20: {{ ubtu24cis_rule_5_1_20 }}
+ubtu24cis_rule_5_1_21: {{ ubtu24cis_rule_5_1_21 }}
+ubtu24cis_rule_5_1_22: {{ ubtu24cis_rule_5_1_22 }}
+# 5.2 Configure privilege escalation
+ubtu24cis_rule_5_2_1: {{ ubtu24cis_rule_5_2_1 }}
+ubtu24cis_rule_5_2_2: {{ ubtu24cis_rule_5_2_2 }}
+ubtu24cis_rule_5_2_3: {{ ubtu24cis_rule_5_2_3 }}
+ubtu24cis_rule_5_2_4: {{ ubtu24cis_rule_5_2_4 }}
+ubtu24cis_rule_5_2_5: {{ ubtu24cis_rule_5_2_5 }}
+ubtu24cis_rule_5_2_6: {{ ubtu24cis_rule_5_2_6 }}
+ubtu24cis_rule_5_2_7: {{ ubtu24cis_rule_5_2_7 }}
+# 5.3.1 Configure PAM software packages
+ubtu24cis_rule_5_3_1_1: {{ ubtu24cis_rule_5_3_1_1 }}
+ubtu24cis_rule_5_3_1_2: {{ ubtu24cis_rule_5_3_1_2 }}
+ubtu24cis_rule_5_3_1_3: {{ ubtu24cis_rule_5_3_1_3 }}
+# 5.3.2 Configure pam-auth-update profiles
+ubtu24cis_rule_5_3_2_1: {{ ubtu24cis_rule_5_3_2_1 }}
+ubtu24cis_rule_5_3_2_2: {{ ubtu24cis_rule_5_3_2_2 }}
+ubtu24cis_rule_5_3_2_3: {{ ubtu24cis_rule_5_3_2_3 }}
+ubtu24cis_rule_5_3_2_4: {{ ubtu24cis_rule_5_3_2_4 }}
+# 5.3.3.1 Configure pam_faillock module
+ubtu24cis_rule_5_3_3_1_1: {{ ubtu24cis_rule_5_3_3_1_1 }}
+ubtu24cis_rule_5_3_3_1_2: {{ ubtu24cis_rule_5_3_3_1_2 }}
+ubtu24cis_rule_5_3_3_1_3: {{ ubtu24cis_rule_5_3_3_1_3 }}
+# 5.3.3.2 Configure pam_quality module
+ubtu24cis_rule_5_3_3_2_1: {{ ubtu24cis_rule_5_3_3_2_1 }}
+ubtu24cis_rule_5_3_3_2_2: {{ ubtu24cis_rule_5_3_3_2_2 }}
+ubtu24cis_rule_5_3_3_2_3: {{ ubtu24cis_rule_5_3_3_2_3 }}
+ubtu24cis_rule_5_3_3_2_4: {{ ubtu24cis_rule_5_3_3_2_4 }}
+ubtu24cis_rule_5_3_3_2_5: {{ ubtu24cis_rule_5_3_3_2_5 }}
+ubtu24cis_rule_5_3_3_2_6: {{ ubtu24cis_rule_5_3_3_2_6 }}
+ubtu24cis_rule_5_3_3_2_7: {{ ubtu24cis_rule_5_3_3_2_7 }}
+ubtu24cis_rule_5_3_3_2_8: {{ ubtu24cis_rule_5_3_3_2_8 }}
+# 5.3.3.3 Configure pam_history module
+# This are added as part of 5.3.2.4 using jinja2 template
+ubtu24cis_rule_5_3_3_3_1: {{ ubtu24cis_rule_5_3_3_3_1 }}
+ubtu24cis_rule_5_3_3_3_2: {{ ubtu24cis_rule_5_3_3_3_2 }}
+ubtu24cis_rule_5_3_3_3_3: {{ ubtu24cis_rule_5_3_3_3_3 }}
+# 5.3.3.4 Configure pam_unix module
+ubtu24cis_rule_5_3_3_4_1: {{ ubtu24cis_rule_5_3_3_4_1 }}
+ubtu24cis_rule_5_3_3_4_2: {{ ubtu24cis_rule_5_3_3_4_2 }}
+ubtu24cis_rule_5_3_3_4_3: {{ ubtu24cis_rule_5_3_3_4_3 }}
+ubtu24cis_rule_5_3_3_4_4: {{ ubtu24cis_rule_5_3_3_4_4 }}
+# 5.4 User Accounts and Environment
+# 5.4.1 Configure shadow password suite parameters
+ubtu24cis_rule_5_4_1_1: {{ ubtu24cis_rule_5_4_1_1 }}
+ubtu24cis_rule_5_4_1_2: {{ ubtu24cis_rule_5_4_1_2 }}
+ubtu24cis_rule_5_4_1_3: {{ ubtu24cis_rule_5_4_1_3 }}
+ubtu24cis_rule_5_4_1_4: {{ ubtu24cis_rule_5_4_1_4 }}
+ubtu24cis_rule_5_4_1_5: {{ ubtu24cis_rule_5_4_1_5 }}
+ubtu24cis_rule_5_4_1_6: {{ ubtu24cis_rule_5_4_1_6 }}
+# 5.4.2 Configure root and system accounts and environment
+ubtu24cis_rule_5_4_2_1: {{ ubtu24cis_rule_5_4_2_1 }}
+ubtu24cis_rule_5_4_2_2: {{ ubtu24cis_rule_5_4_2_2 }}
+ubtu24cis_rule_5_4_2_3: {{ ubtu24cis_rule_5_4_2_3 }}
+ubtu24cis_rule_5_4_2_4: {{ ubtu24cis_rule_5_4_2_4 }}
+ubtu24cis_rule_5_4_2_5: {{ ubtu24cis_rule_5_4_2_5 }}
+ubtu24cis_rule_5_4_2_6: {{ ubtu24cis_rule_5_4_2_6 }}
+ubtu24cis_rule_5_4_2_7: {{ ubtu24cis_rule_5_4_2_7 }}
+ubtu24cis_rule_5_4_2_8: {{ ubtu24cis_rule_5_4_2_8 }}
+# 5.4.2 Configure user default environment
+ubtu24cis_rule_5_4_3_1: {{ ubtu24cis_rule_5_4_3_1 }}
+ubtu24cis_rule_5_4_3_2: {{ ubtu24cis_rule_5_4_3_2 }}
+ubtu24cis_rule_5_4_3_3: {{ ubtu24cis_rule_5_4_3_3 }}
+
+## Section 6
+
+# 6.2.1.x Configure systemd-journald service
+ubtu24cis_rule_6_1_1_1: {{ ubtu24cis_rule_6_1_1_1 }}
+ubtu24cis_rule_6_1_1_2: {{ ubtu24cis_rule_6_1_1_2 }}
+ubtu24cis_rule_6_1_1_3: {{ ubtu24cis_rule_6_1_1_3 }}
+ubtu24cis_rule_6_1_1_4: {{ ubtu24cis_rule_6_1_1_4 }}
+# 6.1.2.1 Configure journald
+ubtu24cis_rule_6_1_2_1_1: {{ ubtu24cis_rule_6_1_2_1_1 }}
+ubtu24cis_rule_6_1_2_1_2: {{ ubtu24cis_rule_6_1_2_1_2 }}
+ubtu24cis_rule_6_1_2_1_3: {{ ubtu24cis_rule_6_1_2_1_3 }}
+ubtu24cis_rule_6_1_2_1_4: {{ ubtu24cis_rule_6_1_2_1_4 }}
+ubtu24cis_rule_6_1_2_2: {{ ubtu24cis_rule_6_1_2_2 }}
+ubtu24cis_rule_6_1_2_3: {{ ubtu24cis_rule_6_1_2_3 }}
+ubtu24cis_rule_6_1_2_4: {{ ubtu24cis_rule_6_1_2_4 }}
+# 6.1.3 Configure rsyslog
+ubtu24cis_rule_6_1_3_1: {{ ubtu24cis_rule_6_1_3_1 }}
+ubtu24cis_rule_6_1_3_2: {{ ubtu24cis_rule_6_1_3_2 }}
+ubtu24cis_rule_6_1_3_3: {{ ubtu24cis_rule_6_1_3_3 }}
+ubtu24cis_rule_6_1_3_4: {{ ubtu24cis_rule_6_1_3_4 }}
+ubtu24cis_rule_6_1_3_5: {{ ubtu24cis_rule_6_1_3_5 }}
+ubtu24cis_rule_6_1_3_6: {{ ubtu24cis_rule_6_1_3_6 }}
+ubtu24cis_rule_6_1_3_7: {{ ubtu24cis_rule_6_1_3_7 }}
+# 6.1.3.8 logrotate
+ubtu24cis_rule_6_1_3_8: {{ ubtu24cis_rule_6_1_3_8 }}
+# 6.1.4.1 configure logfiles
+ubtu24cis_rule_6_1_4_1: {{ ubtu24cis_rule_6_1_4_1 }}
+# 6.2.1 Configure auditd services
+ubtu24cis_rule_6_2_1_1: {{ ubtu24cis_rule_6_2_1_1 }}
+ubtu24cis_rule_6_2_1_2: {{ ubtu24cis_rule_6_2_1_2 }}
+ubtu24cis_rule_6_2_1_3: {{ ubtu24cis_rule_6_2_1_3 }}
+ubtu24cis_rule_6_2_1_4: {{ ubtu24cis_rule_6_2_1_4 }}
+# 6.2.2 Configure auditd data retention
+ubtu24cis_rule_6_2_2_1: {{ ubtu24cis_rule_6_2_2_1 }}
+ubtu24cis_rule_6_2_2_2: {{ ubtu24cis_rule_6_2_2_2 }}
+ubtu24cis_rule_6_2_2_3: {{ ubtu24cis_rule_6_2_2_3 }}
+ubtu24cis_rule_6_2_2_4: {{ ubtu24cis_rule_6_2_2_4 }}
+# 6.2.3 Configure auditd rules
+ubtu24cis_rule_6_2_3_1: {{ ubtu24cis_rule_6_2_3_1 }}
+ubtu24cis_rule_6_2_3_2: {{ ubtu24cis_rule_6_2_3_2 }}
+ubtu24cis_rule_6_2_3_3: {{ ubtu24cis_rule_6_2_3_3 }}
+ubtu24cis_rule_6_2_3_4: {{ ubtu24cis_rule_6_2_3_4 }}
+ubtu24cis_rule_6_2_3_5: {{ ubtu24cis_rule_6_2_3_5 }}
+ubtu24cis_rule_6_2_3_6: {{ ubtu24cis_rule_6_2_3_6 }}
+ubtu24cis_rule_6_2_3_7: {{ ubtu24cis_rule_6_2_3_7 }}
+ubtu24cis_rule_6_2_3_8: {{ ubtu24cis_rule_6_2_3_8 }}
+ubtu24cis_rule_6_2_3_9: {{ ubtu24cis_rule_6_2_3_9 }}
+ubtu24cis_rule_6_2_3_10: {{ ubtu24cis_rule_6_2_3_10 }}
+ubtu24cis_rule_6_2_3_11: {{ ubtu24cis_rule_6_2_3_11 }}
+ubtu24cis_rule_6_2_3_12: {{ ubtu24cis_rule_6_2_3_12 }}
+ubtu24cis_rule_6_2_3_13: {{ ubtu24cis_rule_6_2_3_13 }}
+ubtu24cis_rule_6_2_3_14: {{ ubtu24cis_rule_6_2_3_14 }}
+ubtu24cis_rule_6_2_3_15: {{ ubtu24cis_rule_6_2_3_15 }}
+ubtu24cis_rule_6_2_3_16: {{ ubtu24cis_rule_6_2_3_16 }}
+ubtu24cis_rule_6_2_3_17: {{ ubtu24cis_rule_6_2_3_17 }}
+ubtu24cis_rule_6_2_3_18: {{ ubtu24cis_rule_6_2_3_18 }}
+ubtu24cis_rule_6_2_3_19: {{ ubtu24cis_rule_6_2_3_19 }}
+ubtu24cis_rule_6_2_3_20: {{ ubtu24cis_rule_6_2_3_20 }}
+ubtu24cis_rule_6_2_3_21: {{ ubtu24cis_rule_6_2_3_21 }}
+# 6.2.4 Configure audit file access
+ubtu24cis_rule_6_2_4_1: {{ ubtu24cis_rule_6_2_4_1 }}
+ubtu24cis_rule_6_2_4_2: {{ ubtu24cis_rule_6_2_4_2 }}
+ubtu24cis_rule_6_2_4_3: {{ ubtu24cis_rule_6_2_4_3 }}
+ubtu24cis_rule_6_2_4_4: {{ ubtu24cis_rule_6_2_4_4 }}
+ubtu24cis_rule_6_2_4_5: {{ ubtu24cis_rule_6_2_4_5 }}
+ubtu24cis_rule_6_2_4_6: {{ ubtu24cis_rule_6_2_4_6 }}
+ubtu24cis_rule_6_2_4_7: {{ ubtu24cis_rule_6_2_4_7 }}
+ubtu24cis_rule_6_2_4_8: {{ ubtu24cis_rule_6_2_4_8 }}
+ubtu24cis_rule_6_2_4_9: {{ ubtu24cis_rule_6_2_4_9 }}
+ubtu24cis_rule_6_2_4_10: {{ ubtu24cis_rule_6_2_4_10 }}
+# 6.3 Configure Filesystem Integrity Checking
+ubtu24cis_rule_6_3_1: {{ ubtu24cis_rule_6_3_1 }}
+ubtu24cis_rule_6_3_2: {{ ubtu24cis_rule_6_3_2 }}
+ubtu24cis_rule_6_3_3: {{ ubtu24cis_rule_6_3_3 }}
+
+## Section 7
+# 7.1 System File Permissions
+ubtu24cis_rule_7_1_1: {{ ubtu24cis_rule_7_1_1 }}
+ubtu24cis_rule_7_1_2: {{ ubtu24cis_rule_7_1_2 }}
+ubtu24cis_rule_7_1_3: {{ ubtu24cis_rule_7_1_3 }}
+ubtu24cis_rule_7_1_4: {{ ubtu24cis_rule_7_1_4 }}
+ubtu24cis_rule_7_1_5: {{ ubtu24cis_rule_7_1_5 }}
+ubtu24cis_rule_7_1_6: {{ ubtu24cis_rule_7_1_6 }}
+ubtu24cis_rule_7_1_7: {{ ubtu24cis_rule_7_1_7 }}
+ubtu24cis_rule_7_1_8: {{ ubtu24cis_rule_7_1_8 }}
+ubtu24cis_rule_7_1_9: {{ ubtu24cis_rule_7_1_9 }}
+ubtu24cis_rule_7_1_10: {{ ubtu24cis_rule_7_1_10 }}
+ubtu24cis_rule_7_1_11: {{ ubtu24cis_rule_7_1_11 }}
+ubtu24cis_rule_7_1_12: {{ ubtu24cis_rule_7_1_12 }}
+ubtu24cis_rule_7_1_13: {{ ubtu24cis_rule_7_1_13 }}
+# 7.2 Local User and Group Settings
+ubtu24cis_rule_7_2_1: {{ ubtu24cis_rule_7_2_1 }}
+ubtu24cis_rule_7_2_2: {{ ubtu24cis_rule_7_2_2 }}
+ubtu24cis_rule_7_2_3: {{ ubtu24cis_rule_7_2_3 }}
+ubtu24cis_rule_7_2_4: {{ ubtu24cis_rule_7_2_4 }}
+ubtu24cis_rule_7_2_5: {{ ubtu24cis_rule_7_2_5 }}
+ubtu24cis_rule_7_2_6: {{ ubtu24cis_rule_7_2_6 }}
+ubtu24cis_rule_7_2_7: {{ ubtu24cis_rule_7_2_7 }}
+ubtu24cis_rule_7_2_8: {{ ubtu24cis_rule_7_2_8 }}
+ubtu24cis_rule_7_2_9: {{ ubtu24cis_rule_7_2_9 }}
+ubtu24cis_rule_7_2_10: {{ ubtu24cis_rule_7_2_10 }}
+
+
+## System functionality configuration variables
+##
+## There are certain functionalities of a system
+## that may require either to skip certain CIS rules
+## or install certain packages.
+## Set the respective variable to `true` in order to
+## enable a certain functionality on the system
+
+# This variable governs whether specific CIS rules
+# concerned with acceptance and routing of packages
+# are skipped.
+ubtu24cis_is_router: {{ ubtu24cis_is_router }}
+
+## IPv4 requirement toggle
+# This variable governs whether ipv4 is enabled or disabled.
+ubtu24cis_ipv4_required: {{ ubtu24cis_ipv4_required }}
+
+## IPv6 requirement toggle
+# This variable governs whether ipv6 is enabled or disabled.
+ubtu24cis_ipv6_required: {{ ubtu24cis_ipv6_required }}
+
+## Desktop requirement toggle
+# This variable governs, whether CIS rules regarding GDM
+# and X-Windows are carried out.
+ubtu24cis_desktop_required: {{ ubtu24cis_desktop_required }}
+
+## Section 1
+
+# If system uses squahshfs e.gf. snap package manager set true
+ubtu24cis_squashfs_required:{% if prelim_snap_pkg_mgr.rc == 0 %} true {% else %} false{% endif %}
+
+## Controls 1.3.1.3 and 1.3.1.4 Ensure all AppArmor Profiles are in enforce (1.3.1.3/4) or complain (1.3.1.3) mode
+
+# This variable disables the implementation of rules 1.3.1.3 and 1.3.1.4
+# regarding enforcing profiles or putting them in complain mode
+ubtu24cis_apparmor_disable: {{ ubtu24cis_apparmor_disable }}
+
+## Controls 1.4.x - Boot password
+#
+# THIS VARIABLE SHOULD BE CHANGED AND INCORPORATED INTO VAULT
+# THIS VALUE IS WHAT THE ROOT PW WILL BECOME!!!!!!!!
+# HAVING THAT PW EXPOSED IN RAW TEXT IS NOT SECURE!!!!
+ubtu24cis_grub_user: {{ ubtu24cis_grub_user }}
+ubtu24cis_bootloader_password_hash: {{ grub_user_pass }}  # pragma: allowlist secret
+
+## Controls 1.5.x
+
+## Controls 1.6.x  - Warning banners
+# The controls 1.6.x set various warning banners and protect the respective files
+# by tightening the access rights.
+
+# This variable specifies the warning banner displayed to the user
+# after local login, remote login, and as motd (message of the day)
+# Noe that the banner text must not contain the below items in order to be
+# compliant with CIS: \m, \r, \s, \v or references to the OS platform
+ubtu24cis_warning_banner: |
+        Authorized uses only. All activity may be monitored and reported.
+
+# This variable governs, whether dynamic motd is disabled (as required by control 1.7.1)
+ubtu24cis_disable_dynamic_motd: {{ ubtu24cis_disable_dynamic_motd }}
+
+## Controls 1.7.x - Settings for GDM
+# This variable specifies the GNOME configuration database file to which configurations are written.
+# (See https://help.gnome.org/admin/system-admin-guide/stable/dconf-keyfiles.html.en)
+# The default database is `local`.
+ubtu24cis_dconf_db_name: local
+
+##
+# Section 2
+##
+
+##
+## Service configuration variables.
+##
+## Set the respective variable to true to keep the service.
+## otherwise the service is stopped and disabled
+##
+# Service configuration
+# Options are
+# true to leave installed if exists not changes take place
+# false - this removes the package
+# mask - if a dependancy for product so cannot be removed
+# Server Services
+ubtu24cis_autofs_services: {{ ubtu24cis_autofs_services }}
+ubtu24cis_autofs_mask: {{ ubtu24cis_autofs_mask }}
+ubtu24cis_avahi_server: {{ ubtu24cis_avahi_server }}
+ubtu24cis_avahi_mask: {{ ubtu24cis_avahi_mask }}
+ubtu24cis_dhcp_server: {{ ubtu24cis_dhcp_server }}
+ubtu24cis_dhcp_mask: {{ ubtu24cis_dhcp_mask }}
+ubtu24cis_dns_server: {{ ubtu24cis_dns_server }}
+ubtu24cis_dns_mask: {{ ubtu24cis_dns_mask }}
+ubtu24cis_dnsmasq_server: {{ ubtu24cis_dnsmasq_server }}
+ubtu24cis_dnsmasq_mask: {{ ubtu24cis_dnsmasq_mask }}
+ubtu24cis_ftp_server: {{ ubtu24cis_ftp_server }}
+ubtu24cis_ftp_mask: {{ ubtu24cis_ftp_mask }}
+ubtu24cis_ldap_server: {{ ubtu24cis_ldap_server }}
+ubtu24cis_ldap_mask: {{ ubtu24cis_ldap_mask }}
+ubtu24cis_message_server: {{ ubtu24cis_message_server }}  # This is for messaging dovecot and dovecot-pop3
+ubtu24cis_message_mask: {{ ubtu24cis_message_mask }}
+ubtu24cis_nfs_server: {{ ubtu24cis_nfs_server }}
+ubtu24cis_nfs_mask: {{ ubtu24cis_nfs_mask }}
+ubtu24cis_nis_server: {{ ubtu24cis_nis_server }}  # set to mask if nis client required
+ubtu24cis_nis_mask: {{ ubtu24cis_nis_mask }}
+ubtu24cis_print_server: {{ ubtu24cis_print_server }}  # replaces cups
+ubtu24cis_print_mask: {{ ubtu24cis_print_mask }}
+ubtu24cis_rpc_server: {{ ubtu24cis_rpc_server }}
+ubtu24cis_rpc_mask: {{ ubtu24cis_rpc_mask }}
+ubtu24cis_rsync_server: {{ ubtu24cis_rsync_server }}
+ubtu24cis_rsync_mask: {{ ubtu24cis_rsync_mask }}
+ubtu24cis_samba_server: {{ ubtu24cis_samba_server }}
+ubtu24cis_samba_mask: {{ ubtu24cis_samba_mask }}
+ubtu24cis_snmp_server: {{ ubtu24cis_snmp_server }}
+ubtu24cis_snmp_mask: {{ ubtu24cis_snmp_mask }}
+ubtu24cis_telnet_server: {{ ubtu24cis_telnet_server }}
+ubtu24cis_telnet_mask: {{ ubtu24cis_telnet_mask }}
+ubtu24cis_tftp_server: {{ ubtu24cis_tftp_server }}
+ubtu24cis_tftp_mask: {{ ubtu24cis_tftp_mask }}
+ubtu24cis_squid_server: {{ ubtu24cis_squid_server }}
+ubtu24cis_squid_mask: {{ ubtu24cis_squid_mask }}
+ubtu24cis_apache2_server: {{ ubtu24cis_apache2_server }}
+ubtu24cis_apache2_mask: {{ ubtu24cis_apache2_mask }}
+ubtu24cis_nginx_server: {{ ubtu24cis_nginx_server }}
+ubtu24cis_nginx_mask: {{ ubtu24cis_nginx_mask }}
+ubtu24cis_xinetd_server: {{ ubtu24cis_xinetd_server }}
+ubtu24cis_xinetd_mask: {{ ubtu24cis_xinetd_mask }}
+ubtu24cis_xwindow_server: {{ ubtu24cis_xwindow_server }}  # will remove mask not an option
+ubtu24cis_is_mail_server: {{ ubtu24cis_is_mail_server }}
+
+# Client Services
+ubtu24cis_nis_client_required: {{ ubtu24cis_nis_client_required }}  # Same package as NIS server
+ubtu24cis_rsh_client: {{ ubtu24cis_rsh_client }}
+ubtu24cis_talk_client: {{ ubtu24cis_talk_client }}
+ubtu24cis_telnet_required: {{ ubtu24cis_telnet_required }}
+ubtu24cis_ldap_clients_required: {{ ubtu24cis_ldap_clients_required }}
+ubtu24cis_ftp_client: {{ ubtu24cis_ftp_client }}
+
+## Control 2.3.1.1
+# This variable choses the tool used for time synchronization
+# The two options are `chrony`and `systemd-timesyncd`.
+ubtu24cis_time_sync_tool: "systemd-timesyncd"
+
+## Controls 2.3.x - Configure time pools & servers for chrony and timesyncd
+# The following variable represents a list of of time server pools used
+# for configuring chrony and timesyncd.
+# Each list item contains two settings, `name` (the domain name of the pool) and synchronization `options`.
+# The default setting for the `options` is `iburst maxsources 4` -- please refer to the documentation
+# of the time synchronization mechanism you are using.
+ubtu24cis_time_pool_name:
+{% for pool in ubtu24cis_time_pool %}
+- name: {{ pool.name }}
+  options: {{ pool.options }}
+{% endfor %}
+
+# The following variable represents a list of of time servers used
+# for configuring chrony and timesyncd
+# Each list item contains two settings, `name` (the domain name of the server) and synchronization `options`.
+# The default setting for the `options` is `iburst` -- please refer to the documentation
+# of the time synchronization mechanism you are using.
+ubtu24cis_time_servers:
+{% for servers in ubtu24cis_time_servers %}
+- name: {{ servers.name }}
+  options: {{ servers.options }}
+{% endfor %}
+
+# Section 3
+## Control 3.1.1 - Ensure system is checked to determine if IPv6 is enabled
+# This variable governs the mechanism of how the disabling of IPV6 is carried out.
+# Its possible values are `grub` and `sysctl`.
+ubtu24cis_ipv6_disable: {{ ubtu24cis_ipv6_disable }}
+
+## Control 3.1.3 - Ensure bluetooth Services are not in use
+# This control managed how the bluetooth service is managaed
+# Options are
+# true to leave installed if exists not changes take place
+# false - this removes the package
+# mask - if a dependancy for product so cannot be removed
+ubtu24cis_bluetooth_service: {{ ubtu24cis_bluetooth_service }}
+ubtu24cis_bluetooth_mask: {{ ubtu24cis_bluetooth_mask }}
+
+## Control 3.3.x - Networking configuration
+# This variable contains the path to the file in which, sysctl saves its configurations.
+# Its default value is `/etc/sysctl.conf`.
+ubtu24cis_sysctl_network_conf: {{ ubtu24cis_sysctl_network_conf }}
+
+#
+### Section 4
+#
+## Controls 4.1.x, 4.2.x, and 4.3.x - Firewall configuration
+# This variable represents the toggle for which firewall package is used.
+# The options that have an effect on the system are `ufw` and `iptables`.
+# The option `nftables` is also possible, but will only result in a message,
+# that `nftables` has been chosen; all settings have to be carried out manually.
+# Any other value, e.g. `none` will skip all firewall-related controls.
+ubtu24cis_firewall_package: {{ ubtu24cis_firewall_package }}
+
+## auditd settings
+ubtu24cis_auditd:
+  space_left_action: {{ ubtu24cis_auditd_space_left_action }}
+  admin_space_left_action: {{ ubtu24cis_auditd_admin_space_left_action }}
+  max_log_file_action: {{ ubtu24cis_auditd_max_log_file_action }}
+  auditd_backlog_limit: {{ ubtu24cis_audit_back_log_limit }}
+
+## syslog
+# Set which syslog service
+# journald or rsyslog
+ubtu24cis_syslog_service: {{ ubtu24cis_syslog_service }}
+ubtu24cis_is_syslog_server: {{ ubtu24cis_system_is_log_server }}
+
+### Section 5
+
+# Note the following to understand precedence and layout
+ubtu24cis_sshd_access:
+  - AllowUser {{ ubtu24cis_sshd.allow_users }}
+  - AllowGroup {{ ubtu24cis_sshd.allow_groups }}
+  - DenyUser {{ ubtu24cis_sshd.deny_users }}
+  - DenyGroup {{ ubtu24cis_sshd.deny_groups }}
+
+ubtu24cis_ssh_strong_ciphers:
+  - aes256-gcm@openssh.com
+  - aes128-gcm@openssh.com
+  - aes256-ctr
+  - aes192-ctr
+  - aes128-ctr
+ubtu24cis_ssh_weak_ciphers:
+  - 3des-cbc
+  - aes128-cbc
+  - aes192-cbc
+  - aes256-cbc
+  - arcfour
+  - chacha20-poly1305@openssh.com
+  - arcfour128
+  - arcfour256
+  - blowfish-cbc
+  - cast128-cbc
+  - rijndael-cbc@lysator.liu.se
+
+ubtu24cis_ssh_strong_macs:
+  - HMAC-SHA1
+  - hmac-sha2-256
+  - hmac-sha2-512
+ubtu24cis_ssh_weak_macs:
+  - hmac-md5
+  - hmac-md5-96
+  - hmac-ripemd160
+  - hmac-sha1-96
+  - umac-64@openssh.com
+  - umac-128@openssh.com
+  - hmac-md5-etm@openssh.com
+  - hmac-md5-96-etm@openssh.com
+  - hmac-ripemd160-etm@openssh.com
+  - hmac-sha1-etm@openssh.com
+  - hmac-sha1-96-etm@openssh.com
+  - umac-64-etm@openssh.com
+  - umac-128-etm@openssh.com
+  - hmac-sha2-512-etm@openssh.com
+  - hmac-sha2-256-etm@openssh.com
+
+ubtu24cis_ssh_strong_kex:
+  - ecdh-sha2-nistp256
+  - ecdh-sha2-nistp521
+  - diffie-hellman-group-exchange-sha256
+  - diffie-hellman-group14-sha256
+  - diffie-hellman-group16-sha512
+  - diffie-hellman-group18-sha512
+ubtu24cis_ssh_weak_kex:
+  - diffie-hellman-group1-sha1
+  - diffie-hellman-group14-sha1
+  - diffie-hellman-group-exchange-sha1
+
+ubtu24cis_ssh_aliveinterval: 300
+ubtu24cis_ssh_countmax: 3
+## PAM
+ubtu24cis_pam_password:
+  minlen: "14"
+  minclass: "4"
+
+ubtu24cis_pam_passwd_retry: "3"
+
+# logins.def password settings
+ubtu24cis_pass:
+  max_days: {{ ubtu24cis_pass.max_days }}
+  min_days: {{ ubtu24cis_pass.min_days }}
+  warn_age: {{ ubtu24cis_pass.warn_age }}
+
+# set sugroup if differs from wheel
+ubtu24cis_sugroup: nosugroup
+
+
+# var log location variable
+ubtu24_varlog_location: {{ ubtu24cis_sudo_logfile }}
+
+# Section 6
+
+# 6.1.2
+
+# AIDE
+ubtu24cis_config_aide: {{ ubtu24cis_config_aide }}
+
+# aide setup via - cron, timer
+ubtu24cis_aide_scan: {{ ubtu24cis_aide_scan }}

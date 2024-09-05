@@ -1,0 +1,129 @@
+---
+
+- name: "1.6.1 | PATCH | Ensure message of the day is configured properly"
+  when:
+    - ubtu24cis_rule_1_6_1
+  tags:
+    - level1-server
+    - level1-workstation
+    - patch
+    - rule_1.6.1
+    - NIST800-53R5_CM-1
+    - NIST800-53R5_CM-3
+    - NIST800-53R5_CM-6
+    - motd
+  block:
+    - name: "1.6.1 | PATCH | Ensure message of the day is configured properly | motd"
+      ansible.builtin.template:
+        src: etc/motd.j2
+        dest: /etc/motd
+
+    - name: "1.6.1 | PATCH | Ensure message of the day is configured properly | disable dynamic_motd"
+      when: ubtu24cis_disable_dynamic_motd
+      ansible.builtin.lineinfile:
+        path: /etc/pam.d/sshd
+        regexp: "{{ item.regexp }}"
+        line: "{{ item.line }}"
+        backrefs: true
+      loop:
+        - { regexp: '(session\s+optional\s+pam_motd.so\s+motd=/run/motd.dynamic)', line: '# \1' }
+        - { regexp: '(session\s+optional\s+pam_motd.so noupdate)', line: '# \1' }
+        - { regexp: '# Pam_motd.so disabled for CIS benchmark', line: '# Pam_motd.so disabled for CIS benchmark' }
+
+- name: "1.6.2 | PATCH | Ensure local login warning banner is configured properly"
+  when:
+    - ubtu24cis_rule_1_6_2
+  tags:
+    - level1-server
+    - level1-workstation
+    - patch
+    - rule_1.6.2
+    - NIST800-53R5_CM-1
+    - NIST800-53R5_CM-3
+    - NIST800-53R5_CM-6
+    - banner
+  block:
+    - name: "1.6.2 | PATCH | Ensure local login warning banner is configured properly | issue"
+      ansible.builtin.template:
+        src: etc/issue.j2
+        dest: /etc/issue
+
+    - name: "1.6.2 | PATCH | Ensure local login warning banner is kept on package upgrade | issue"
+      community.general.dpkg_divert:
+        path: /etc/issue
+
+- name: "1.6.3 | PATCH | Ensure remote login warning banner is configured properly"
+  when:
+    - ubtu24cis_rule_1_6_3
+  tags:
+    - level1-server
+    - level1-workstation
+    - patch
+    - rule_1.6.3
+    - NIST800-53R5_CM-1
+    - NIST800-53R5_CM-3
+    - NIST800-53R5_CM-6
+    - banner
+  block:
+    - name: "1.6.3 | PATCH | Ensure remote login warning banner is configured properly | issue.net"
+      ansible.builtin.template:
+        src: etc/issue.net.j2
+        dest: /etc/issue.net
+
+    - name: "1.6.3 | PATCH | Ensure remote login warning banner is kept on package upgrade | issue.net"
+      community.general.dpkg_divert:
+        path: /etc/issue.net
+
+- name: "1.6.4 | PATCH | Ensure permissions on /etc/motd are configured"
+  when:
+    - ubtu24cis_rule_1_6_4
+  tags:
+    - level1-server
+    - level1-workstation
+    - patch
+    - rule_1.6.4
+    - NIST800-53R5_AC-3
+    - NIST800-53R5_MP-2
+    - permissions
+    - motd
+  ansible.builtin.file:
+    path: /etc/motd
+    owner: root
+    group: root
+    mode: 'u-x,go-wx'
+
+- name: "1.6.5 | PATCH | Ensure permissions on /etc/issue are configured"
+  when:
+    - ubtu24cis_rule_1_6_5
+  tags:
+    - level1-server
+    - level1-workstation
+    - patch
+    - rule_1.6.5
+    - NIST800-53R5_AC-3
+    - NIST800-53R5_MP-2
+    - permissions
+    - banner
+  ansible.builtin.file:
+    path: /etc/issue
+    owner: root
+    group: root
+    mode: 'u-x,go-wx'
+
+- name: "1.6.6 | PATCH | Ensure permissions on /etc/issue.net are configured"
+  when:
+    - ubtu24cis_rule_1_6_6
+  tags:
+    - level1-server
+    - level1-workstation
+    - patch
+    - rule_1.6.6
+    - NIST800-53R5_AC-3
+    - NIST800-53R5_MP-2
+    - permissions
+    - banner
+  ansible.builtin.file:
+    path: /etc/issue.net
+    owner: root
+    group: root
+    mode: 'u-x,go-wx'

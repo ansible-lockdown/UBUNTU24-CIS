@@ -1,0 +1,356 @@
+---
+
+- name: "1.1.1.1 | PATCH | Ensure cramfs kernel module is not available"
+  when:
+    - ubtu24cis_rule_1_1_1_1
+  tags:
+    - level1-server
+    - level1-workstation
+    - patch
+    - rule_1.1.1.1
+    - filesystems
+    - cramfs
+    - NIST800-53R5_CM-7
+  block:
+    - name: "1.1.1.1 | PATCH | Ensure cramfs kernel module is not available | Edit modprobe config"
+      ansible.builtin.lineinfile:
+        path: /etc/modprobe.d/CIS.conf
+        regexp: "^(#)?install cramfs(\\s|$)"
+        line: "install cramfs /bin/true"
+        create: true
+        mode: '0600'
+
+    - name: "1.1.1.1 | PATCH | Ensure cramfs kernel module is not available | blacklist"
+      ansible.builtin.lineinfile:
+        path: /etc/modprobe.d/blacklist.conf
+        regexp: "^(#)?blacklist cramfs(\\s|$)"
+        line: "blacklist cramfs"
+        create: true
+        mode: '0600'
+
+    - name: "1.1.1.1 | PATCH | Ensure cramfs kernel module is not available | Disable cramfs"
+      when:
+        - not system_is_container
+      community.general.modprobe:
+        name: cramfs
+        state: absent
+
+- name: "1.1.1.2 | PATCH | Ensure freevxfs kernel module is not available"
+  when:
+    - ubtu24cis_rule_1_1_1_2
+  tags:
+    - level1-server
+    - level1-workstation
+    - patch
+    - rule_1.1.1.2
+    - filesystems
+    - freevxfs
+    - NIST800-53R5_CM-7
+  block:
+    - name: "1.1.1.2 | PATCH | Ensure freevxfs kernel module is not available | Edit modprobe config"
+      ansible.builtin.lineinfile:
+        path: /etc/modprobe.d/CIS.conf
+        regexp: "^(#)?install freevxfs(\\s|$)"
+        line: "install freevxfs /bin/true"
+        create: true
+        mode: '0600'
+
+    - name: "1.1.1.2 | PATCH | Ensure freevxfs kernel module is not available | blacklist"
+      ansible.builtin.lineinfile:
+        path: /etc/modprobe.d/blacklist.conf
+        regexp: "^(#)?blacklist freevxfs(\\s|$)"
+        line: "blacklist freevxfs"
+        create: true
+        mode: '0600'
+
+    - name: "1.1.1.2 | PATCH | Ensure freevxfs kernel module is not available | Disable freevxfs"
+      when:
+        - not system_is_container
+      community.general.modprobe:
+        name: freevxfs
+        state: absent
+
+- name: "1.1.1.3 | PATCH | Ensure hfs kernel module is not available"
+  when:
+    - ubtu24cis_rule_1_1_1_3
+  tags:
+    - level1-server
+    - level1-workstation
+    - patch
+    - rule_1.1.1.3
+    - filesystems
+    - hfs
+    - NIST800-53R5_CM-7
+  block:
+    - name: "1.1.1.3 | PATCH | Ensure hfs kernel module is not available | Edit modprobe config"
+      ansible.builtin.lineinfile:
+        path: /etc/modprobe.d/CIS.conf
+        regexp: "^(#)?install hfs(\\s|$)"
+        line: "install hfs /bin/true"
+        create: true
+        mode: '0600'
+
+    - name: "1.1.1.3 | PATCH | Ensure hfs kernel module is not available | blacklist"
+      ansible.builtin.lineinfile:
+        path: /etc/modprobe.d/blacklist.conf
+        regexp: "^(#)?blacklist hfs(\\s|$)"
+        line: "blacklist hfs"
+        create: true
+        mode: '0600'
+
+    - name: "1.1.1.3 | PATCH | Ensure hfs kernel module is not available | Disable hfs"
+      when:
+        - not system_is_container
+      community.general.modprobe:
+        name: hfs
+        state: absent
+
+- name: "1.1.1.4 | PATCH | Ensure hfsplus kernel module is not available"
+  when:
+    - ubtu24cis_rule_1_1_1_4
+  tags:
+    - level1-server
+    - level1-workstation
+    - patch
+    - rule_1.1.1.4
+    - filesystems
+    - hfsplus
+    - NIST800-53R5_CM-7
+  block:
+    - name: "1.1.1.4 | PATCH | Ensure hfsplus kernel module is not available | Edit modprobe config"
+      ansible.builtin.lineinfile:
+        path: /etc/modprobe.d/CIS.conf
+        regexp: "^(#)?install hfsplus(\\s|$)"
+        line: "install hfsplus /bin/true"
+        create: true
+        mode: '0600'
+
+    - name: "1.1.1.4 | PATCH | Ensure hfsplus kernel module is not available | blacklist"
+      ansible.builtin.lineinfile:
+        path: /etc/modprobe.d/blacklist.conf
+        regexp: "^(#)?blacklist hfsplus(\\s|$)"
+        line: "blacklist hfsplus"
+        create: true
+        mode: '0600'
+
+    - name: "1.1.1.4 | PATCH | Ensure hfsplus kernel module is not available | Disable hfsplus"
+      when:
+        - not system_is_container
+      community.general.modprobe:
+        name: hfsplus
+        state: absent
+
+- name: "1.1.1.5 | PATCH | Ensure jffs2 kernel module is not available"
+  when:
+    - ubtu24cis_rule_1_1_1_5
+  tags:
+    - level1-server
+    - level1-workstation
+    - patch
+    - rule_1.1.1.5
+    - filesystems
+    - jffs2
+    - NIST800-53R5_CM-7
+  block:
+    - name: "1.1.1.5 | PATCH | Ensure jffs2 kernel module is not available | Edit modprobe config"
+      ansible.builtin.lineinfile:
+        path: /etc/modprobe.d/CIS.conf
+        regexp: "^(#)?install jffs2(\\s|$)"
+        line: "install jffs2 /bin/true"
+        create: true
+        mode: '0600'
+
+    - name: "1.1.1.5 | PATCH | Ensure jffs2 kernel module is not available | blacklist"
+      ansible.builtin.lineinfile:
+        path: /etc/modprobe.d/blacklist.conf
+        regexp: "^(#)?blacklist jffs2(\\s|$)"
+        line: "blacklist jffs2"
+        create: true
+        mode: '0600'
+
+    - name: "1.1.1.5 | PATCH | Ensure jffs2 kernel module is not available | Disable jffs2"
+      when:
+        - not system_is_container
+      community.general.modprobe:
+        name: jffs2
+        state: absent
+
+- name: "1.1.1.6 | PATCH | Ensure overlayfs kernel module is not available"
+  when:
+    - ubtu24cis_rule_1_1_1_6
+  tags:
+    - level2-server
+    - level2-workstation
+    - patch
+    - rule_1.1.1.6
+    - filesystems
+    - overlayfs
+    - NIST800-53R5_CM-7
+  block:
+    - name: "1.1.1.6 | PATCH | Ensure overlayfs kernel module is not available | Edit modprobe config"
+      ansible.builtin.lineinfile:
+        path: /etc/modprobe.d/CIS.conf
+        regexp: "^(#)?install overlayfs(\\s|$)"
+        line: "install overlayfs /bin/true"
+        create: true
+        mode: '0600'
+
+    - name: "1.1.1.6 | PATCH | Ensure overlayfs kernel module is not available | blacklist"
+      ansible.builtin.lineinfile:
+        path: /etc/modprobe.d/blacklist.conf
+        regexp: "^(#)?blacklist overlayfs(\\s|$)"
+        line: "blacklist overlayfs"
+        create: true
+        mode: '0600'
+
+    - name: "1.1.1.6 | PATCH | Ensure overlayfs kernel module is not available | Disable overlayfs"
+      when:
+        - not system_is_container
+      community.general.modprobe:
+        name: overlayfs
+        state: absent
+
+- name: "1.1.1.7 | PATCH | Ensure squashfs kernel module is not available"
+  when:
+    - ubtu24cis_rule_1_1_1_7
+    - not prelim_squashfs_builtin
+    - prelim_snap_pkg_mgr.rc != 0
+  tags:
+    - level2-server
+    - level2-workstation
+    - patch
+    - rule_1.1.1.7
+    - filesystems
+    - squashfs
+    - NIST800-53R5_CM-7
+  block:
+    - name: "1.1.1.7 | PATCH | Ensure squashfs kernel module is not available | Edit modprobe config"
+      ansible.builtin.lineinfile:
+        path: /etc/modprobe.d/CIS.conf
+        regexp: "^(#)?install squashfs(\\s|$)"
+        line: "install squashfs /bin/true"
+        create: true
+        mode: '0600'
+
+    - name: "1.1.1.7 | PATCH | Ensure squashfs kernel module is not available | blacklist"
+      ansible.builtin.lineinfile:
+        path: /etc/modprobe.d/blacklist.conf
+        regexp: "^(#)?blacklist squashfs(\\s|$)"
+        line: "blacklist squashfs"
+        create: true
+        mode: '0600'
+
+    - name: "1.1.1.7 | PATCH | Ensure squashfs kernel module is not available | Disable squashfs"
+      when:
+        - not system_is_container
+      community.general.modprobe:
+        name: squashfs
+        state: absent
+
+- name: "1.1.1.8 | PATCH | Ensure udf kernel module is not available"
+  when:
+    - ubtu24cis_rule_1_1_1_8
+  tags:
+    - level2-server
+    - level2-workstation
+    - patch
+    - rule_1.1.1.8
+    - filesystems
+    - udf
+    - NIST800-53R5_CM-7
+  block:
+    - name: "1.1.1.8 | PATCH | Ensure udf kernel module is not available | Edit modprobe config"
+      ansible.builtin.lineinfile:
+        path: /etc/modprobe.d/CIS.conf
+        regexp: "^(#)?install udf(\\s|$)"
+        line: "install udf /bin/true"
+        create: true
+        mode: '0600'
+
+    - name: "1.1.1.8 | PATCH | Ensure udf kernel module is not available | blacklist"
+      ansible.builtin.lineinfile:
+        path: /etc/modprobe.d/blacklist.conf
+        regexp: "^(#)?blacklist udf(\\s|$)"
+        line: "blacklist udf"
+        create: true
+        mode: '0600'
+
+    - name: "1.1.1.8 | PATCH | Ensure udf kernel module is not available | Disable udf"
+      when:
+        - not system_is_container
+      community.general.modprobe:
+        name: udf
+        state: absent
+
+- name: "1.1.1.9 | PATCH | Ensure usb-storage kernel module is not available"
+  when:
+    - ubtu24cis_rule_1_1_1_9
+  tags:
+    - level1-server
+    - level2-workstation
+    - patch
+    - rule_1.1.1.9
+    - filesystems
+    - usb
+    - NIST800-53R5_SI-3
+  block:
+    - name: "1.1.1.9 | PATCH | Ensure usb-storage kernel module is not available | Edit modprobe config"
+      ansible.builtin.lineinfile:
+        path: /etc/modprobe.d/CIS.conf
+        regexp: "^(#)?install usb-storage(\\s|$)"
+        line: "install usb-storage /bin/true"
+        create: true
+        mode: '0600'
+
+    - name: "1.1.1.9 | PATCH | Ensure usb-storage kernel module is not available | blacklist"
+      ansible.builtin.lineinfile:
+        path: /etc/modprobe.d/blacklist.conf
+        regexp: "^(#)?blacklist usb-storage(\\s|$)"
+        line: "blacklist usb-storage"
+        create: true
+        mode: '0600'
+
+    - name: "1.1.1.9 | PATCH | Ensure usb-storage kernel module is not available | Disable usb"
+      when:
+        - not system_is_container
+      community.general.modprobe:
+        name: usb-storage
+        state: absent
+
+- name: "1.1.1.10 | PATCH | Ensure unused filesystems kernel modules are not available"
+  when:
+    - ubtu24cis_rule_1_1_1_10
+  tags:
+    - level1-server
+    - level1-workstation
+    - patch
+    - rule_1.1.1.10
+    - filesystems
+  vars:
+    warn_control_id: '1.1.1.10'
+  block:
+    - name: "1.1.1.10 | PATCH | Ensure unused filesystems kernel modules are not available | Add discovery script"
+      ansible.builtin.template:
+        src: fs_with_cves.sh.j2
+        dest: /var/fs_with_cves.sh
+        owner: root
+        group: root
+        mode: '0744'
+
+    - name: "1.1.1.10 | AUDIT | Ensure unused filesystems kernel modules are not available | Run discovery script"
+      ansible.builtin.shell: /var/fs_with_cves.sh
+      changed_when: false
+      failed_when: discovered_fs_modules_loaded.rc not in [ 0, 99 ]
+      register: discovered_fs_modules_loaded
+
+    - name: "1.1.1.10 | AUDIT | Ensure unused filesystems kernel modules are not available | Output Warning"
+      when: discovered_fs_modules_loaded.stdout | length > 0
+      ansible.builtin.debug:
+        msg: |
+          "Warning!! Discovered loaded Filesystem modules that need attention. This is a manual task
+          {{ discovered_fs_modules_loaded.stdout_lines}}"
+
+    - name: "1.1.1.9 | AUDIT | Ensure unused filesystems kernel modules are not available | Capture Warning"
+      when: discovered_fs_modules_loaded.stdout | length > 0
+      ansible.builtin.import_tasks:
+        file: warning_facts.yml

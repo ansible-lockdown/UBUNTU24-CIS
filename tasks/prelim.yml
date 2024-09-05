@@ -1,0 +1,319 @@
+---
+
+- name: "PRELIM | AUDIT | Set default values for facts"
+  ansible.builtin.set_fact:
+    control_1_6_1_4_was_run: false
+    ubtu24cis_apparmor_enforce_only: false
+  changed_when: false
+
+- name: "PRELIM | AUDIT | Register if snap being used"
+  ansible.builtin.shell: df -h | grep -wc "/snap"
+  changed_when: false
+  failed_when: prelim_snap_pkg_mgr.rc not in [ 0, 1 ]
+  register: prelim_snap_pkg_mgr
+  tags:
+    - rule_1.1.1.2
+    - always
+  when:
+    - ubtu24cis_rule_1_1_1_6
+
+- name: "PRELIM | AUDIT | Register if squashfs is built into the kernel"
+  ansible.builtin.shell: cat /lib/modules/$(uname -r)/modules.builtin | grep -c "squashfs"
+  changed_when: false
+  failed_when: prelim_squashfs_builtin.rc not in [ 0, 1 ]
+  register: prelim_squashfs_builtin
+  tags:
+    - always
+  when:
+    - ubtu24cis_rule_1_1_1_6
+
+- name: "PRELIM | AUDIT | Section 1.1 | Create list of mount points"
+  ansible.builtin.set_fact:
+    mount_names: "{{ ansible_facts.mounts | map(attribute='mount') | list }}"
+  tags:
+    - always
+
+- name: PRELIM | AUDIT | Capture tmp mount type | discover mount tmp type
+  when:
+    - "'/tmp' in mount_names"
+    - ubtu24cis_rule_1_1_2_1_1 or
+      ubtu24cis_rule_1_1_2_1_2 or
+      ubtu24cis_rule_1_1_2_1_3 or
+      ubtu24cis_rule_1_1_2_1_4
+  tags:
+    - always
+  block:
+    - name: PRELIM | AUDIT | Capture tmp mount type | discover mount tmp type
+      ansible.builtin.shell: systemctl is-enabled tmp.mount
+      register: prelim_tmp_mnt_type
+      changed_when: false
+      failed_when: prelim_tmp_mnt_type.rc not in [ 0, 1 ]
+
+    - name: PRELIM | AUDIT | Capture tmp mount type | Set to expected_tmp_mnt variable
+      when: "'generated' in prelim_tmp_mnt_type.stdout"
+      ansible.builtin.set_fact:
+        tmp_mnt_type: "{{ expected_tmp_mnt }}"
+
+    - name: PRELIM | AUDIT | Capture tmp mount type | Set systemd service
+      when: "'generated' not in prelim_tmp_mnt_type.stdout"
+      ansible.builtin.set_fact:
+        tmp_mnt_type: tmp_systemd
+
+- name: PRELIM | Initialize the mount options variable
+  tags:
+    - always
+  block:
+    - name: PRELIM | Initializing the var if there is no /tmp mount | set_fact
+      when: "'/tmp' not in mount_names"
+      ansible.builtin.set_fact:
+        tmp_partition_mount_options: []
+
+    - name: PRELIM | Initializing the var if there is a /tmp mount | set_fact
+      when:
+        - item.mount == "/tmp"
+        - "'/tmp' in mount_names"
+      ansible.builtin.set_fact:
+        tmp_partition_mount_options: "{{ item.options.split(',') }}"
+      loop: "{{ ansible_facts.mounts }}"
+
+- name: Include audit specific variables
+  when:
+    - run_audit or audit_only
+    - setup_audit
+  tags:
+    - setup_audit
+    - run_audit
+  ansible.builtin.include_vars:
+    file: audit.yml
+
+- name: Include pre-remediation audit tasks
+  when:
+    - run_audit or audit_only
+    - setup_audit
+  tags:
+    - run_audit
+  ansible.builtin.import_tasks:
+    file: pre_remediation_audit.yml
+
+- name: "PRELIM | PATCH | Run apt update"
+  when:
+    - ubtu24cis_rule_1_2_1_1 or
+      ubtu24cis_rule_1_2_2_1
+  tags:
+    - always
+  ansible.builtin.package:
+    update_cache: true
+
+- name: "PRELIM | AUDIT | Wireless adapter pre-requisites"
+  when:
+    - ubtu24cis_rule_3_1_2
+    - not system_is_container
+  tags:
+    - always
+  block:
+    - name: "PRELIM | AUDIT | Discover is wireless adapter on system"
+      ansible.builtin.shell: find /sys/class/net/*/ -type d -name wireless
+      register: prelim_wireless_adapters
+      changed_when: false
+      failed_when: prelim_wireless_adapters.rc not in [ 0, 1 ]
+
+    - name: "PRELIM | AUDIT | If wireless adapter present capture module"
+      when:
+        - prelim_wireless_adapters.rc == 0
+      ansible.builtin.shell: |
+        for driverdir in $(find /sys/class/net/*/ -type d -name wireless | xargs -0 dirname);
+          do basename "$(readlink -f "$driverdir"/device/driver/module)";
+        done | sort -u
+      changed_when: false
+      failed_when: prelim_wireless_modules.rc not in [ 0, 1 ]
+      register: prelim_wireless_modules
+
+- name: "PRELIM | PATCH | 5.3.4.5 | Find all sudoers files."
+  when:
+    - ubtu24cis_rule_5_2_4 or
+      ubtu24cis_rule_5_2_5
+  tags:
+    - always
+  ansible.builtin.shell: "find /etc/sudoers /etc/sudoers.d/ -type f ! -name '*~' ! -name '*.*'"
+  changed_when: false
+  failed_when: false
+  check_mode: false
+  register: prelim_sudoers_files
+
+- name: "PRELIM | PATCH | Ensure conf.d directory exists required for 5.3.3.2.x"
+  when:
+    - ubtu24cis_rule_5_3_3_2_1 or
+      ubtu24cis_rule_5_3_3_2_2 or
+      ubtu24cis_rule_5_3_3_2_3 or
+      ubtu24cis_rule_5_3_3_2_4 or
+      ubtu24cis_rule_5_3_3_2_5 or
+      ubtu24cis_rule_5_3_3_2_6
+  tags:
+    - always
+  ansible.builtin.file:
+    path: '/etc/security/pwquality.conf.d'
+    state: directory
+    owner: root
+    group: root
+    mode: '0750'
+
+- name: "PRELIM | AUDIT | Discover Interactive UID MIN and MIN from logins.def"
+  when:
+    - not discover_int_uid
+  tags:
+    - always
+  block:
+    - name: "PRELIM | AUDIT | Capture UID_MIN information from logins.def"
+      ansible.builtin.shell: grep -w "^UID_MIN" /etc/login.defs | awk '{print $NF}'
+      changed_when: false
+      register: prelim_uid_min_id
+
+    - name: "PRELIM | AUDIT | Capture UID_MAX information from logins.def"
+      ansible.builtin.shell: grep -w "^UID_MAX" /etc/login.defs | awk '{print $NF}'
+      changed_when: false
+      register: prelim_uid_max_id
+
+    - name: "PRELIM | AUDIT | Capture GID_MIN information from logins.def"
+      ansible.builtin.shell: grep -w "^GID_MIN" /etc/login.defs | awk '{print $NF}'
+      changed_when: false
+      register: prelim_gid_min_id
+
+    - name: "PRELIM | AUDIT | Set_facts for interactive uid/gid"
+      ansible.builtin.set_fact:
+        min_int_uid: "{{ prelim_uid_min_id.stdout }}"
+        max_int_uid: "{{ prelim_uid_max_id.stdout }}"
+        min_int_gid: "{{ prelim_gid_min_id.stdout }}"
+
+- name: "PRELIM | AUDIT | Interactive Users"
+  tags:
+    - always
+  ansible.builtin.shell: >
+    grep -E -v '^(root|halt|sync|shutdown)' /etc/passwd | awk -F: '(!index($7, "sbin/nologin") && $7 != "/bin/nologin" && $7 != "/bin/false" && $7 != "/dev/null") { print $1 }'
+  changed_when: false
+  register: prelim_interactive_usernames
+
+- name: "PRELIM | AUDIT | Interactive User accounts home directories"
+  tags:
+    - always
+  ansible.builtin.shell: >
+    grep -E -v '^(root|halt|sync|shutdown)' /etc/passwd | awk -F: '(!index($7, "sbin/nologin") && $7 != "/bin/nologin" && $7 != "/bin/false" && $7 != "/dev/null") { print $6 }'
+  changed_when: false
+  register: prelim_interactive_users_home
+
+- name: "PRELIM | AUDIT | Interactive UIDs"
+  tags:
+    - always
+  ansible.builtin.shell: >
+    grep -E -v '^(root|halt|sync|shutdown)' /etc/passwd | awk -F: '(!index($7, "sbin/nologin") && $7 != "/bin/nologin" && $7 != "/bin/false") { print $3 }'
+  changed_when: false
+  register: prelim_interactive_uids
+
+- name: "PRELIM | AUDIT | Gather UID 0 accounts other than root"
+  when:
+    - ubtu24cis_rule_5_4_2_1
+  tags:
+    - rule_5.4.2.1
+    - level1-server
+    - level1-workstation
+    - users
+    - always
+  ansible.builtin.shell: "cat /etc/passwd | awk -F: '($3 == 0 && $1 != \"root\") {i++;print $1 } END {exit i}'"
+  changed_when: false
+  check_mode: false
+  register: prelim_uid_zero_accounts_except_root
+
+- name: "PRELIM | PATCH | Create journald conf.d directory"
+  when:
+    - ubtu24cis_rule_6_1_2_2 or
+      ubtu24cis_rule_6_1_2_3 or
+      ubtu24cis_rule_6_1_2_4
+  tags:
+    - always
+  ansible.builtin.file:
+    path: /etc/systemd/journald.conf.d
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: "PRELIM | PATCH | Ensure auditd is installed"
+  when:
+    - ubtu24cis_rule_6_2_1_1 or
+      ubtu24cis_rule_6_2_4_1 or
+      ubtu24cis_rule_6_2_4_6 or
+      ubtu24cis_rule_6_2_4_8
+  tags:
+    - level2-server
+    - level2-workstation
+    - patch
+    - auditd
+    - always
+  block:
+    - name: "PRELIM | PATCH | Ensure auditd is installed"
+      when:
+        - "'auditd' not in ansible_facts.packages or
+          'auditd-plugins' not in ansible_facts.packages"
+      ansible.builtin.package:
+        name: ['auditd', 'audispd-plugins']
+        state: present
+
+    - name: "PRELIM | AUDIT | Audit conf and rules files | list files"
+      ansible.builtin.find:
+        path: /etc/audit/
+        file_type: file
+        recurse: true
+        patterns: '*.conf,*.rules'
+      register: prelim_auditd_conf_files
+
+- name: "PRELIM | AUDIT | Check if auditd is immutable before changes"
+  when: "'auditd' in ansible_facts.packages"
+  tags:
+    - always
+  ansible.builtin.shell: auditctl -l | grep -c '-e 2'
+  changed_when: false
+  failed_when: prelim_auditd_immutable_check.rc not in [ 0, 1 ]
+  register: prelim_auditd_immutable_check
+
+- name: "PRELIM | AUDIT | 6.2.4.x | Capture information about auditd logfile path | discover file"
+  when:
+    - ubtu24cis_rule_6_2_4_1 or
+      ubtu24cis_rule_6_2_4_2 or
+      ubtu24cis_rule_6_2_4_3 or
+      ubtu24cis_rule_6_2_4_4
+  tags:
+    - level2-server
+    - level2-workstation
+    - patch
+    - auditd
+    - rule_6.3.4.1
+    - rule_6.3.4.2
+    - rule_6.3.4.3
+    - rule_6.3.4.4
+  ansible.builtin.shell: "grep ^log_file /etc/audit/auditd.conf | awk '{ print $NF }'"
+  changed_when: false
+  failed_when: prelim_auditd_logfile.rc not in [ 0, 1 ]
+  register: prelim_auditd_logfile
+
+- name: "PRELIM | PATCH | Install ACL"
+  when:
+    - ubtu24cis_rule_7_2_9
+    - "'acl' not in ansible_facts.packages"
+  tags:
+    - always
+  ansible.builtin.package:
+    name: acl
+    state: present
+
+## Optional
+
+- name: "Optional | PATCH | UFW firewall force to use /etc/sysctl.conf settings"
+  when:
+    - ubtu24cis_firewall_package == "ufw"
+    - ubtu24cis_ufw_use_sysctl
+  tags:
+    - always
+  ansible.builtin.lineinfile:
+    path: /etc/default/ufw
+    regexp: ^IPT_SYSCTL=.*
+    line: IPT_SYSCTL=/etc/sysctl.conf
+    mode: '0644'

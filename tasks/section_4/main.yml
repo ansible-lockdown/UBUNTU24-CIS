@@ -1,0 +1,32 @@
+---
+
+- name: "SECTION | 4.1 | Single firewall installed"
+  ansible.builtin.import_tasks:
+    file: cis_4.1.1.yml
+
+- name: "SECTION | 4.2 | Configure UnComplicatedFirewall"
+  when: ubtu24cis_firewall_package == "ufw"
+  ansible.builtin.import_tasks:
+    file: cis_4.2.x.yml
+
+- name: "SECTION | 4.3 | Configure nftables software"
+  when: ubtu24cis_firewall_package == "nftables"
+  ansible.builtin.import_tasks:
+    file: cis_4.3.x.yml
+
+- name: "SECTION | 4.4.1.x | Configure iptables software"
+  when: ubtu24cis_firewall_package == "nftables"
+  ansible.builtin.import_tasks:
+    file: cis_4.4.1.x.yml
+
+- name: "SECTION | 4.4.2.x | Configure ipv4 iptables"
+  when: ubtu24cis_firewall_package == "iptables"
+  ansible.builtin.import_tasks:
+    file: cis_4.4.2.x.yml
+
+- name: "SECTION | 4.4.3.x | Configure ipv6 iptables"
+  when:
+    - ubtu24cis_firewall_package == "iptables"
+    - ubtu24cis_ipv6_required
+  ansible.builtin.import_tasks:
+    file: cis_4.4.3.x.yml

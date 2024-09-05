@@ -1,0 +1,28 @@
+---
+
+galaxy_info:
+    author: "Mark Bolwell"
+    description: "Apply the Ubuntu 24 CIS benchmarks"
+    company: "MindPoint Group"
+    license: MIT
+    namespace: mindpointgroup
+    role_name: ubuntu24_cis
+    min_ansible_version: 2.12.1
+    platforms:
+        - name: Ubuntu
+          versions:
+              - jammy
+    galaxy_tags:
+        - system
+        - security
+        - cis
+        - hardening
+        - benchmark
+        - compliance
+        - complianceascode
+        - ubuntu24
+collections:
+    - community.general
+    - community.crypto
+    - ansible.posix
+dependencies: []

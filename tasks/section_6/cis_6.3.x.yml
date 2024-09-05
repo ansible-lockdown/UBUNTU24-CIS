@@ -1,0 +1,110 @@
+---
+
+- name: "6.3.1 | PATCH | Ensure AIDE is installed"
+  when:
+    - ubtu24cis_rule_6_3_1
+    - ubtu24cis_config_aide
+  tags:
+    - level1-server
+    - level1-workstation
+    - patch
+    - rule_6.3.1
+    - NIST800-53R5_AU-2
+    - aide
+  block:
+    - name: "6.3.1 | PATCH | Ensure AIDE is installed"
+      when:
+        - "'aide' not in ansible_facts.packages or
+          'aide-common' not in ansible_facts.packages"
+      ansible.builtin.package:
+        name: ['aide', 'aide-common']
+        state: present
+        update_cache: true
+      register: ubtu24cis_rule_6_3_1_aide_added
+
+    - name: "6.3.1 | PATCH | Ensure AIDE is installed | Recapture packages"
+      when: ubtu24cis_rule_6_3_1_aide_added.skipped is not defined
+      ansible.builtin.package_facts:
+        manager: auto
+
+    - name: "6.3.1 | PATCH | Ensure AIDE is installed | Configure AIDE"
+      ansible.builtin.shell: aideinit && mv /var/lib/aide/aide.db.new /var/lib/aide/aide.db
+      args:
+        creates: /var/lib/aide/aide.db
+      changed_when: false
+      failed_when: false
+      async: "{{ ubtu24cis_aide_init.async }}"
+      poll: "{{ ubtu24cis_aide_init.poll }}"
+      when: not ansible_check_mode
+
+- name: "6.3.2 | PATCH | Ensure filesystem integrity is regularly checked"
+  when:
+    - ubtu24cis_config_aide
+    - ubtu24cis_rule_6_3_2
+  tags:
+    - level1-server
+    - level1-workstation
+    - patch
+    - rule_6.3.2
+    - NIST800-53R5_AU-2
+    - cron
+    - aide
+  block:
+    - name: "6.3.2 | PATCH | Ensure filesystem integrity is regularly checked | cron"
+      when: ubtu24cis_aide_scan == 'cron'
+      ansible.builtin.cron:
+        name: Run AIDE integrity check
+        cron_file: "{{ ubtu24cis_aide_cron['cron_file'] }}"
+        user: "{{ ubtu24cis_aide_cron['cron_user'] }}"
+        minute: "{{ ubtu24cis_aide_cron['aide_minute'] | default('0') }}"
+        hour: "{{ ubtu24cis_aide_cron['aide_hour'] | default('5') }}"
+        day: "{{ ubtu24cis_aide_cron['aide_day'] | default('*') }}"
+        month: "{{ ubtu24cis_aide_cron['aide_month'] | default('*') }}"
+        weekday: "{{ ubtu24cis_aide_cron['aide_weekday'] | default('*') }}"
+        job: "{{ ubtu24cis_aide_cron['aide_job'] }}"
+
+    - name: "6.3.2 | PATCH | Ensure filesystem integrity is regularly checked | timer template"
+      when: ubtu24cis_aide_scan == 'timer'
+      ansible.builtin.template:
+        src: "{{ item }}.j2"
+        dest: "/{{ item }}"
+        owner: root
+        group: root
+        mode: '0644'
+      loop:
+        - etc/systemd/system/aidecheck.service
+        - etc/systemd/system/aidecheck.timer
+
+    - name: "6.3.2 | PATCH | Ensure filesystem integrity is regularly checked | timer service"
+      when: ubtu24cis_aide_scan == 'timer'
+      ansible.builtin.systemd:
+        name: "{{ item }}"
+        state: started
+        enabled: true
+        daemon_reload: true
+      loop:
+        - aidecheck.service
+        - aidecheck.timer
+
+- name: "6.3.3 | Ensure cryptographic mechanisms are used to protect the integrity of audit tools"
+  when:
+    - ubtu24cis_rule_6_3_3
+  tags:
+    - level1-server
+    - level1-workstation
+    - aide
+    - file_integrity
+    - patch
+    - rule_6.3.3
+    - NIST800-53R5_NA
+  ansible.builtin.blockinfile:
+    path: /etc/aide/aide.conf
+    marker: "# {mark} Audit tools - CIS benchmark - Ansible-lockdown"
+    block: |
+      /usr/sbin/auditctl p+i+n+u+g+s+b+acl+xattrs+sha512
+      /usr/sbin/auditd p+i+n+u+g+s+b+acl+xattrs+sha512
+      /usr/sbin/ausearch p+i+n+u+g+s+b+acl+xattrs+sha512
+      /usr/sbin/aureport p+i+n+u+g+s+b+acl+xattrs+sha512
+      /usr/sbin/autrace p+i+n+u+g+s+b+acl+xattrs+sha512
+      /usr/sbin/augenrules p+i+n+u+g+s+b+acl+xattrs+sha512
+    validate: aide -D --config %s

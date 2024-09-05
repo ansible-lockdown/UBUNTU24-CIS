@@ -1,0 +1,43 @@
+---
+
+- name: "4.1.1 | PATCH | Ensure a single firewall configuration utility is in use"
+  when:
+    - ubtu24cis_rule_4_1_1
+  tags:
+    - level1-server
+    - level1-workstation
+    - patch
+    - rule_4.1.1
+    - NIST800-53R5_NA
+  vars:
+    warn_control_id: '4.1.1'
+  block:
+
+    - name: "4.1.1 | PATCH | Ensure a single firewall configuration utility is in use | Check packages"
+      ansible.builtin.shell: dpkg-query -l | grep -Ec "^ii\s*ufw|^ii\s*iptables|^ii\s*nftables"
+      changed_when: false
+      failed_when: discovered_firewall_pkgs.rc not in [ 0, 1 ]
+      register: discovered_firewall_pkgs
+
+    - name: "4.1.1 | PATCH | Ensure a single firewall configuration utility is in use | Check enabled"
+      when: discovered_firewall_pkgs.stdout not in [ 0, 1 ]
+      ansible.builtin.shell: for svc in ufw nftables iptables; do if [ "$(systemctl is-enabled $svc | grep enabled &> /dev/null)" ]; then fw_enabled=$(( fw_enabled +1 )); fi; done; echo $fw_enabled
+      changed_when: false
+      register: discovered_enabled_firewalls
+      environment:
+        fw_enabled: 0
+
+    - name: "4.1.1 | AUDIT | Ensure a single firewall configuration utility is in use | Message out warning"
+      when:
+        - discovered_enabled_firewalls.stdout is defined
+        - discovered_enabled_firewalls.stdout|int >= 2
+      ansible.builtin.debug:
+        msg: "Warning!! You have more than one firewalls installed and running or enabled. Please use UFW, iptables, or manually manage nftables"
+
+    - name: "4.1.1 | AUDIT | Ensure a single firewall configuration utility is in use | Set warning count"
+      when:
+        - discovered_enabled_firewalls.stdout is defined
+        - discovered_enabled_firewalls.stdout|int >= 2
+      ansible.builtin.import_tasks:
+        file: warning_facts.yml
+

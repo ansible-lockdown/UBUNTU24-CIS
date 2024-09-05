@@ -1,0 +1,13 @@
+---
+
+- name: "SECTION | 3.1 | Configure Network Devices"
+  ansible.builtin.import_tasks:
+    file: cis_3.1.x.yml
+
+- name: "SECTION | 3.2 | Configure Network Kernel Modules"
+  ansible.builtin.import_tasks:
+    file: cis_3.2.x.yml
+
+- name: "SECTION | 3.3 | Configure Network Kernel Parameters"
+  ansible.builtin.import_tasks:
+    file: cis_3.3.x.yml
