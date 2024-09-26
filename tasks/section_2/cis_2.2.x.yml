@@ -61,7 +61,9 @@
     - NIST800-53R5_CM-11
     - telnet
   ansible.builtin.package:
-    name: telnet
+    name:
+      - telnet
+      - inetutils-telnet
     state: absent
     purge: "{{ ubtu24cis_purge_apt }}"
 
@@ -94,6 +96,8 @@
     - NIST800-53R5_CM-11
     - ftp
   ansible.builtin.package:
-    name: ftp
+    name:
+      - ftp
+      - tnftp
     state: absent
     purge: "{{ ubtu24cis_purge_apt }}"
