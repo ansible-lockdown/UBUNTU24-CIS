@@ -18,7 +18,7 @@
         path: /etc/default/grub
         regexp: '^(GRUB_CMDLINE_LINUX=.*)\bipv6\.disable=\d\b(.*$)'
         replace: '\1ipv6.disable=1\2'
-      register: ipv6disable_replaced
+      register: discovered_ipv6disable_replaced
       notify: Grub update
 
     - name: "3.1.1 | PATCH | Ensure IPv6 status is identified | Check grub cmdline linux"
@@ -26,13 +26,13 @@
       changed_when: false
       failed_when: false
       check_mode: false
-      register: ubtu24cis_3_1_1_cmdline_settings
+      register: discovered_ipv6_grub_cmdline_settings
 
     - name: "3.1.1 | PATCH | Ensure IPv6 status is identified | Insert ipv6.disable if it doesn't exist"
       when:
         - ubtu24cis_ipv6_disable == 'grub'
-        - ipv6disable_replaced is not changed
-        - "'ipv6.disable' not in ubtu24cis_3_1_1_cmdline_settings.stdout"
+        - discovered_ipv6disable_replaced is not changed
+        - "'ipv6.disable' not in discovered_ipv6_grub_cmdline_settings.stdout"
       ansible.builtin.lineinfile:
         path: /etc/default/grub
         regexp: '^(GRUB_CMDLINE_LINUX=".*)"$'
@@ -47,13 +47,14 @@
         dest: "/{{ item }}"
         owner: root
         group: root
-        mode: '0640'
+        mode: 'g-wx,o-rwx'
       notify: Flush ipv6 route table
       loop:
         - etc/sysctl.d/60-disable_ipv6.conf
 
 - name: "3.1.2 | PATCH | Ensure wireless interfaces are disabled"
   when:
+    - prelim_wireless_modules.stdout is defined
     - ubtu24cis_rule_3_1_2
   tags:
     - level1-server
@@ -70,15 +71,16 @@
         regexp: '^(#)?install true(\\s|$)'
         line: install {{ item }} true
         create: true
+        mode: 'go-wx'
       loop: "{{ prelim_wireless_modules.stdout_lines }}"
 
-    - name: "3.1.2 | PATCH | Ensure dccp kernel module is not available | blacklist"
+    - name: "3.1.2 | PATCH | Ensure wireless interfaces are disabled | blacklist"
       ansible.builtin.lineinfile:
         path: /etc/modprobe.d/blacklist.conf
         regexp: "^(#)?blacklist {{ item }}(\\s|$)"
         line: "blacklist {{ item }}"
         create: true
-        mode: '0600'
+        mode: 'go-rwx'
       loop: "{{ prelim_wireless_modules.stdout_lines }}"
 
 - name: "3.1.3 | PATCH | Ensure bluetooth services are not in use"

@@ -15,11 +15,11 @@
     warn_control_id: '1.2.1.1'
   block:
     - name: "1.2.1.1 | AUDIT | Ensure GPG keys are configured | Get apt gpg keys"
-      ansible.builtin.shell: apt-key list
+      ansible.builtin.command: apt-key list
       changed_when: false
       failed_when: false
       check_mode: false
-      register: ubtu24cis_1_2_1_1_apt_gpgkeys
+      register: discovered_apt_gpgkeys
 
     - name: "1.2.1.1 | AUDIT | Ensure GPG keys are configured | Message out apt gpg keys"
       ansible.builtin.debug:
@@ -27,7 +27,7 @@
           - "Warning!! Below are the apt gpg keys configured"
           - "Please review to make sure they are configured"
           - "in accordance with site policy"
-          - "{{ ubtu24cis_1_2_1_1_apt_gpgkeys.stdout_lines }}"
+          - "{{ discovered_apt_gpgkeys.stdout_lines }}"
 
     - name: "1.2.1.1 | WARN | Ensure GPG keys are configured | warn_count"
       ansible.builtin.import_tasks:
@@ -47,18 +47,18 @@
     warn_control_id: '1.2.1.2'
   block:
     - name: "1.2.1.2 | AUDIT | Ensure package manager repositories are configured | Get repositories"
-      ansible.builtin.shell: apt-cache policy
+      ansible.builtin.command: apt-cache policy
       changed_when: false
       failed_when: false
       check_mode: false
-      register: ubtu24cis_1_2_1_2_apt_policy
+      register: discovered_apt_policy
 
     - name: "1.2.1.2 | AUDIT | Ensure package manager repositories are configured | Message out repository configs"
       ansible.builtin.debug:
         msg:
           - "Warning!! Below are the apt package repositories"
           - "Please review to make sure they conform to your sites policies"
-          - "{{ ubtu24cis_1_2_1_2_apt_policy.stdout_lines }}"
+          - "{{ discovered_apt_policy.stdout_lines }}"
 
     - name: "1.2.1.2 | WARN | Ensure package manager repositories are configured | warn_count"
       ansible.builtin.import_tasks:

@@ -1,9 +1,6 @@
 ---
 
 - name: "1.7.1 | PATCH | Ensure GNOME Display Manager is removed"
-  ansible.builtin.package:
-    name: gdm3
-    state: absent
   when:
     - ubtu24cis_rule_1_7_1
     - not ubtu24cis_desktop_required
@@ -15,6 +12,9 @@
     - rule_1.7.1
     - NIST800-53R5_CM-11
     - gnome
+  ansible.builtin.package:
+    name: gdm3
+    state: absent
 
 - name: "1.7.2 | PATCH | Ensure GDM login banner is configured"
   when:
@@ -31,13 +31,14 @@
     - NIST800-53R5_CM-7
     - NIST800-53R5_IA-5
     - gnome
+  notify: Update dconf
   block:
     - name: "1.7.2 | PATCH | Ensure GDM login banner is configured | make directory"
       ansible.builtin.file:
         path: "/etc/dconf/db/{{ ubtu24cis_dconf_db_name }}.d"
         owner: root
         group: root
-        mode: '0755'
+        mode: 'u+x,go-w'
         state: directory
 
     - name: "1.7.2 | PATCH | Ensure GDM login banner is configured | banner settings"
@@ -49,12 +50,11 @@
         create: true
         owner: root
         group: root
-        mode: '0644'
-        loop:
-          - { regexp: '\[org\/gnome\/login-screen\]', line: '[org/gnome/login-screen]', insertafter: EOF }
-          - { regexp: 'banner-message-enable', line: 'banner-message-enable=true', insertafter: '\[org\/gnome\/login-screen\]'}
-          - { regexp: 'banner-message-text', line: "banner-message-text='{{ ubtu24cis_warning_banner | regex_replace('\n', ' ') | trim }}'", insertafter: 'banner-message-enable' }
-  notify: Update dconf
+        mode: 'u-x,go-wx'
+      loop:
+        - { regexp: '\[org\/gnome\/login-screen\]', line: '[org/gnome/login-screen]', insertafter: EOF }
+        - { regexp: 'banner-message-enable', line: 'banner-message-enable=true', insertafter: '\[org\/gnome\/login-screen\]'}
+        - { regexp: 'banner-message-text', line: "banner-message-text='{{ ubtu24cis_warning_banner | regex_replace('\n', ' ') | trim }}'", insertafter: 'banner-message-enable' }
 
 - name: "1.7.3 | PATCH | Ensure disable-user-list option is enabled"
   when:
@@ -71,13 +71,14 @@
     - NIST800-53R5_CM-7
     - NIST800-53R5_IA-5
     - gnome
+  notify: Update dconf
   block:
     - name: "1.7.3 | PATCH | Ensure disable-user-list option is enabled | make directories"
       ansible.builtin.file:
         path: "{{ item }}"
         owner: root
         group: root
-        mode: '0755'
+        mode: 'u+x,go-w'
         state: directory
       loop:
         - /etc/dconf/db/{{ ubtu24cis_dconf_db_name }}.d
@@ -92,7 +93,7 @@
         create: true
         owner: root
         group: root
-        mode: '0644'
+        mode: 'u-x,go-wx'
       loop:
         - { regexp: '\[org\/gnome\/login-screen\]', line: '[org/gnome/login-screen]', insertafter: EOF }
         - { regexp: 'disable-user-list', line: 'disable-user-list=true', insertafter: '\[org\/gnome\/login-screen\]'}
@@ -106,12 +107,11 @@
         create: true
         owner: root
         group: root
-        mode: '0644'
+        mode: 'u-x,go-wx'
       loop:
         - { regexp: '^user-db:user', line: 'user-db:user', insertafter: EOF }
         - { regexp: '^system-db:{{ ubtu24cis_dconf_db_name }}', line: 'system-db:{{ ubtu24cis_dconf_db_name }}', insertafter: 'user-db:user'}
         - { regexp: '^file-db:/usr/share/gdm/greeter-dconf-defaults', line: 'file-db:/usr/share/gdm/greeter-dconf-defaults', insertafter: 'system-db:{{ ubtu24cis_dconf_db_name }}'}
-  notify: Update dconf
 
 - name: "1.7.4 | PATCH | Ensure GDM screen locks when the user is idle"
   when:
@@ -132,6 +132,7 @@
         line: "{{ item.line }}"
         insertafter: "{{ item.after | default(omit) }}"
         create: true
+        mode: 'u-x,go-wx'
       loop:
         - { regexp: 'user-db:user', line: 'user-db:user' }
         - { regexp: 'system-db:{{ ubtu24cis_dconf_db_name }}', line: 'system-db:{{ ubtu24cis_dconf_db_name }}', after: '^user-db.*' }
@@ -141,7 +142,7 @@
         path: "/etc/dconf/db/{{ ubtu24cis_dconf_db_name }}.d"
         owner: root
         group: root
-        mode: '0755'
+        mode: 'u+x,go-w'
         state: directory
       notify: Update dconf
 
@@ -151,7 +152,7 @@
         dest: "/etc/dconf/db/{{ ubtu24cis_dconf_db_name }}.d/00-screensaver"
         owner: root
         group: root
-        mode: '0644'
+        mode: 'u-x,go-wx'
       notify: Update dconf
 
 - name: "1.7.5 | PATCH | Ensure GDM screen locks cannot be overridden"
@@ -171,7 +172,7 @@
         path: "/etc/dconf/db/{{ ubtu24cis_dconf_db_name }}.d/locks"
         owner: root
         group: root
-        mode: '0755'
+        mode: 'u+x,go-w'
         state: directory
       notify: Update dconf
 
@@ -181,7 +182,7 @@
         dest: "/etc/dconf/db/{{ ubtu24cis_dconf_db_name }}.d/locks/00-screensaver"
         owner: root
         group: root
-        mode: '0644'
+        mode: 'u-x,go-wx'
       notify: Update dconf
 
 - name: "1.7.6 | PATCH | Ensure GDM automatic mounting of removable media is disabled"
@@ -205,7 +206,7 @@
         path: "/etc/dconf/db/{{ ubtu24cis_dconf_db_name }}.d"
         owner: root
         group: root
-        mode: '0755'
+        mode: 'u+x,go-w'
         state: directory
       notify: Update dconf
 
@@ -215,7 +216,7 @@
         dest: "/etc/dconf/db/{{ ubtu24cis_dconf_db_name }}.d/00-media-automount"
         owner: root
         group: root
-        mode: '0644'
+        mode: 'u-x,go-wx'
       notify: Update dconf
 
 - name: "1.7.7 | PATCH | Ensure GDM disabling automatic mounting of removable media is not overridden"
@@ -239,7 +240,7 @@
         path: "/etc/dconf/db/{{ ubtu24cis_dconf_db_name }}.d/locks"
         owner: root
         group: root
-        mode: '0755'
+        mode: 'u+x,go-w'
         state: directory
       notify: Update dconf
 
@@ -249,7 +250,7 @@
         dest: "/etc/dconf/db/{{ ubtu24cis_dconf_db_name }}.d/locks/00-automount_lock"
         owner: root
         group: root
-        mode: '0644'
+        mode: 'u-x,go-wx'
       notify: Update dconf
 
 - name: "1.7.8 | PATCH | Ensure GDM autorun-never is enabled"
@@ -273,7 +274,7 @@
         path: "/etc/dconf/db/{{ ubtu24cis_dconf_db_name }}.d"
         owner: root
         group: root
-        mode: '0755'
+        mode: 'u+x,go-w'
         state: directory
       notify: Update dconf
 
@@ -283,7 +284,7 @@
         dest: "/etc/dconf/db/{{ ubtu24cis_dconf_db_name }}.d/00-media-autorun"
         owner: root
         group: root
-        mode: '0644'
+        mode: 'u-x,go-wx'
       notify: Update dconf
 
 - name: "1.7.9 | PATCH | Ensure GDM autorun-never is not overridden"
@@ -307,7 +308,7 @@
         path: "/etc/dconf/db/{{ ubtu24cis_dconf_db_name }}.d/locks"
         owner: root
         group: root
-        mode: '0755'
+        mode: 'u+x,go-w'
         state: directory
       notify: Update dconf
 
@@ -317,7 +318,7 @@
         dest: "/etc/dconf/db/{{ ubtu24cis_dconf_db_name }}.d/locks/00-autorun_lock"
         owner: root
         group: root
-        mode: '0644'
+        mode: 'u-x,go-wx'
       notify: Update dconf
 
 - name: "1.7.10 | PATCH | Ensure XDCMP is not enabled"

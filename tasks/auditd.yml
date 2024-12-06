@@ -7,8 +7,8 @@
     dest: /etc/audit/rules.d/99_auditd.rules
     owner: root
     group: root
-    mode: '0640'
-  register: audit_rules_updated
+    mode: 'u-x,go-wx'
+  register: discovered_audit_rules_updated
   notify:
     - Auditd rules reload
     - Audit_immutable_fact
@@ -22,7 +22,7 @@
     dest: /etc/audit/rules.d/98_auditd_exceptions.rules
     owner: root
     group: root
-    mode: '0600'
+    mode: 'u-x,go-rwx'
   notify: Restart auditd
 
 - name: POST | AUDITD | Flush handlers

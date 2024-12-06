@@ -26,7 +26,7 @@
         - item != "/var/log/lastlog"
       ansible.builtin.file:
         path: "{{ item }}"
-        mode: u-x,g-wx,o-rwx
+        mode: 'u-x,g-wx,o-rwx'
       loop: "{{ discovered_logfiles.stdout_lines }}"
 
     - name: "6.1.4.1 | PATCH | Ensure access to all logfiles has been configured | change permissions"

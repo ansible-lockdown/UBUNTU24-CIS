@@ -1,8 +1,7 @@
 ---
 
 - name: "2.4.2.1 | PATCH | Ensure at is restricted to authorized users"
-  when:
-    - - ubtu24cis_rule_2_4_2_1
+  when: ubtu24cis_rule_2_4_2_1
   tags:
     - level1-server
     - level1-workstation
@@ -20,10 +19,10 @@
     - name: "2.4.2.1 | PATCH | Ensure at is restricted to authorized users | Check for at.allow"
       ansible.builtin.stat:
         path: /etc/at.allow
-      register: ubtu24cis_2_4_2_1_status
+      register: discovered_at_allow_status
 
     - name: "2.4.2.1 | PATCH | Ensure at is restricted to authorized users | Create at.allow if doesn't exist"
-      when: not ubtu24cis_2_4_2_1_status.stat.exists
+      when: not discovered_at_allow_status.stat.exists
       ansible.builtin.file:
         path: /etc/at.allow
         owner: root
@@ -32,7 +31,7 @@
         state: touch
 
     - name: "2.4.2.1 | PATCH | Ensure at is restricted to authorized users | update at.allow if exists"
-      when: ubtu24cis_2_4_2_1_status.stat.exists
+      when: discovered_at_allow_status.stat.exists
       ansible.builtin.file:
         path: /etc/at.allow
         owner: root

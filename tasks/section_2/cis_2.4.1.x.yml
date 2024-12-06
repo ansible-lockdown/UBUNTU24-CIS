@@ -1,8 +1,7 @@
 ---
 
 - name: "2.4.1.1 | PATCH | Ensure cron daemon is enabled and running"
-  when:
-    - ubtu24cis_rule_2_4_1_1
+  when: ubtu24cis_rule_2_4_1_1
   tags:
     - level1-server
     - level1-workstation
@@ -20,8 +19,7 @@
     enabled: true
 
 - name: "2.4.1.2 | PATCH | Ensure permissions on /etc/crontab are configured"
-  when:
-    - ubtu24cis_rule_2_4_1_2
+  when: ubtu24cis_rule_2_4_1_2
   tags:
     - level1-server
     - level1-workstation
@@ -34,11 +32,10 @@
     path: /etc/crontab
     owner: root
     group: root
-    mode: '0600'
+    mode: 'go-rwx'
 
 - name: "2.4.1.3 | PATCH | Ensure permissions on /etc/cron.hourly are configured"
-  when:
-    - ubtu24cis_rule_2_4_1_3
+  when: ubtu24cis_rule_2_4_1_3
   tags:
     - level1-server
     - level1-workstation
@@ -51,12 +48,11 @@
     path: /etc/cron.hourly
     owner: root
     group: root
-    mode: '0700'
+    mode: 'u+x,go-rwx'
     state: directory
 
 - name: "2.4.1.4 | PATCH | Ensure permissions on /etc/cron.daily are configured"
-  when:
-    - ubtu24cis_rule_2_4_1_4
+  when: ubtu24cis_rule_2_4_1_4
   tags:
     - level1-server
     - level1-workstation
@@ -69,12 +65,11 @@
     path: /etc/cron.daily
     owner: root
     group: root
-    mode: '0700'
+    mode: 'u+x,go-rwx'
     state: directory
 
 - name: "2.4.1.5 | PATCH | Ensure permissions on /etc/cron.weekly are configured"
-  when:
-    - ubtu24cis_rule_2_4_1_5
+  when: ubtu24cis_rule_2_4_1_5
   tags:
     - level1-server
     - level1-workstation
@@ -87,12 +82,11 @@
     path: /etc/cron.weekly
     owner: root
     group: root
-    mode: '0700'
+    mode: 'u+x,go-rwx'
     state: directory
 
 - name: "2.4.1.6 | PATCH | Ensure permissions on /etc/cron.monthly are configured"
-  when:
-    - ubtu24cis_rule_2_4_1_6
+  when: ubtu24cis_rule_2_4_1_6
   tags:
     - level1-server
     - level1-workstation
@@ -105,12 +99,11 @@
     path: /etc/cron.monthly
     owner: root
     group: root
-    mode: '0700'
+    mode: 'u+x,go-rwx'
     state: directory
 
 - name: "2.4.1.7 | PATCH | Ensure permissions on /etc/cron.d are configured"
-  when:
-    - ubtu24cis_rule_2_4_1_7
+  when: ubtu24cis_rule_2_4_1_7
   tags:
     - level1-server
     - level1-workstation
@@ -123,12 +116,11 @@
     path: /etc/cron.d
     owner: root
     group: root
-    mode: '0700'
+    mode: 'u+x,go-rwx'
     state: directory
 
 - name: "2.4.1.8 | PATCH | Ensure cron is restricted to authorized users"
-  when:
-    - ubtu24cis_rule_2_4_1_8
+  when: ubtu24cis_rule_2_4_1_8
   tags:
     - level1-server
     - level1-workstation
@@ -146,10 +138,10 @@
     - name: "2.4.1.8 | PATCH | Ensure cron is restricted to authorized users | Check for cron.allow"
       ansible.builtin.stat:
         path: /etc/cron.allow
-      register: ubtu24cis_2_4_1_8_status
+      register: discovered_cron_allow_status
 
     - name: "2.4.1.8 | PATCH | Ensure cron is restricted to authorized users | Create cron.allow if doesn't exist"
-      when: not ubtu24cis_2_4_1_8_status.stat.exists
+      when: not discovered_cron_allow_status.stat.exists
       ansible.builtin.file:
         path: /etc/cron.allow
         owner: root
@@ -158,7 +150,7 @@
         state: touch
 
     - name: "2.4.1.8 | PATCH | Ensure cron is restricted to authorized users |  Update cron.allow if exists"
-      when: ubtu24cis_2_4_1_8_status.stat.exists
+      when: discovered_cron_allow_status.stat.exists
       ansible.builtin.file:
         path: /etc/cron.allow
         owner: root

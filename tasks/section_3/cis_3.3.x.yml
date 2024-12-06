@@ -72,8 +72,7 @@
   notify: Flush ipv4 route table
 
 - name: "3.3.3 | PATCH | Ensure bogus ICMP responses are ignored"
-  when:
-    - ubtu24cis_rule_3_3_3
+  when: ubtu24cis_rule_3_3_3
   tags:
     - level1-server
     - level1-workstation
@@ -97,8 +96,7 @@
   notify: Flush ipv4 route table
 
 - name: "3.3.4 | PATCH | Ensure broadcast ICMP requests are ignored"
-  when:
-    - ubtu24cis_rule_3_3_4
+  when: ubtu24cis_rule_3_3_4
   tags:
     - level1-server
     - level1-workstation
@@ -122,8 +120,7 @@
   notify: Flush ipv4 route table
 
 - name: "3.3.5 | PATCH | Ensure ICMP redirects are not accepted"
-  when:
-    - ubtu24cis_rule_3_3_5
+  when: ubtu24cis_rule_3_3_5
   tags:
     - level1-server
     - level1-workstation
@@ -167,8 +164,7 @@
       notify: Flush ipv6 route table
 
 - name: "3.3.6 | PATCH | Ensure secure ICMP redirects are not accepted"
-  when:
-    - ubtu24cis_rule_3_3_6
+  when: ubtu24cis_rule_3_3_6
   tags:
     - level1-server
     - level1-workstation
@@ -195,8 +191,7 @@
   notify: Flush ipv4 route table
 
 - name: "3.3.7 | PATCH | Ensure Reverse Path Filtering is enabled"
-  when:
-    - ubtu24cis_rule_3_3_7
+  when: ubtu24cis_rule_3_3_7
   tags:
     - level1-server
     - level1-workstation
