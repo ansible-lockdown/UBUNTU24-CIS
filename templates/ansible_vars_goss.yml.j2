@@ -653,10 +653,10 @@ ubtu24cis_is_syslog_server: {{ ubtu24cis_system_is_log_server }}
 
 # Note the following to understand precedence and layout
 ubtu24cis_sshd_access:
-  - AllowUser {{ ubtu24cis_sshd.allow_users }}
-  - AllowGroup {{ ubtu24cis_sshd.allow_groups }}
-  - DenyUser {{ ubtu24cis_sshd.deny_users }}
-  - DenyGroup {{ ubtu24cis_sshd.deny_groups }}
+  - AllowUser {{ ubtu24cis_sshd_allow_users }}
+  - AllowGroup {{ ubtu24cis_sshd_allow_groups }}
+  - DenyUser {{ ubtu24cis_sshd_deny_users }}
+  - DenyGroup {{ ubtu24cis_sshd_deny_groups }}
 
 ubtu24cis_ssh_strong_ciphers:
   - aes256-gcm@openssh.com
@@ -721,13 +721,12 @@ ubtu24cis_pam_passwd_retry: "3"
 
 # logins.def password settings
 ubtu24cis_pass:
-  max_days: {{ ubtu24cis_pass.max_days }}
-  min_days: {{ ubtu24cis_pass.min_days }}
-  warn_age: {{ ubtu24cis_pass.warn_age }}
+  max_days: {{ ubtu24cis_pass_max_days }}
+  min_days: {{ ubtu24cis_pass_min_days }}
+  warn_age: {{ ubtu24cis_pass_warn_age }}
 
 # set sugroup if differs from wheel
 ubtu24cis_sugroup: nosugroup
-
 
 # var log location variable
 ubtu24_varlog_location: {{ ubtu24cis_sudo_logfile }}

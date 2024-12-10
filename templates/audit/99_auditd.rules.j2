@@ -34,8 +34,8 @@
 -w /etc/netplan -p wa -k system-locale
 {% endif %}
 {% if ubtu24cis_rule_6_2_3_6 %}
-{% if priv_procs is defined %}
-{% for proc in priv_procs.stdout_lines -%}
+{% if discovered_privilege_processes is defined %}
+{% for proc in discovered_privilege_processes.stdout_lines -%}
 -a always,exit -F path={{ proc }} -F perm=x -F auid>=1000 -F auid!=unset -k privileged
 {% endfor %}
 {% endif %}

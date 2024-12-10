@@ -828,67 +828,67 @@ ubtu24cis_sshd_default_kex_algorithms:
   - diffie-hellman-group18-sha512
   - diffie-hellman-group14-sha256
 
-ubtu24cis_sshd:
-  # This variable is used to control the verbosity of the logging produced by the SSH server.
-  # The options for setting it are as follows:
-  # - `QUIET`: Minimal logging;
-  # - `FATAL`: logs only fatal errors;
-  # - `ERROR`: logs error messages;
-  # - `INFO`: logs informational messages in addition to errors;
-  # - `VERBOSE`: logs a higher level of detail, including login attempts and key exchanges;
-  # - `DEBUG`: generates very detailed debugging information including sensitive information.
-  log_level: "{{ ubtu24cis_sshd_default_log_level }}"
-  # This variable specifies the maximum number of authentication attempts that are
-  # allowed for a single SSH session.
-  max_auth_tries: "{{ubtu24cis_sshd_default_max_auth_tries}}"
-  # This variable specifies the encryption algorithms that can be used for securing
-  # data transmission.
-  ciphers: "{{ ubtu24cis_sshd_default_ciphers }}"
-  # This variable specifies a list of message authentication code algorithms (MACs) that are allowed for verifying
-  # the integrity of data exchanged.
-  macs: "{{ ubtu24cis_sshd_default_macs }}"
-  # This variable is used to state the key exchange algorithms used to establish secure encryption
-  # keys during the initial connection setup.
-  kex_algorithms: "{{ ubtu24cis_sshd_default_kex_algorithms }}"
-  # This variable sets the time interval in seconds between sending "keep-alive"
-  # messages from the server to the client. These types of messages are intended to
-  # keep the connection alive and prevent it being terminated due to inactivity.
-  client_alive_interval: "{{ ubtu24cis_sshd_default_client_alive_interval }}"
-  # This variable sets the maximum number of unresponsive "keep-alive" messages
-  # that can be sent from the server to the client before the connection is considered
-  # inactive and thus, closed.
-  client_alive_count_max: "{{ ubtu24cis_sshd_default_client_alive_count_max }}"
-  # This variable specifies the amount of seconds allowed for successful authentication to
-  # the SSH server.
-  login_grace_time: "{{ ubtu24cis_sshd_default_login_grace_time }}"
-  # This variables is used to set the maximum number of open sessions per connection.
-  max_sessions: "{{ ubtu24cis_sshd_default_max_sessions }}"
-  # This variable, if specified, configures a list of USER name patterns, separated by spaces, to allow SSH
-  # access for users whose user name matches one of the patterns. This is done
-  # by setting the value of `AllowUsers` option in `/etc/ssh/sshd_config` file.
-  # If an USER@HOST format will be used, the specified user will be allowed only on that particular host.
-  # The allow/deny directives process order: DenyUsers, AllowUsers, DenyGroups, AllowGroups.
-  # For more info, see https://linux.die.net/man/5/sshd_config
-  allow_users: ""
-  # (String) This variable, if specified, configures a list of GROUP name patterns, separated by spaces, to allow SSH access
-  # for users whose primary group or supplementary group list matches one of the patterns. This is done
-  # by setting the value of `AllowGroups` option in `/etc/ssh/sshd_config` file.
-  # The allow/deny directives process order: DenyUsers, AllowUsers, DenyGroups, AllowGroups.
-  # For more info, https://linux.die.net/man/5/sshd_config
-  allow_groups: ""
-  # This variable, if specified, configures a list of USER name patterns, separated by spaces, to prevent SSH access
-  # for users whose user name matches one of the patterns. This is done
-  # by setting the value of `DenyUsers` option in `/etc/ssh/sshd_config` file.
-  # If an USER@HOST format will be used, the specified user will be restricted only on that particular host.
-  # The allow/deny directives process order: DenyUsers, AllowUsers, DenyGroups, AllowGroups.
-  # For more info, see https://linux.die.net/man/5/sshd_config
-  deny_users: ""
-  # This variable, if specified, configures a list of GROUP name patterns, separated by spaces, to prevent SSH access
-  # for users whose primary group or supplementary group list matches one of the patterns. This is done
-  # by setting the value of `DenyGroups` option in `/etc/ssh/sshd_config` file.
-  # The allow/deny directives process order: DenyUsers, AllowUsers, DenyGroups, AllowGroups.
-  # For more info, see https://linux.die.net/man/5/sshd_config
-  deny_groups: ""
+# SSH Settings
+# This variable is used to control the verbosity of the logging produced by the SSH server.
+# The options for setting it are as follows:
+# - `QUIET`: Minimal logging;
+# - `FATAL`: logs only fatal errors;
+# - `ERROR`: logs error messages;
+# - `INFO`: logs informational messages in addition to errors;
+# - `VERBOSE`: logs a higher level of detail, including login attempts and key exchanges;
+# - `DEBUG`: generates very detailed debugging information including sensitive information.
+ubtu24cis_sshd_log_level: "{{ ubtu24cis_sshd_default_log_level }}"
+# This variable specifies the maximum number of authentication attempts that are
+# allowed for a single SSH session.
+ubtu24cis_sshd_max_auth_tries: "{{ ubtu24cis_sshd_default_max_auth_tries }}"
+# This variable specifies the encryption algorithms that can be used for securing
+# data transmission.
+ubtu24cis_sshd_ciphers: "{{ ubtu24cis_sshd_default_ciphers }}"
+# This variable specifies a list of message authentication code algorithms (MACs) that are allowed for verifying
+# the integrity of data exchanged.
+ubtu24cis_sshd_macs: "{{ ubtu24cis_sshd_default_macs }}"
+# This variable is used to state the key exchange algorithms used to establish secure encryption
+# keys during the initial connection setup.
+ubtu24cis_sshd_kex_algorithms: "{{ ubtu24cis_sshd_default_kex_algorithms }}"
+# This variable sets the time interval in seconds between sending "keep-alive"
+# messages from the server to the client. These types of messages are intended to
+# keep the connection alive and prevent it being terminated due to inactivity.
+ubtu24cis_sshd_client_alive_interval: "{{ ubtu24cis_sshd_default_client_alive_interval }}"
+# This variable sets the maximum number of unresponsive "keep-alive" messages
+# that can be sent from the server to the client before the connection is considered
+# inactive and thus, closed.
+ubtu24cis_sshd_client_alive_count_max: "{{ ubtu24cis_sshd_default_client_alive_count_max }}"
+# This variable specifies the amount of seconds allowed for successful authentication to
+# the SSH server.
+ubtu24cis_sshd_login_grace_time: "{{ ubtu24cis_sshd_default_login_grace_time }}"
+# This variables is used to set the maximum number of open sessions per connection.
+ubtu24cis_sshd_max_sessions: "{{ ubtu24cis_sshd_default_max_sessions }}"
+# This variable, if specified, configures a list of USER name patterns, separated by spaces, to allow SSH
+# access for users whose user name matches one of the patterns. This is done
+# by setting the value of `AllowUsers` option in `/etc/ssh/sshd_config` file.
+# If an USER@HOST format will be used, the specified user will be allowed only on that particular host.
+# The allow/deny directives process order: DenyUsers, AllowUsers, DenyGroups, AllowGroups.
+# For more info, see https://linux.die.net/man/5/sshd_config
+ubtu24cis_sshd_allow_users: ""
+# (String) This variable, if specified, configures a list of GROUP name patterns, separated by spaces, to allow SSH access
+# for users whose primary group or supplementary group list matches one of the patterns. This is done
+# by setting the value of `AllowGroups` option in `/etc/ssh/sshd_config` file.
+# The allow/deny directives process order: DenyUsers, AllowUsers, DenyGroups, AllowGroups.
+# For more info, https://linux.die.net/man/5/sshd_config
+ubtu24cis_sshd_allow_groups: ""
+# This variable, if specified, configures a list of USER name patterns, separated by spaces, to prevent SSH access
+# for users whose user name matches one of the patterns. This is done
+# by setting the value of `DenyUsers` option in `/etc/ssh/sshd_config` file.
+# If an USER@HOST format will be used, the specified user will be restricted only on that particular host.
+# The allow/deny directives process order: DenyUsers, AllowUsers, DenyGroups, AllowGroups.
+# For more info, see https://linux.die.net/man/5/sshd_config
+ubtu24cis_sshd_deny_users: ""
+# This variable, if specified, configures a list of GROUP name patterns, separated by spaces, to prevent SSH access
+# for users whose primary group or supplementary group list matches one of the patterns. This is done
+# by setting the value of `DenyGroups` option in `/etc/ssh/sshd_config` file.
+# The allow/deny directives process order: DenyUsers, AllowUsers, DenyGroups, AllowGroups.
+# For more info, see https://linux.die.net/man/5/sshd_config
+ubtu24cis_sshd_deny_groups: ""
 
 ## Control 5.2.1
 # This variable represents the name of the sudo package to install
@@ -1015,22 +1015,22 @@ ubtu24cis_pamd_pwhistory_remember: 24
 
 ## Controls 5.4.1.x - Password settings
 ubtu24cis_pass:
-  ## Control 5.4.1.1
-  # This variable governs after how many days a  password expires.
-  # CIS requires a value of 365 or less.
-  max_days: 365
-  ## Control 5.4.1.2
-  # This variable specifies the minimum number of days allowed between changing passwords.
-  # CIS requires a value of at least 1.
-  min_days: 1
-  ## Control 5.5.1.3
-  # This variable governs, how many days before a password expires, the user will be warned.
-  # CIS requires a value of at least 7.
-  warn_age: 7
-  ## Control 5.4.1.5
-  # This variable specifies the number of days of inactivity before an account will be locked.
-  # CIS requires a value of 45 days or less.
-  inactive: 45
+## Control 5.4.1.1
+# This variable governs after how many days a  password expires.
+# CIS requires a value of 365 or less.
+ubtu24cis_pass_max_days: 365
+## Control 5.4.1.2
+# This variable specifies the minimum number of days allowed between changing passwords.
+# CIS requires a value of at least 1.
+ubtu24cis_pass_min_days: 1
+## Control 5.5.1.3
+# This variable governs, how many days before a password expires, the user will be warned.
+# CIS requires a value of at least 7.
+ubtu24cis_pass_warn_age: 7
+## Control 5.4.1.5
+# This variable specifies the number of days of inactivity before an account will be locked.
+# CIS requires a value of 45 days or less.
+ubtu24cis_pass_inactive: 45
 
 # 5.4.2.6 root umask
 ubtu24cis_root_umask: '0027'  # 0027 or more restrictive
@@ -1062,7 +1062,6 @@ ubtu24cis_shell_session_file: /etc/profile.d/tmout.sh
 ##
 ## Section 6 Control Variables
 ##
-
 # Set which syslog service
 # journald or rsyslog
 ubtu24cis_syslog_service: 'journald'
@@ -1105,6 +1104,11 @@ ubtu24cis_journald_runtimekeepfree: "#RuntimeKeepFree="
 # ATTENTION: Uncomment the keyword below when values are set!
 ubtu24cis_journald_maxfilesec: "#MaxFileSec="
 
+# 6.1.3.8
+# ubtu24cis_logrotate sets the daily, weekly, monthly, yearly value for the log rotation
+# To conform to CIS standards this just needs to comply with your site policy
+ubtu24cis_logrotate: "daily"
+
 ## Controls 6.2.3.x - Audit template
 # This variable is set to true by tasks 6.2.3.1 to 6.2.3.20. As a result, the
 # audit settings are overwritten with the role's template. In order to exclude
@@ -1119,11 +1123,6 @@ ubtu24cis_allow_auditd_uid_user_exclusions: false
 # add a list of uids
 ubtu24cis_auditd_uid_exclude:
   - 1999
-
-# 6.1.3.8
-# ubtu24cis_logrotate sets the daily, weekly, monthly, yearly value for the log rotation
-# To conform to CIS standards this just needs to comply with your site policy
-ubtu24cis_logrotate: "daily"
 
 ##  Control 6.2.1.4 - Ensure audit_backlog_limit is sufficient
 # This variable represents the audit backlog limit, i.e., the maximum number of audit records that the
@@ -1177,7 +1176,7 @@ ubtu24cis_auditd_disk_error_action: syslog
 ubtu24cis_auditd_space_left_action: email
 ubtu24cis_auditd_admin_space_left_action: halt
 
-## Control 6.2.x - allow aide to be configured
+## Control 6.3.x - allow aide to be configured
 # AIDE is a file integrity checking tool, similar in nature to Tripwire.
 # While it cannot prevent intrusions, it can detect unauthorized changes
 # to configuration files by alerting when the files are changed. Review
@@ -1185,15 +1184,24 @@ ubtu24cis_auditd_admin_space_left_action: halt
 # By setting this variable to `true`, all of the settings related to AIDE will be applied!
 ubtu24cis_config_aide: true
 
+# If DB file older than below will automatically rebuild DB
+# e.g. options:1w = 1 week, 1d = 1day 1h = 1 hour
+ubtu24cis_aide_db_file_age: 1w
+
+# If aide already setup this forces a new DB to be created
+ubtu24cis_aide_db_recreate: false
+
+# allows to change db file, not config need to be adjusted too
+ubtu24cis_aide_db_file: /var/lib/aide/aide.db
+
 ## When Initializing aide this can take longer on some systems
 # changing the values enables user to change to thier own requirements
-ubtu24cis_aide_init:
-  # Maximum Time in seconds
-  async: 45
-  # Polling Interval in seconds
-  poll: 0
+# Maximum Time in seconds
+ubtu24cis_aide_init_async: 600
+# Polling Interval in seconds
+ubtu24cis_aide_init_poll: 15
 
-## Control 6.3
+## Control 6.3.x
 # Set how aide is scanned either cron or timer
 ubtu24cis_aide_scan: cron
 # These are the crontab settings for periodical checking of the filesystem's integrity using AIDE.
@@ -1201,36 +1209,36 @@ ubtu24cis_aide_scan: cron
 # the cron job on the target system.
 # Cron is a time-based job scheduling program in Unix OS, which allows tasks to be scheduled
 # and executed automatically at a certain point in time.
-ubtu24cis_aide_cron:
-  # This variable represents the user account under which the cron job for AIDE will run.
-  cron_user: root
-  # This variable represents the path to the AIDE crontab file.
-  cron_file: /etc/cron.d/aide_cron
-  # This variable represents the actual command or script that the cron job
-  # will execute for running AIDE.
-  aide_job: '/usr/bin/aide --config /etc/aide/aide.conf --check'
-  # These variables define the schedule for the cron job
-  # This variable governs the minute of the time of day when the AIDE cronjob is run.
-  # It must be in the range `0-59`.
-  aide_minute: 0
-  # This variable governs the hour of the time of day when the AIDE cronjob is run.
-  # It must be in the range `0-23`.
-  aide_hour: 5
-  # This variable governs the day of the month when the AIDE cronjob is run.
-  # `*` signifies that the job is run on all days; furthermore, specific days
-  # can be given in the range `1-31`; several days can be concatenated with a comma.
-  # The specified day(s) can must be in the range  `1-31`.
-  aide_day: '*'
-  # This variable governs months when the AIDE cronjob is run.
-  # `*` signifies that the job is run in every month; furthermore, specific months
-  # can be given in the range `1-12`; several months can be concatenated with commas.
-  # The specified month(s) can must be in the range  `1-12`.
-  aide_month: '*'
-  # This variable governs the weekdays, when the AIDE cronjob is run.
-  # `*` signifies that the job is run on all weekdays; furthermore, specific weekdays
-  # can be given in the range `0-7` (both `0` and `7` represent Sunday); several weekdays
-  # can be concatenated with commas.
-  aide_weekday: '*'
+
+# This variable represents the user account under which the cron job for AIDE will run.
+ubtu24cis_aide_cron_user: root
+# This variable represents the path to the AIDE crontab file.
+ubtu24cis_aide_cron_file: /etc/cron.d/aide_cron
+# This variable represents the actual command or script that the cron job
+# will execute for running AIDE.
+ubtu24cis_aide_cron_job: '/usr/bin/aide --config /etc/aide/aide.conf --check'
+# These variables define the schedule for the cron job
+# This variable governs the minute of the time of day when the AIDE cronjob is run.
+# It must be in the range `0-59`.
+ubtu24cis_aide_cron_minute: 0
+# This variable governs the hour of the time of day when the AIDE cronjob is run.
+# It must be in the range `0-23`.
+ubtu24cis_aide_cron_hour: 5
+# This variable governs the day of the month when the AIDE cronjob is run.
+# `*` signifies that the job is run on all days; furthermore, specific days
+# can be given in the range `1-31`; several days can be concatenated with a comma.
+# The specified day(s) can must be in the range  `1-31`.
+ubtu24cis_aide_cron_day: '*'
+# This variable governs months when the AIDE cronjob is run.
+# `*` signifies that the job is run in every month; furthermore, specific months
+# can be given in the range `1-12`; several months can be concatenated with commas.
+# The specified month(s) can must be in the range  `1-12`.
+ubtu24cis_aide_cron_month: '*'
+# This variable governs the weekdays, when the AIDE cronjob is run.
+# `*` signifies that the job is run on all weekdays; furthermore, specific weekdays
+# can be given in the range `0-7` (both `0` and `7` represent Sunday); several weekdays
+# can be concatenated with commas.
+ubtu24cis_aide_cron_weekday: '*'
 
 ##
 ## Section 7 Control Variables

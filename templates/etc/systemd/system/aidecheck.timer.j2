@@ -2,7 +2,7 @@
 Description=Aide check
 
 [Timer]
-OnCalendar={{ ubtu24cis_aide_cron.aide_day }}-{{ ubtu24cis_aide_cron.aide_month }}-{{ ubtu24cis_aide_cron.aide_weekday }} {{ ubtu24cis_aide_cron.aide_hour }}:{{ ubtu24cis_aide_cron.aide_minute }}:00
+OnCalendar={{ ubtu24cis_aide_cron_aide_day }}-{{ ubtu24cis_aide_cron_aide_month }}-{{ ubtu24cis_aide_cron_aide_weekday }} {{ ubtu24cis_aide_cron_aide_hour }}:{{ ubtu24cis_aide_cron_aide_minute }}:00
 Unit=aidecheck.service
 
 [Install]

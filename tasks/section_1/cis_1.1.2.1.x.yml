@@ -39,7 +39,7 @@
   vars:
     required_mount: '/tmp'
   ansible.builtin.set_fact:
-    tmp_partition_mount_options: "{{ tmp_partition_mount_options + [ 'nodev' ] }}"
+    tmp_partition_mount_options: "{{ tmp_partition_mount_options + ['nodev'] }}"
   changed_when: true
   notify: Writing and remounting tmp
 
@@ -59,7 +59,7 @@
   vars:
     required_mount: '/tmp'
   ansible.builtin.set_fact:
-    tmp_partition_mount_options: "{{ tmp_partition_mount_options + [ 'nosuid' ] }}"
+    tmp_partition_mount_options: "{{ tmp_partition_mount_options + ['nosuid'] }}"
   changed_when: true
   notify: Writing and remounting tmp
 
@@ -79,6 +79,6 @@
   vars:
     required_mount: '/tmp'
   ansible.builtin.set_fact:
-    tmp_partition_mount_options: "{{ tmp_partition_mount_options + [ 'noexec' ] }}"
+    tmp_partition_mount_options: "{{ tmp_partition_mount_options + ['noexec'] }}"
   changed_when: true
   notify: Writing and remounting tmp
