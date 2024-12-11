@@ -13,7 +13,6 @@ system_is_container: false
 warn_control_list: ""
 warn_count: 0
 
-
 # Aide initiate command for new DB creation
 aide_initiate_command: aideinit -y -f
 

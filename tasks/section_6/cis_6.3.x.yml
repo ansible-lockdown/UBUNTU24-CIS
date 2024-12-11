@@ -52,9 +52,9 @@
             state: absent
 
         - name: "6.3.1 | PATCH | Ensure AIDE is installed | Configure AIDE"
-          when:
-            - not ansible_check_mode
-          ansible.builtin.shell: "{{ aide_initiate_command }}"
+          when: not ansible_check_mode
+          ansible.builtin.command: "{{ aide_initiate_command }}"
+          changed_when: true
           args:
             creates: "{{ ubtu24cis_aide_db_file }}"
           async: "{{ ubtu24cis_aide_init_async }}"
