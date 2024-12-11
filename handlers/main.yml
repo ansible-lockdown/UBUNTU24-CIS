@@ -142,6 +142,7 @@
     path: "{{ mount_point }}"
     state: remounted
   listen: "Remount /var/log/audit"
+
 - name: Update_Initramfs
   ansible.builtin.command: update-initramfs -u
   changed_when: true
