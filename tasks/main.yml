@@ -22,7 +22,7 @@
     - ansible_env.SUDO_USER is defined
   tags: always
   block:
-    - name: Capture current password state of connecting user"
+    - name: "Capture current password state of connecting user"
       ansible.builtin.shell: "grep -w {{ ansible_env.SUDO_USER }} /etc/shadow | awk -F: '{print $2}'"
       changed_when: false
       failed_when: false
