@@ -484,7 +484,7 @@ ubtu24cis_apparmor_disable: {{ ubtu24cis_apparmor_disable }}
 # THIS VALUE IS WHAT THE ROOT PW WILL BECOME!!!!!!!!
 # HAVING THAT PW EXPOSED IN RAW TEXT IS NOT SECURE!!!!
 ubtu24cis_grub_user: {{ ubtu24cis_grub_user }}
-ubtu24cis_bootloader_password_hash: {{ grub_user_pass }}  # pragma: allowlist secret
+ubtu24cis_bootloader_password_hash: {{ ubtu24cis_grub_user_passwd }}  # pragma: allowlist secret
 
 ## Controls 1.5.x
 
@@ -580,7 +580,7 @@ ubtu24cis_ftp_client: {{ ubtu24cis_ftp_client }}
 ## Control 2.3.1.1
 # This variable choses the tool used for time synchronization
 # The two options are `chrony`and `systemd-timesyncd`.
-ubtu24cis_time_sync_tool: "systemd-timesyncd"
+ubtu24cis_time_sync_tool: {{ ubtu24cis_time_sync_tool }}
 
 ## Controls 2.3.x - Configure time pools & servers for chrony and timesyncd
 # The following variable represents a list of of time server pools used
@@ -588,7 +588,7 @@ ubtu24cis_time_sync_tool: "systemd-timesyncd"
 # Each list item contains two settings, `name` (the domain name of the pool) and synchronization `options`.
 # The default setting for the `options` is `iburst maxsources 4` -- please refer to the documentation
 # of the time synchronization mechanism you are using.
-ubtu24cis_time_pool_name:
+ubtu24cis_time_pool:
 {% for pool in ubtu24cis_time_pool %}
 - name: {{ pool.name }}
   options: {{ pool.options }}
@@ -732,6 +732,9 @@ ubtu24cis_sugroup: nosugroup
 ubtu24_varlog_location: {{ ubtu24cis_sudo_logfile }}
 
 # Section 6
+
+# This variable specifies the address of the remote log host where logs are being sent.
+ubtu24cis_remote_log_server: {{ ubtu24cis_remote_log_server }}
 
 # 6.1.2
 
