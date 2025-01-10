@@ -7,7 +7,7 @@
   changed_when: false
 
 - name: "PRELIM | AUDIT | Register if snap being used"
-  when: ubtu24cis_rule_1_1_1_6
+  when: ubtu24cis_rule_1_1_1_7
   tags: always
   ansible.builtin.shell: df -h | grep -wc "/snap"
   changed_when: false
@@ -15,7 +15,7 @@
   register: prelim_snap_pkg_mgr
 
 - name: "PRELIM | AUDIT | Register if squashfs is built into the kernel"
-  when: ubtu24cis_rule_1_1_1_6
+  when: ubtu24cis_rule_1_1_1_7
   tags: always
   ansible.builtin.shell: cat /lib/modules/$(uname -r)/modules.builtin | grep -c "squashfs"
   changed_when: false
