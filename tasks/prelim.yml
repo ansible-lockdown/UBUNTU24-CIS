@@ -256,3 +256,11 @@
     regexp: ^IPT_SYSCTL=.*
     line: IPT_SYSCTL=/etc/sysctl.conf
     mode: 'u-x,go-wx'
+
+- name: "OPTIONAL | PATCH | Install Logrotate if missing"
+  when:
+    - ubtu24cis_rule_6_1_3_8
+    - ubtu24cis_logrotate_pkg_install
+  ansible.builtin.package:
+    name: logrotate
+    state: present
