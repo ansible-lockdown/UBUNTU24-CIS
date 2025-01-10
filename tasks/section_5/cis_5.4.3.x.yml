@@ -34,7 +34,7 @@
     state: "{{ item.state }}"
     marker: "# {mark} - CIS benchmark - Ansible-lockdown"
     create: true
-    mode: 'go+r'
+    mode: 'go-w'
     block: |
       TMOUT={{ ubtu24cis_shell_session_timeout }}
       readonly TMOUT
