@@ -218,7 +218,7 @@
 - name: "PRELIM | AUDIT | Check if auditd is immutable before changes"
   when: "'auditd' in ansible_facts.packages"
   tags: always
-  ansible.builtin.shell: auditctl -l | grep -c '-e 2'
+  ansible.builtin.shell: auditctl -s | grep "enabled 2"
   changed_when: false
   failed_when: prelim_auditd_immutable_check.rc not in [ 0, 1 ]
   register: prelim_auditd_immutable_check
