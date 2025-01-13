@@ -7,7 +7,7 @@
   changed_when: false
 
 - name: "PRELIM | AUDIT | Register if snap being used"
-  when: ubtu24cis_rule_1_1_1_6
+  when: ubtu24cis_rule_1_1_1_7
   tags: always
   ansible.builtin.shell: df -h | grep -wc "/snap"
   changed_when: false
@@ -15,7 +15,7 @@
   register: prelim_snap_pkg_mgr
 
 - name: "PRELIM | AUDIT | Register if squashfs is built into the kernel"
-  when: ubtu24cis_rule_1_1_1_6
+  when: ubtu24cis_rule_1_1_1_7
   tags: always
   ansible.builtin.shell: cat /lib/modules/$(uname -r)/modules.builtin | grep -c "squashfs"
   changed_when: false
@@ -218,7 +218,7 @@
 - name: "PRELIM | AUDIT | Check if auditd is immutable before changes"
   when: "'auditd' in ansible_facts.packages"
   tags: always
-  ansible.builtin.shell: auditctl -l | grep -c '-e 2'
+  ansible.builtin.shell: auditctl -s | grep "enabled 2"
   changed_when: false
   failed_when: prelim_auditd_immutable_check.rc not in [ 0, 1 ]
   register: prelim_auditd_immutable_check
@@ -256,3 +256,11 @@
     regexp: ^IPT_SYSCTL=.*
     line: IPT_SYSCTL=/etc/sysctl.conf
     mode: 'u-x,go-wx'
+
+- name: "OPTIONAL | PATCH | Install Logrotate if missing"
+  when:
+    - ubtu24cis_rule_6_1_3_8
+    - ubtu24cis_logrotate_pkg_install
+  ansible.builtin.package:
+    name: logrotate
+    state: present
