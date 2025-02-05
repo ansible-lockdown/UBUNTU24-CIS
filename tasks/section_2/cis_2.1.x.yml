@@ -699,7 +699,7 @@
       notify: Restart postfix
       ansible.builtin.lineinfile:
         path: /etc/postfix/main.cf
-        regexp: '^(#)?inet_interfaces'
+        regexp: '^(#)?inet_interfaces\s*=(?!\s*loopback-only\s*).*'
         line: 'inet_interfaces = loopback-only'
 
     - name: "2.1.21 | WARN | Ensure mail transfer agents are configured for local-only mode | Message out other main agents"
