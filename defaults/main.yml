@@ -626,6 +626,10 @@ ubtu24cis_desktop_required: false
 # This will also purge any packages not removed via this playbook
 ubtu24cis_purge_apt: false
 
+## Ignore change_when for apt update task
+# Modifies behavior of 'changed_when' for 'apt update' task  in prelim that always changes
+ignore_apt_update_changed_when: false
+
 ##
 ## Section 1 Control Variables
 ##
