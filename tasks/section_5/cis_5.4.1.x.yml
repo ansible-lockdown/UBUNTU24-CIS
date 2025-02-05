@@ -130,13 +130,13 @@
     - login
   block:
     - name: "5.4.1.5 | AUDIT | Ensure inactive password lock is configured | General setting"
-      ansible.builtin.command: useradd -D | grep INACTIVE | cut -d= -f2
+      ansible.builtin.shell: useradd -D | grep INACTIVE | cut -d= -f2
       changed_when: false
       failed_when: false
       register: discovered_passwd_inactive_setting
 
     - name: "5.4.1.5 | PATCH | Ensure inactive password lock is configured| Set inactive period for new users"
-      when: discovered_passwd_inactive_setting.stdout != ubtu24cis_pass_inactive | string
+      when: discovered_passwd_inactive_setting.stdout != (ubtu24cis_pass_inactive | string)
       ansible.builtin.command: useradd -D -f {{ ubtu24cis_pass_inactive }}
       failed_when: false
       changed_when: true
