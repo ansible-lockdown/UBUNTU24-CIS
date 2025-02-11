@@ -55,6 +55,7 @@
   tags: always
   ansible.builtin.package:
     update_cache: true
+  changed_when: not ignore_apt_update_changed_when
 
 - name: Include audit specific variables
   when:
@@ -229,6 +230,7 @@
   tags: always
   ansible.builtin.shell: "grep ^log_file /etc/audit/auditd.conf | awk '{ print $NF }'"
   changed_when: false
+  check_mode: false
   failed_when: prelim_auditd_logfile.rc not in [ 0, 1 ]
   register: prelim_auditd_logfile
 
