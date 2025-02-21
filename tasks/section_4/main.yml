@@ -15,7 +15,7 @@
     file: cis_4.3.x.yml
 
 - name: "SECTION | 4.4.1.x | Configure iptables software"
-  when: ubtu24cis_firewall_package == "nftables"
+  when: ubtu24cis_firewall_package == "iptables"
   ansible.builtin.import_tasks:
     file: cis_4.4.1.x.yml
 
