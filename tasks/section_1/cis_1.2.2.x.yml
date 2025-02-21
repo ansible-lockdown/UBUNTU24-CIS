@@ -9,6 +9,14 @@
     - rule_1.2.2.1
     - NIST800-53R5_SI-2
     - patch
-  ansible.builtin.package:
-    name: "*"
-    state: latest
+  block:
+    - name: "1.2.2.1 | PATCH | Ensure updates, patches, and additional security software are installedi | Update"
+      ansible.builtin.package:
+        name: "*"
+        state: latest
+      register: discovered_pkg_updates
+
+    # Resetting connection as ssh stops if patched reset connection kickstarts it
+    - name: "1.2.2.1 | PATCH | Ensure updates, patches, and additional security software are installed | reset ansible connection if ssh updated"
+      when: "'openssh-server' in discovered_pkg_updates.stdout"
+      ansible.builtin.meta: reset_connection
