@@ -12,6 +12,12 @@
     mode: 'go-w'
     state: directory
 
+- name: Pre Audit Setup | Ensure existence of {{ audit_log_dir }}
+  ansible.builtin.file:
+    path: "{{ audit_log_dir }}"
+    mode: 'go-w'
+    state: directory
+
 - name: Pre Audit Setup | If using git for content set up
   when: audit_content == 'git'
   block:
