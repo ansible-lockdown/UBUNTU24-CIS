@@ -19,6 +19,21 @@
     regexp: nologin
     replace: ""
 
+- name: "5.4.3.2 | PATCH | Remove old content from {{ ubtu24cis_shell_session_file }} before adding new lines"
+  when:
+    - ubtu24cis_rule_5_4_3_2
+  tags:
+    - level1-server
+    - level1-workstation
+    - patch
+    - shell
+    - rule_5.4.3.2
+    - NIST800-53R5_NA
+  ansible.builtin.replace:
+    path: "{{ ubtu24cis_shell_session_file }}"
+    regexp: '# Logout Timeout\nexport TMOUT=0\nreadonly TMOUT\n'
+    replace: '# Logout Timeout\n'
+
 - name: "5.4.3.2 | PATCH | Ensure default user shell timeout is configured"
   when:
     - ubtu24cis_rule_5_4_3_2
