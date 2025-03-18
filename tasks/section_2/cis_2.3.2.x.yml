@@ -23,7 +23,7 @@
       ansible.builtin.template:
         src: "{{ item }}.j2"
         dest: "/{{ item }}"
-        mode: 'go-r'
+        mode: 'go-wx'
         owner: root
         group: root
       loop:

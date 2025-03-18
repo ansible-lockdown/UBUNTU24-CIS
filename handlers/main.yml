@@ -237,11 +237,11 @@
   changed_when: true
 
 - name: Auditd rules reload
-  when:
-    - not prelim_auditd_immutable_check or
-      '"No change" not in ubtu24cis_rule_6_2_3_21_grep -iR augen_check.stdout'
+  when: ('"No change" not in discovered_augenrules_check.stdout') or prelim_auditd_immutable_check.rc == 1
   ansible.builtin.command: augenrules --load
   changed_when: true
+  failed_when: discovered_augenrule_load.rc not in [ 0, 1 ]
+  register: discovered_augenrule_load
 
 - name: Audit_immutable_fact
   when:

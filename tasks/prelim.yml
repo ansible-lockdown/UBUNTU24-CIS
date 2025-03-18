@@ -7,7 +7,7 @@
   changed_when: false
 
 - name: "PRELIM | AUDIT | Register if snap being used"
-  when: ubtu24cis_rule_1_1_1_6
+  when: ubtu24cis_rule_1_1_1_7
   tags: always
   ansible.builtin.shell: df -h | grep -wc "/snap"
   changed_when: false
@@ -15,7 +15,7 @@
   register: prelim_snap_pkg_mgr
 
 - name: "PRELIM | AUDIT | Register if squashfs is built into the kernel"
-  when: ubtu24cis_rule_1_1_1_6
+  when: ubtu24cis_rule_1_1_1_7
   tags: always
   ansible.builtin.shell: cat /lib/modules/$(uname -r)/modules.builtin | grep -c "squashfs"
   changed_when: false
@@ -51,6 +51,12 @@
       ansible.builtin.debug:
         msg: "{{ prelim_mount_point_fs_and_options }}"
 
+- name: "PRELIM | PATCH | Run apt update"
+  tags: always
+  ansible.builtin.package:
+    update_cache: true
+  changed_when: not ignore_apt_update_changed_when
+
 - name: Include audit specific variables
   when:
     - run_audit or audit_only
@@ -69,14 +75,6 @@
     - run_audit
   ansible.builtin.import_tasks:
     file: pre_remediation_audit.yml
-
-- name: "PRELIM | PATCH | Run apt update"
-  when:
-    - ubtu24cis_rule_1_2_1_1 or
-      ubtu24cis_rule_1_2_2_1
-  tags: always
-  ansible.builtin.package:
-    update_cache: true
 
 - name: "PRELIM | AUDIT | Wireless adapter pre-requisites"
   when:
@@ -218,7 +216,7 @@
 - name: "PRELIM | AUDIT | Check if auditd is immutable before changes"
   when: "'auditd' in ansible_facts.packages"
   tags: always
-  ansible.builtin.shell: auditctl -l | grep -c '-e 2'
+  ansible.builtin.shell: auditctl -s | grep "enabled 2"
   changed_when: false
   failed_when: prelim_auditd_immutable_check.rc not in [ 0, 1 ]
   register: prelim_auditd_immutable_check
@@ -232,6 +230,7 @@
   tags: always
   ansible.builtin.shell: "grep ^log_file /etc/audit/auditd.conf | awk '{ print $NF }'"
   changed_when: false
+  check_mode: false
   failed_when: prelim_auditd_logfile.rc not in [ 0, 1 ]
   register: prelim_auditd_logfile
 
@@ -256,3 +255,11 @@
     regexp: ^IPT_SYSCTL=.*
     line: IPT_SYSCTL=/etc/sysctl.conf
     mode: 'u-x,go-wx'
+
+- name: "OPTIONAL | PATCH | Install Logrotate if missing"
+  when:
+    - ubtu24cis_rule_6_1_3_8
+    - ubtu24cis_logrotate_pkg_install
+  ansible.builtin.package:
+    name: logrotate
+    state: present

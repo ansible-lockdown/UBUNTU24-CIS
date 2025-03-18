@@ -309,7 +309,7 @@
     warn_control_id: '7.2.10'
   block:
     - name: "7.2.10 | AUDIT | Ensure local interactive user dot files access is configured | Check for files"
-      ansible.builtin.shell: find /home/ -name "\.*" -perm /g+w,o+w
+      ansible.builtin.shell: find /home/ /root/ -name "\.*" -type f -perm /u+x,g+wx,o+wx
       changed_when: false
       failed_when: discovered_homedir_dot_files.rc not in [ 0, 1 ]
       check_mode: false
@@ -336,5 +336,5 @@
         - ubtu24cis_dotperm_ansiblemanaged
       ansible.builtin.file:
         path: '{{ item }}'
-        mode: 'go-w'
+        mode: 'u-x,go-wx'
       with_items: "{{ discovered_homedir_dot_files.stdout_lines }}"

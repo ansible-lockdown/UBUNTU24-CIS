@@ -626,6 +626,10 @@ ubtu24cis_desktop_required: false
 # This will also purge any packages not removed via this playbook
 ubtu24cis_purge_apt: false
 
+## Ignore change_when for apt update task
+# Modifies behavior of 'changed_when' for 'apt update' task  in prelim that always changes
+ignore_apt_update_changed_when: false
+
 ##
 ## Section 1 Control Variables
 ##
@@ -647,6 +651,7 @@ ubtu24cis_tmp_svc: false
 # The following variables are related to the set of rules from section 1.6.1.x
 
 ## Controls 1.3.1.3 and 1.3.1.4 Ensure all AppArmor Profiles are in enforce (1.3.1.3/4) or complain (1.3.1.3) mode
+control_1_3_1_4_was_run: false
 
 # This variable disables the implementation of rules 1.3.1.3 and 1.3.1.4
 # regarding enforcing profiles or putting them in complain mode
@@ -665,7 +670,6 @@ ubtu24cis_apparmor_mode: complain
 # HAVING THAT PW EXPOSED IN RAW TEXT IS NOT SECURE!!!!
 ubtu24cis_grub_user: root
 ubtu24cis_set_grub_user_pass: false
-ubtu24cis_grub_user_passwd: '$y$j9T$MBA5l/tQyWifM869nQjsi.$cTy0ConcNjIYOn6Cppo5NAky20osrkRxz4fEWA8xac6'  # Set to changeme
 ubtu24cis_grub_user_file: /etc/grub.d/00_user
 ubtu24cis_bootloader_password_hash: "grub.pbkdf2.sha512.changethispassword"  # pragma: allowlist secret
 ubtu24cis_set_boot_pass: false
@@ -1069,6 +1073,9 @@ ubtu24cis_shell_session_file: /etc/profile.d/tmout.sh
 # journald or rsyslog
 ubtu24cis_syslog_service: 'journald'
 
+# Enable rsyslog logging to be managed by ansible
+ubtu24cis_rsyslog_ansible_managed: true
+
 ## Controls 6.1.1.x journald
 
 # This variable specifies the address of the remote log host where logs are being sent.
@@ -1107,7 +1114,12 @@ ubtu24cis_journald_runtimekeepfree: "#RuntimeKeepFree="
 # ATTENTION: Uncomment the keyword below when values are set!
 ubtu24cis_journald_maxfilesec: "#MaxFileSec="
 
-# 6.1.3.8
+# 6.1.3.8 LOGRotate
+# Optional to alow logrotate to be installed
+# While it is required for 6.1.3.8 its not installed by default on minimal image
+# or required for CIS to be installed, but in order to achieve ability to install has been added
+ubtu24cis_logrotate_pkg_install: false
+
 # ubtu24cis_logrotate sets the daily, weekly, monthly, yearly value for the log rotation
 # To conform to CIS standards this just needs to comply with your site policy
 ubtu24cis_logrotate: "daily"

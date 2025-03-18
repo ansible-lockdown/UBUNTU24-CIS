@@ -277,3 +277,4 @@
     - auditd
   ansible.builtin.command: augenrules --check
   changed_when: false
+  register: discovered_augenrules_check
