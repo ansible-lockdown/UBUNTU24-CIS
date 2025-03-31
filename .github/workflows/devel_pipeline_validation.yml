@@ -7,6 +7,8 @@
         types: [opened, reopened, synchronize]
         branches:
             - devel
+            - benchmark*
+            - latest
         paths:
             - '**.yml'
             - '**.sh'
@@ -69,7 +71,6 @@
               else
                  echo IAC_BRANCH=main >> $GITHUB_ENV
               fi
-
 
           # Pull in terraform code for linux servers
           - name: Clone GitHub IaC plan
