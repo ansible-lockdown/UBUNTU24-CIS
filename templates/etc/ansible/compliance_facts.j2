@@ -7,8 +7,8 @@
 Benchmark_release = CIS-{{ benchmark_version }}
 Benchmark_run_date = {{ '%Y-%m-%d - %H:%M:%S' | ansible.builtin.strftime }}
 # If options set (doesn't mean it ran all controls)
-level_1_hardening_enabled = {{ rhel9cis_level_1 }}
-level_2_hardening_enabled = {{ rhel9cis_level_2 }}
+level_1_hardening_enabled = {{ ubtu24cis_level_1 }}
+level_2_hardening_enabled = {{ ubtu24cis_level_2 }}
 
 {% if ansible_run_tags | length > 0 %}
 # If tags used to stipulate run level
