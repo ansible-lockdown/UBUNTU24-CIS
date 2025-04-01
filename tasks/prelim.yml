@@ -243,6 +243,22 @@
     name: acl
     state: present
 
+- name: "PRELIM | PATCH | Install cron"
+  when: ubtu24cis_rule_2_4_1_1
+  tags: always
+  ansible.builtin.package:
+    name: cron
+    state: present
+
+- name: "PRELIM | PATCH | Install UFW"
+  when:
+    - ubtu24cis_rule_2_4_1_1
+    - ubtu24cis_firewall_package == "ufw"
+  tags: always
+  ansible.builtin.package:
+    name: ufw
+    state: present
+
 ## Optional
 
 - name: "Optional | PATCH | UFW firewall force to use /etc/sysctl.conf settings"
