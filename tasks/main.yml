@@ -172,8 +172,8 @@
 - name: Add ansible file showing Benchmark and levels applied
   when: create_benchmark_facts
   tags:
-  - always
-  - benchmark
+    - always
+    - benchmark
   block:
     - name: Create ansible facts directory
       ansible.builtin.file:
