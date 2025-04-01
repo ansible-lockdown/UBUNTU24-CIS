@@ -55,7 +55,7 @@
   tags: always
   ansible.builtin.package:
     update_cache: true
-  changed_when: not ignore_apt_update_changed_when
+  changed_when: not ubtu24cis_ignore_apt_update_changed_when
 
 - name: Include audit specific variables
   when:
