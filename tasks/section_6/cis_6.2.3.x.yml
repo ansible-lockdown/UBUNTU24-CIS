@@ -1,8 +1,7 @@
 ---
 
 - name: "6.2.3.1 | PATCH | Ensure changes to system administration scope (sudoers) is collected"
-  when:
-    - ubtu24cis_rule_6_2_3_1
+  when: ubtu24cis_rule_6_2_3_1
   tags:
     - level2-server
     - level2-workstation
@@ -14,8 +13,7 @@
     update_audit_template: true
 
 - name: "6.2.3.2 | PATCH | Ensure actions as another user are always logged"
-  when:
-    - ubtu24cis_rule_6_2_3_2
+  when: ubtu24cis_rule_6_2_3_2
   tags:
     - level2-server
     - level2-workstation
@@ -27,8 +25,7 @@
     update_audit_template: true
 
 - name: "6.2.3.3 | PATCH | Ensure events that modify the sudo log file are collected"
-  when:
-    - ubtu24cis_rule_6_2_3_3
+  when: ubtu24cis_rule_6_2_3_3
   tags:
     - level2-server
     - level2-workstation
@@ -40,8 +37,7 @@
     update_audit_template: true
 
 - name: "6.2.3.4 | PATCH | Ensure events that modify date and time information are collected"
-  when:
-    - ubtu24cis_rule_6_2_3_4
+  when: ubtu24cis_rule_6_2_3_4
   tags:
     - level2-server
     - level2-workstation
@@ -54,8 +50,7 @@
     update_audit_template: true
 
 - name: "6.2.3.5 | PATCH | Ensure events that modify the system's network environment are collected"
-  when:
-    - ubtu24cis_rule_6_2_3_5
+  when: ubtu24cis_rule_6_2_3_5
   tags:
     - level2-server
     - level2-workstation
@@ -68,8 +63,7 @@
     update_audit_template: true
 
 - name: "6.2.3.6 | PATCH | Ensure use of privileged commands is collected"
-  when:
-    - ubtu24cis_rule_6_2_3_6
+  when: ubtu24cis_rule_6_2_3_6
   tags:
     - level2-server
     - level2-workstation
@@ -80,17 +74,16 @@
   block:
     - name: "6.2.3.6 | AUDIT | Ensure use of privileged commands is collected | Get list of privileged programs"
       ansible.builtin.shell: for i in  $(findmnt -n -l -k -it $(awk '/nodev/ { print $2 }' /proc/filesystems | paste -sd,) | grep -Pv "noexec|nosuid" | awk '{print $1}'); do find $i -xdev -type f -perm -4000 -o -type f -perm -2000 2>/dev/null; done
-      register: priv_procs
       changed_when: false
       check_mode: false
+      register: discovered_privilege_processes
 
     - name: "6.2.3.6 | PATCH | Ensure use of privileged commands is collected | Set privileged rules"
       ansible.builtin.set_fact:
         update_audit_template: true
 
 - name: "6.2.3.7 | PATCH | Ensure unsuccessful file access attempts are collected"
-  when:
-    - ubtu24cis_rule_6_2_3_7
+  when: ubtu24cis_rule_6_2_3_7
   tags:
     - level2-server
     - level2-workstation
@@ -102,8 +95,7 @@
     update_audit_template: true
 
 - name: "6.2.3.8 | PATCH | Ensure events that modify user/group information are collected"
-  when:
-    - ubtu24cis_rule_6_2_3_8
+  when: ubtu24cis_rule_6_2_3_8
   tags:
     - level2-server
     - level2-workstation
@@ -115,8 +107,7 @@
     update_audit_template: true
 
 - name: "6.2.3.9 | PATCH | Ensure discretionary access control permission modification events are collected"
-  when:
-    - ubtu24cis_rule_6_2_3_9
+  when: ubtu24cis_rule_6_2_3_9
   tags:
     - level2-server
     - level2-workstation
@@ -129,8 +120,7 @@
     update_audit_template: true
 
 - name: "6.2.3.10 | PATCH | Ensure successful file system mounts are collected"
-  when:
-    - ubtu24cis_rule_6_2_3_10
+  when: ubtu24cis_rule_6_2_3_10
   tags:
     - level2-server
     - level2-workstation
@@ -142,8 +132,7 @@
     update_audit_template: true
 
 - name: "6.2.3.11 | PATCH | Ensure session initiation information is collected"
-  when:
-    - ubtu24cis_rule_6_2_3_11
+  when: ubtu24cis_rule_6_2_3_11
   tags:
     - level2-server
     - level2-workstation
@@ -155,8 +144,7 @@
     update_audit_template: true
 
 - name: "6.2.3.12 | PATCH | Ensure login and logout events are collected"
-  when:
-    - ubtu24cis_rule_6_2_3_12
+  when: ubtu24cis_rule_6_2_3_12
   tags:
     - level2-server
     - level2-workstation
@@ -168,8 +156,7 @@
     update_audit_template: true
 
 - name: "6.2.3.13 | PATCH | Ensure file deletion events by users are collected"
-  when:
-    - ubtu24cis_rule_6_2_3_13
+  when: ubtu24cis_rule_6_2_3_13
   tags:
     - level2-server
     - level2-workstation
@@ -182,8 +169,7 @@
     update_audit_template: true
 
 - name: "6.2.3.14 | PATCH | Ensure events that modify the system's Mandatory Access Controls are collected"
-  when:
-    - ubtu24cis_rule_6_2_3_14
+  when: ubtu24cis_rule_6_2_3_14
   tags:
     - level2-server
     - level2-workstation
@@ -196,8 +182,7 @@
     update_audit_template: true
 
 - name: "6.2.3.15 | PATCH | Ensure successful and unsuccessful attempts to use the chcon command are recorded"
-  when:
-    - ubtu24cis_rule_6_2_3_15
+  when: ubtu24cis_rule_6_2_3_15
   tags:
     - level2-server
     - level2-workstation
@@ -211,8 +196,7 @@
     update_audit_template: true
 
 - name: "6.2.3.16 | PATCH | Ensure successful and unsuccessful attempts to use the setfacl command are recorded"
-  when:
-    - ubtu24cis_rule_6_2_3_16
+  when: ubtu24cis_rule_6_2_3_16
   tags:
     - level2-server
     - level2-workstation
@@ -226,8 +210,7 @@
     update_audit_template: true
 
 - name: "6.2.3.17 | PATCH | Ensure successful and unsuccessful attempts to use the chacl command are recorded"
-  when:
-    - ubtu24cis_rule_6_2_3_17
+  when: ubtu24cis_rule_6_2_3_17
   tags:
     - level2-server
     - level2-workstation
@@ -241,8 +224,7 @@
     update_audit_template: true
 
 - name: "6.2.3.18 | PATCH | Ensure successful and unsuccessful attempts to use the usermod command are recorded"
-  when:
-    - ubtu24cis_rule_6_2_3_18
+  when: ubtu24cis_rule_6_2_3_18
   tags:
     - level2-server
     - level2-workstation
@@ -256,8 +238,7 @@
     update_audit_template: true
 
 - name: "6.2.3.19 | PATCH | Ensure kernel module loading and unloading is collected"
-  when:
-    - ubtu24cis_rule_6_2_3_19
+  when: ubtu24cis_rule_6_2_3_19
   tags:
     - level2-server
     - level2-workstation
@@ -270,8 +251,7 @@
     update_audit_template: true
 
 - name: "6.2.3.20 | PATCH | Ensure the audit configuration is immutable"
-  when:
-    - ubtu24cis_rule_6_2_3_20
+  when: ubtu24cis_rule_6_2_3_20
   tags:
     - level2-server
     - level2-workstation
@@ -286,8 +266,7 @@
     update_audit_template: true
 
 - name: "6.2.3.21 | PATCH | Ensure the running and on disk configuration is the same"
-  when:
-    - ubtu24cis_rule_6_2_3_21
+  when: ubtu24cis_rule_6_2_3_21
   tags:
     - level2-server
     - level2-workstation
@@ -296,6 +275,6 @@
     - rule_6.2.3.21
     - NIST800-53R5_AU-3
     - auditd
-  ansible.builtin.shell: augenrules --check
+  ansible.builtin.command: augenrules --check
   changed_when: false
-  register: ubtu24cis_rule_6_2_3_21_augen_check
+  register: discovered_augenrules_check

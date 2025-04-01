@@ -1,14 +1,25 @@
 ---
 
-- name: "POST | AUDITD | Apply auditd template for section 4.1.3.x"
+# Since auditd rules are dependent on syscalls and syscall tables are architecture specific,
+# we need to update the auditd rules depending on the architecture of the system.
+# This task passed the syscalls table to the auditd template and updates the auditd rules
+- name: "POST | AUDITD | Set supported_syscalls variable"
+  ansible.builtin.shell: ausyscall --dump |  awk  '{print $2}'
+  changed_when: false
+  failed_when: discovered_auditd_syscalls.rc not in [ 0, 1 ]
+  register: discovered_auditd_syscalls
+
+- name: "POST | AUDITD | Apply auditd template for section 6.2.4.x"
   when: update_audit_template
+  vars:
+    supported_syscalls: "{{ discovered_auditd_syscalls.stdout_lines }}"
   ansible.builtin.template:
     src: audit/99_auditd.rules.j2
     dest: /etc/audit/rules.d/99_auditd.rules
     owner: root
     group: root
-    mode: '0640'
-  register: audit_rules_updated
+    mode: 'u-x,go-wx'
+  register: discovered_audit_rules_updated
   notify:
     - Auditd rules reload
     - Audit_immutable_fact
@@ -22,7 +33,7 @@
     dest: /etc/audit/rules.d/98_auditd_exceptions.rules
     owner: root
     group: root
-    mode: '0600'
+    mode: 'u-x,go-rwx'
   notify: Restart auditd
 
 - name: POST | AUDITD | Flush handlers

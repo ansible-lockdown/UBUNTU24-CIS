@@ -96,7 +96,7 @@
         dest: /etc/systemd/journald.conf.d/forwardtosyslog.conf
         owner: root
         group: root
-        mode: '0640'
+        mode: 'g-wx,o-rwx'
 
     - name: "6.1.2.2 | PATCH | Ensure journald ForwardToSyslog is disabled | comment out current entries"
       ansible.builtin.replace:
@@ -121,7 +121,7 @@
         dest: /etc/systemd/journald.conf.d/storage.conf
         owner: root
         group: root
-        mode: '0640'
+        mode: 'g-wx,o-rwx'
 
     - name: "6.1.2.3 | PATCH | Ensure journald Compress is configured | comment out current entries"
       ansible.builtin.replace:
@@ -146,7 +146,7 @@
         dest: /etc/systemd/journald.conf.d/storage.conf
         owner: root
         group: root
-        mode: '0640'
+        mode: 'g-wx,o-rwx'
 
     - name: "6.1.2.4 | PATCH | Ensure journald Storage is configured | comment out current entries"
       ansible.builtin.replace:

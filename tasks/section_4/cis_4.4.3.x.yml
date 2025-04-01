@@ -1,8 +1,7 @@
 ---
 
 - name: "4.4.3.1 | PATCH | Ensure ip6tables default deny firewall policy"
-  when:
-    - ubtu24cis_rule_4_4_3_1
+  when: ubtu24cis_rule_4_4_3_1
   tags:
     - level1-server
     - level1-workstationå
@@ -126,18 +125,18 @@
     warn_control_id: '4.4.3.4'
   block:
     - name: "4.4.3.4 | AUDIT | Ensure ip6tables firewall rules exist for all open ports | Get list of open ports"
-      ansible.builtin.shell: ss -6tuln
+      ansible.builtin.command: ss -6tuln
       changed_when: false
       failed_when: false
       check_mode: false
-      register: ubtu24cis_4_4_3_4_open_ports
+      register: discovered_open_ports
 
     - name: "4.4.3.4 | AUDIT | Ensure ip6tables firewall rules exist for all open ports | Get list of rules"
-      ansible.builtin.shell: ip6tables -L INPUT -v -n
+      ansible.builtin.command: ip6tables -L INPUT -v -n
       changed_when: false
       failed_when: false
       check_mode: false
-      register: ubtu24cis_4_4_3_4_current_rules
+      register: discovered_current_rules
 
     - name: "4.4.3.4 | AUDIT | Ensure ip6tables firewall rules exist for all open ports | Warn about settings"
       ansible.builtin.debug:
@@ -145,9 +144,9 @@
           - "Warning!! Below is the list the open ports and current rules"
           - "Please create a rule for any open port that does not have a current rule"
           - "Open Ports:"
-          - "{{ ubtu24cis_4_4_3_4_open_ports.stdout_lines }}"
+          - "{{ discovered_open_ports.stdout_lines }}"
           - "Current Rules:"
-          - "{{ ubtu24cis_4_4_3_4_current_rules.stdout_lines }}"
+          - "{{ discovered_current_rules.stdout_lines }}"
 
     - name: "4.4.3.4 | AUDIT | Ensure ip6tables firewall rules exist for all open ports | Set warning count"
       ansible.builtin.import_tasks:
@@ -171,9 +170,9 @@
 
 #       - name: "Make IP6Tables persistent | Save to persistent files"
 #         ansible.builtin.shell: bash -c "ip6tables-save > /etc/iptables/rules.v6"
-#         changed_when: ubtu24cis_ip6tables_save.rc == 0
-#         failed_when: ubtu24cis_ip6tables_save.rc > 0
-#         register: ubtu24cis_ip6tables_save
+#         changed_when: discovered_ip6tables_save.rc == 0
+#         failed_when: discovered_ip6tables_save.rc > 0
+#         register: discovered_ip6tables_save
 #   when:
 #       - ubtu24cis_firewall_package == "iptables"
 #       - ubtu24cis_ipv6_required

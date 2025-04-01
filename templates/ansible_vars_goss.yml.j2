@@ -484,7 +484,7 @@ ubtu24cis_apparmor_disable: {{ ubtu24cis_apparmor_disable }}
 # THIS VALUE IS WHAT THE ROOT PW WILL BECOME!!!!!!!!
 # HAVING THAT PW EXPOSED IN RAW TEXT IS NOT SECURE!!!!
 ubtu24cis_grub_user: {{ ubtu24cis_grub_user }}
-ubtu24cis_bootloader_password_hash: {{ grub_user_pass }}  # pragma: allowlist secret
+ubtu24cis_bootloader_password_hash: {{ ubtu24cis_bootloader_password_hash }}  # pragma: allowlist secret
 
 ## Controls 1.5.x
 
@@ -580,7 +580,7 @@ ubtu24cis_ftp_client: {{ ubtu24cis_ftp_client }}
 ## Control 2.3.1.1
 # This variable choses the tool used for time synchronization
 # The two options are `chrony`and `systemd-timesyncd`.
-ubtu24cis_time_sync_tool: "systemd-timesyncd"
+ubtu24cis_time_sync_tool: {{ ubtu24cis_time_sync_tool }}
 
 ## Controls 2.3.x - Configure time pools & servers for chrony and timesyncd
 # The following variable represents a list of of time server pools used
@@ -588,7 +588,7 @@ ubtu24cis_time_sync_tool: "systemd-timesyncd"
 # Each list item contains two settings, `name` (the domain name of the pool) and synchronization `options`.
 # The default setting for the `options` is `iburst maxsources 4` -- please refer to the documentation
 # of the time synchronization mechanism you are using.
-ubtu24cis_time_pool_name:
+ubtu24cis_time_pool:
 {% for pool in ubtu24cis_time_pool %}
 - name: {{ pool.name }}
   options: {{ pool.options }}
@@ -653,10 +653,10 @@ ubtu24cis_is_syslog_server: {{ ubtu24cis_system_is_log_server }}
 
 # Note the following to understand precedence and layout
 ubtu24cis_sshd_access:
-  - AllowUser {{ ubtu24cis_sshd.allow_users }}
-  - AllowGroup {{ ubtu24cis_sshd.allow_groups }}
-  - DenyUser {{ ubtu24cis_sshd.deny_users }}
-  - DenyGroup {{ ubtu24cis_sshd.deny_groups }}
+  - AllowUser {{ ubtu24cis_sshd_allow_users }}
+  - AllowGroup {{ ubtu24cis_sshd_allow_groups }}
+  - DenyUser {{ ubtu24cis_sshd_deny_users }}
+  - DenyGroup {{ ubtu24cis_sshd_deny_groups }}
 
 ubtu24cis_ssh_strong_ciphers:
   - aes256-gcm@openssh.com
@@ -721,18 +721,20 @@ ubtu24cis_pam_passwd_retry: "3"
 
 # logins.def password settings
 ubtu24cis_pass:
-  max_days: {{ ubtu24cis_pass.max_days }}
-  min_days: {{ ubtu24cis_pass.min_days }}
-  warn_age: {{ ubtu24cis_pass.warn_age }}
+  max_days: {{ ubtu24cis_pass_max_days }}
+  min_days: {{ ubtu24cis_pass_min_days }}
+  warn_age: {{ ubtu24cis_pass_warn_age }}
 
 # set sugroup if differs from wheel
 ubtu24cis_sugroup: nosugroup
-
 
 # var log location variable
 ubtu24_varlog_location: {{ ubtu24cis_sudo_logfile }}
 
 # Section 6
+
+# This variable specifies the address of the remote log host where logs are being sent.
+ubtu24cis_remote_log_server: {{ ubtu24cis_remote_log_server }}
 
 # 6.1.2
 

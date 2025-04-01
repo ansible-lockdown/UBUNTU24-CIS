@@ -4,7 +4,7 @@
   when:
     - ubtu24cis_rule_6_2_1_1
     - "'auditd' not in ansible_facts.packages or
-      'audisd-plugins' not in ansible_facts.packages"
+      'audispd-plugins' not in ansible_facts.packages"
   tags:
     - level2-server
     - level2-workstation
@@ -20,8 +20,7 @@
     state: present
 
 - name: "6.2.1.2 | PATCH | Ensure auditd service is enabled and active"
-  when:
-    - ubtu24cis_rule_6_2_1_2
+  when: ubtu24cis_rule_6_2_1_2
   tags:
     - level2-server
     - level2-workstation
@@ -31,15 +30,14 @@
     - NIST800-53R5_AU-3
     - NIST800-53R5_AU-12
     - auditd
-  ansible.builtin.service:
+  ansible.builtin.systemd:
     name: auditd
     state: started
     enabled: true
     masked: false
 
 - name: "6.2.1.3 | PATCH | Ensure auditing for processes that start prior to auditd is enabled"
-  when:
-    - ubtu24cis_rule_6_2_1_3
+  when: ubtu24cis_rule_6_2_1_3
   tags:
     - level2-server
     - level2-workstation
@@ -55,18 +53,18 @@
       changed_when: false
       failed_when: false
       check_mode: false
-      register: ubtu24cis_6_2_1_3_cmdline_settings
+      register: discovered_grub_cmdline_settings
 
     - name: "6.2.1.3 | PATCH | Ensure auditing for processes that start prior to auditd is enabled | Add setting if doesn't exist"
-      when: "'audit=' not in ubtu24cis_6_2_1_3_cmdline_settings.stdout"
+      when: "'audit=' not in discovered_grub_cmdline_settings.stdout"
       ansible.builtin.lineinfile:
         path: /etc/default/grub
         regexp: '^GRUB_CMDLINE_LINUX='
-        line: 'GRUB_CMDLINE_LINUX="{{ ubtu24cis_6_2_1_3_cmdline_settings.stdout }} audit=1"'
+        line: 'GRUB_CMDLINE_LINUX="{{ discovered_grub_cmdline_settings.stdout }} audit=1"'
       notify: Grub update
 
     - name: "6.2.1.3 | PATCH | Ensure auditing for processes that start prior to auditd is enabled | Update setting if exists"
-      when: "'audit=' in ubtu24cis_6_2_1_3_cmdline_settings.stdout"
+      when: "'audit=' in discovered_grub_cmdline_settings.stdout"
       ansible.builtin.replace:
         dest: /etc/default/grub
         regexp: 'audit=([0-9]+)'
@@ -76,8 +74,7 @@
       notify: Grub update
 
 - name: "6.2.1.4 | PATCH | Ensure audit_backlog_limit is sufficient"
-  when:
-    - ubtu24cis_rule_6_2_1_4
+  when: ubtu24cis_rule_6_2_1_4
   tags:
     - level2-server
     - level2-workstation
@@ -93,14 +90,14 @@
       changed_when: false
       failed_when: false
       check_mode: false
-      register: ubtu24cis_6_2_1_4_cmdline_settings
+      register: discovered_audit_backlog_grub_cmdline_settings
 
     - name: "6.2.1.4 | PATCH | Ensure audit_backlog_limit is sufficient | Add setting if doesn't exist"
-      when: "'audit_backlog_limit=' not in ubtu24cis_6_2_1_4_cmdline_settings.stdout"
+      when: "'audit_backlog_limit=' not in discovered_audit_backlog_grub_cmdline_settings.stdout"
       ansible.builtin.lineinfile:
         path: /etc/default/grub
         regexp: '^GRUB_CMDLINE_LINUX='
-        line: 'GRUB_CMDLINE_LINUX="{{ ubtu24cis_6_2_1_4_cmdline_settings.stdout }} audit_backlog_limit={{ ubtu24cis_audit_back_log_limit }}"'
+        line: 'GRUB_CMDLINE_LINUX="{{ discovered_audit_backlog_grub_cmdline_settings.stdout }} audit_backlog_limit={{ ubtu24cis_audit_back_log_limit }}"'
       notify: Grub update
 
     - name: "6.2.1.4 | PATCH | Ensure audit_backlog_limit is sufficient | Update setting if exists"

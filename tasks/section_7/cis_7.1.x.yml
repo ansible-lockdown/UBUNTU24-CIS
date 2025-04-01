@@ -1,8 +1,7 @@
 ---
 
 - name: "7.1.1 | PATCH | Ensure permissions on /etc/passwd are configured"
-  when:
-    - ubtu24cis_rule_7_1_1
+  when: ubtu24cis_rule_7_1_1
   tags:
     - level1-server
     - level1-workstation
@@ -18,8 +17,7 @@
     mode: 'u-x,go-wx'
 
 - name: "7.1.2 | PATCH | Ensure permissions on /etc/passwd- are configured"
-  when:
-    - ubtu24cis_rule_7_1_2
+  when: ubtu24cis_rule_7_1_2
   tags:
     - level1-server
     - level1-workstation
@@ -35,8 +33,7 @@
     mode: 'u-x,go-wx'
 
 - name: "7.1.3 | PATCH | Ensure permissions on /etc/group are configured"
-  when:
-    - ubtu24cis_rule_7_1_3
+  when: ubtu24cis_rule_7_1_3
   tags:
     - level1-server
     - level1-workstation
@@ -52,8 +49,7 @@
     mode: 'u-x,go-wx'
 
 - name: "7.1.4 | PATCH | Ensure permissions on /etc/group- are configured"
-  when:
-    - ubtu24cis_rule_7_1_4
+  when: ubtu24cis_rule_7_1_4
   tags:
     - level1-server
     - level1-workstation
@@ -86,8 +82,7 @@
     mode: 'u-x,g-wx,o-rwx'
 
 - name: "7.1.6 | PATCH | Ensure permissions on /etc/shadow- are configured"
-  when:
-    - ubtu24cis_rule_7_1_6
+  when: ubtu24cis_rule_7_1_6
   tags:
     - level1-server
     - level1-workstation
@@ -103,8 +98,7 @@
     mode: 'u-x,g-wx,o-rwx'
 
 - name: "7.1.7 | PATCH | Ensure permissions on /etc/gshadow are configured"
-  when:
-    - ubtu24cis_rule_7_1_7
+  when: ubtu24cis_rule_7_1_7
   tags:
     - level1-server
     - level1-workstation
@@ -120,8 +114,7 @@
     mode: 'u-x,g-wx,o-rwx'
 
 - name: "7.1.8 | PATCH | Ensure permissions on /etc/gshadow- are configured"
-  when:
-    - ubtu24cis_rule_7_1_8
+  when: ubtu24cis_rule_7_1_8
   tags:
     - level1-server
     - level1-workstation
@@ -137,8 +130,7 @@
     mode: 'u-x,g-wx,o-rwx'
 
 - name: "7.1.9 | PATCH | Ensure permissions on /etc/shells are configured"
-  when:
-    - ubtu24cis_rule_7_1_9
+  when: ubtu24cis_rule_7_1_9
   tags:
     - level1-server
     - level1-workstation
@@ -154,11 +146,7 @@
     mode: 'u-x,go-wx'
 
 - name: "7.1.10 | PATCH | Ensure permissions on /etc/security/opasswd are configured"
-  loop:
-    - /etc/security/opasswd
-    - /etc/security/opasswd.old
-  when:
-    - ubtu24cis_rule_7_1_10
+  when: ubtu24cis_rule_7_1_10
   tags:
     - level1-server
     - level1-workstation
@@ -168,14 +156,18 @@
     - NIST800-53R5_AC-3
     - NIST800-53R5_MP-2
   ansible.builtin.file:
-    path: /etc/security/opasswd
+    path: "{{ item }}"
     owner: root
     group: root
     mode: 'u-x,go-rwx'
+  failed_when: discovered_file_exists.state not in '[ file, absent ]'
+  register: discovered_file_exists
+  loop:
+    - /etc/security/opasswd
+    - /etc/security/opasswd.old
 
 - name: "7.1.11 | PATCH | Ensure world writable files and directories are secured"
-  when:
-    - ubtu24cis_rule_7_1_11
+  when: ubtu24cis_rule_7_1_11
   tags:
     - level1-server
     - level1-workstation
@@ -190,17 +182,17 @@
       ansible.builtin.shell: df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -type f -perm -0002
       failed_when: false
       changed_when: false
-      register: ubtu24cis_worldwriteable
+      register: discovered_worldwriteable_files
 
     - name: "7.1.11 | PATCH | Ensure world writable files and directories are secured | Adjust world-writable files if they exist (Configurable)"
+      when:
+        - discovered_worldwriteable_files.stdout_lines is defined
+        - ubtu24cis_no_world_write_adjust
       ansible.builtin.file:
         path: '{{ item }}'
-        mode: o-w
+        mode: 'o-w'
         state: touch
-      loop: "{{ ubtu24cis_worldwriteable.stdout_lines }}"
-      when:
-        - ubtu24cis_worldwriteable.stdout_lines is defined
-        - ubtu24cis_no_world_write_adjust
+      loop: "{{ discovered_worldwriteable_files.stdout_lines }}"
 
     - name: "7.1.11 | PATCH | Ensure world writable files and directories are secured | sticky bit set on world-writable directories"
       ansible.builtin.shell: df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -type d -perm -0002 2>/dev/null | xargs chmod a+t
@@ -208,8 +200,7 @@
       failed_when: false
 
 - name: "7.1.12 | PATCH | Ensure no files or directories without an owner and a group exist"
-  when:
-    - ubtu24cis_rule_7_1_12
+  when: ubtu24cis_rule_7_1_12
   tags:
     - level1-server
     - level1-workstation
@@ -222,7 +213,7 @@
     warn_control_id: '7.1.12'
   block:
     - name: "7.1.12 | AUDIT | Ensure no files or directories without an owner and a group exist | Get list files or directories"
-      ansible.builtin.shell: find {{ ubtu24cis_exclude_unowned_search_path }} {{ item.mount }} -xdev \( -nouser -o -nogroup \) -not -fstype nfs
+      ansible.builtin.command: find {{ ubtu24cis_exclude_unowned_search_path }} {{ item.mount }} -xdev \( -nouser -o -nogroup \) -not -fstype nfs
       changed_when: false
       failed_when: false
       check_mode: false
@@ -265,8 +256,7 @@
         file: warning_facts.yml
 
 - name: "7.1.13 | AUDIT | Ensure SUID and SGID files are reviewed"
-  when:
-    - ubtu24cis_rule_7_1_13
+  when: ubtu24cis_rule_7_1_13
   tags:
     - level1-server
     - level1-workstation
@@ -284,7 +274,7 @@
     warn_control_id: '7.1.13'
   block:
     - name: "7.1.13 | AUDIT | Ensure SUID and SGID files are reviewed | Find SUID and SGID"
-      ansible.builtin.shell: find {{ item.mount }} -xdev -type f -perm \( -02000 or -04000 \) -not -fstype nfs
+      ansible.builtin.command: find {{ item.mount }} -xdev -type f -perm \( -02000 or -04000 \) -not -fstype nfs
       changed_when: false
       failed_when: false
       check_mode: false

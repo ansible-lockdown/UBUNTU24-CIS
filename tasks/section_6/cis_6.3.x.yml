@@ -9,7 +9,6 @@
     - level1-workstation
     - patch
     - rule_6.3.1
-    - NIST800-53R5_AU-2
     - aide
   block:
     - name: "6.3.1 | PATCH | Ensure AIDE is installed"
@@ -20,22 +19,46 @@
         name: ['aide', 'aide-common']
         state: present
         update_cache: true
-      register: ubtu24cis_rule_6_3_1_aide_added
+      register: discovered_aide_pkgs_added
 
     - name: "6.3.1 | PATCH | Ensure AIDE is installed | Recapture packages"
-      when: ubtu24cis_rule_6_3_1_aide_added.skipped is not defined
+      when: discovered_aide_pkgs_added.skipped is not defined
       ansible.builtin.package_facts:
         manager: auto
 
+    - name: "6.3.1 | AUDIT | Ensure AIDE is installed | Check file exists"
+      ansible.builtin.stat:
+        path: "{{ ubtu24cis_aide_db_file }}"
+      register: discovered_aide_db_file
+
+    - name: "6.3.1 | AUDIT | Ensure AIDE is installed | Check current db file age"
+      when: discovered_aide_db_file.stat.exists
+      ansible.builtin.find:
+        path: "{{ ubtu24cis_aide_db_file | dirname }}"
+        pattern: "{{ ubtu24cis_aide_db_file | basename }}"
+        age: "{{ ubtu24cis_aide_db_file_age }}"
+      register: discovered_aide_db_age
+
     - name: "6.3.1 | PATCH | Ensure AIDE is installed | Configure AIDE"
-      ansible.builtin.shell: aideinit && mv /var/lib/aide/aide.db.new /var/lib/aide/aide.db
-      args:
-        creates: /var/lib/aide/aide.db
-      changed_when: false
-      failed_when: false
-      async: "{{ ubtu24cis_aide_init.async }}"
-      poll: "{{ ubtu24cis_aide_init.poll }}"
-      when: not ansible_check_mode
+      when:
+        - not ansible_check_mode
+        - not discovered_aide_db_file.stat.exists or
+          (discovered_aide_db_age.files | length > 0) or
+          ubtu24cis_aide_db_recreate
+      block:
+        - name: "6.3.1 | PATCH | Ensure AIDE is installed | Remove current db file"
+          ansible.builtin.file:
+            path: "{{ ubtu24cis_aide_db_file }}"
+            state: absent
+
+        - name: "6.3.1 | PATCH | Ensure AIDE is installed | Configure AIDE"
+          when: not ansible_check_mode
+          ansible.builtin.command: "{{ aide_initiate_command }}"
+          changed_when: true
+          args:
+            creates: "{{ ubtu24cis_aide_db_file }}"
+          async: "{{ ubtu24cis_aide_init_async }}"
+          poll: "{{ ubtu24cis_aide_init_poll }}"
 
 - name: "6.3.2 | PATCH | Ensure filesystem integrity is regularly checked"
   when:
@@ -54,14 +77,14 @@
       when: ubtu24cis_aide_scan == 'cron'
       ansible.builtin.cron:
         name: Run AIDE integrity check
-        cron_file: "{{ ubtu24cis_aide_cron['cron_file'] }}"
-        user: "{{ ubtu24cis_aide_cron['cron_user'] }}"
-        minute: "{{ ubtu24cis_aide_cron['aide_minute'] | default('0') }}"
-        hour: "{{ ubtu24cis_aide_cron['aide_hour'] | default('5') }}"
-        day: "{{ ubtu24cis_aide_cron['aide_day'] | default('*') }}"
-        month: "{{ ubtu24cis_aide_cron['aide_month'] | default('*') }}"
-        weekday: "{{ ubtu24cis_aide_cron['aide_weekday'] | default('*') }}"
-        job: "{{ ubtu24cis_aide_cron['aide_job'] }}"
+        cron_file: "{{ ubtu24cis_aide_cron_file }}"
+        user: "{{ ubtu24cis_aide_cron_user }}"
+        minute: "{{ ubtu24cis_aide_cron_minute | default('0') }}"
+        hour: "{{ ubtu24cis_aide_cron_hour | default('5') }}"
+        day: "{{ ubtu24cis_aide_cron_day | default('*') }}"
+        month: "{{ ubtu24cis_aide_cron_month | default('*') }}"
+        weekday: "{{ ubtu24cis_aide_cron_weekday | default('*') }}"
+        job: "{{ ubtu24cis_aide_cron_job }}"
 
     - name: "6.3.2 | PATCH | Ensure filesystem integrity is regularly checked | timer template"
       when: ubtu24cis_aide_scan == 'timer'
@@ -70,7 +93,7 @@
         dest: "/{{ item }}"
         owner: root
         group: root
-        mode: '0644'
+        mode: 'go-r'
       loop:
         - etc/systemd/system/aidecheck.service
         - etc/systemd/system/aidecheck.timer
