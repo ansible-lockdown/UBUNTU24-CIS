@@ -4,7 +4,7 @@
   when:
     - ubtu24cis_rule_6_2_1_1
     - "'auditd' not in ansible_facts.packages or
-      'audisd-plugins' not in ansible_facts.packages"
+      'audispd-plugins' not in ansible_facts.packages"
   tags:
     - level2-server
     - level2-workstation

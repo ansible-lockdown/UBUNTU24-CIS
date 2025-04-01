@@ -46,7 +46,7 @@
       when:
         - not ubtu24cis_avahi_server
         - not ubtu24cis_avahi_mask
-        - "'avahi' in ansible_facts.packages or 'avahi-autopd' in ansible_facts.packages"
+        - "'avahi' in ansible_facts.packages or 'avahi-autoipd' in ansible_facts.packages"
       ansible.builtin.package:
         name:
           - avahi-autoipd
