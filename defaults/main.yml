@@ -106,10 +106,6 @@ audit_conf_dest: "/opt"
 # Where the audit logs are stored
 audit_log_dir: '/opt'
 
-## Ability to collect and take audit files moving to a centralised location
-# This enables the collection of the files from the host
-fetch_audit_output: false
-
 # Method of getting,uploading the summary files
 ## Ensure access and permissions are avaiable for these to occur.
 ## options are
