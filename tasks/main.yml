@@ -65,7 +65,8 @@
 - name: Setup rules if container
   when:
     - ansible_connection == 'docker' or
-      ansible_facts.virtualization_type in ["docker", "lxc", "openvz", "podman", "container"]
+      (ansible_facts.virtualization_type is defined and
+       ansible_facts.virtualization_type in ["docker", "lxc", "openvz", "podman", "container"])
   tags: always
   block:
     - name: Discover and set container variable if required
