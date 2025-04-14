@@ -202,6 +202,7 @@
   tags: always
   ansible.builtin.import_tasks:
     file: fetch_audit_output.yml
+
 - name: Show Audit Summary
   when: run_audit
   tags: run_audit
