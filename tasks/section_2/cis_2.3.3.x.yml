@@ -16,8 +16,8 @@
         src: "{{ item }}.j2"
         dest: "/{{ item }}"
         mode: 'go-r'
-        owner: root
-        group: root
+        owner: _chrony
+        group: _chrony
       loop:
         - etc/chrony/sources.d/pool.sources
         - etc/chrony/sources.d/server.sources
