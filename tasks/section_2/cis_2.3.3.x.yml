@@ -15,9 +15,9 @@
       ansible.builtin.template:
         src: "{{ item }}.j2"
         dest: "/{{ item }}"
-        mode: 'go-r'
+        mode: 'g=r,o-rwx'
         owner: root
-        group: root
+        group: "{% if ubtu24cis_rule_2_3_3_2 %}_chrony{% else %}root{% endif %}"
       loop:
         - etc/chrony/sources.d/pool.sources
         - etc/chrony/sources.d/server.sources
