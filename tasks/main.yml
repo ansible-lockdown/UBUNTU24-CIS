@@ -38,7 +38,9 @@
         sudo_password_rule: ubtu24cis_rule_5_2_4  # pragma: allowlist secret
 
 - name: Ensure root password is set
-  when: ubtu24cis_rule_5_4_2_4
+  when:
+    - ubtu24cis_section5
+    - ubtu24cis_rule_5_4_2_4
   tags: always
   block:
     - name: Ensure root password is set
