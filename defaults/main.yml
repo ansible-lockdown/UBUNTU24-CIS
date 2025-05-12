@@ -107,7 +107,9 @@ audit_conf_dest: "/opt"
 audit_log_dir: '/opt'
 
 # Method of getting,uploading the summary files
-## Ensure access and permissions are avaiable for these to occur.
+## Enable the collection of audit files
+fetch_audit_output: false
+## Ensure access and permissions are available for these to occur.
 ## options are
 # fetch - fetches from server and moves to location on the ansible controller (could be a mount point available to controller)
 # copy - copies file to a location available to the managed node
