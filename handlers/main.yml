@@ -21,6 +21,7 @@
   listen: "Remount /tmp"
 
 - name: "Remounting /tmp systemd"
+  when: ubtu24cis_tmp_svc
   vars:
     mount_point: '/tmp'
   ansible.builtin.systemd:

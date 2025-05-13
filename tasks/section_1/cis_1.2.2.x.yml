@@ -10,7 +10,7 @@
     - NIST800-53R5_SI-2
     - patch
   block:
-    - name: "1.2.2.1 | PATCH | Ensure updates, patches, and additional security software are installedi | Update"
+    - name: "1.2.2.1 | PATCH | Ensure updates, patches, and additional security software are installed | Update"
       ansible.builtin.package:
         name: "*"
         state: latest
