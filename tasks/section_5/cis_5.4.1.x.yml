@@ -118,8 +118,7 @@
     line: 'ENCRYPT_METHOD {{ ubtu24cis_passwd_hash_algo | upper }}'
 
 - name: "5.4.1.5 | PATCH | Ensure inactive password lock is configured"
-  when:
-    - ubtu24cis_rule_5_4_1_5
+  when: ubtu24cis_rule_5_4_1_5
   tags:
     - level1-server
     - level1-workstation
@@ -159,8 +158,7 @@
         - "{{ ubtu24cis_passwd | map(attribute='id') | list | intersect(discovered_passwd_inactive_users.stdout_lines) | list }}"
 
 - name: "5.4.1.6 | PATCH | Ensure all users last password change date is in the past"
-  when:
-    - ubtu24cis_rule_5_4_1_6
+  when: ubtu24cis_rule_5_4_1_6
   tags:
     - level1-server
     - level1-workstation
