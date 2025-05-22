@@ -154,5 +154,5 @@
       ansible.builtin.file:
         path: /etc/cron.allow
         owner: root
-        group: root
+        group: '{{ (discovered_cron_allow_status.stat.gr_name == "crontab") | ternary(omit,"root") }}'
         mode: 'u-x,g-wx,o-rwx'

@@ -38,7 +38,9 @@
         sudo_password_rule: ubtu24cis_rule_5_2_4  # pragma: allowlist secret
 
 - name: Ensure root password is set
-  when: ubtu24cis_rule_5_4_2_4
+  when:
+    - ubtu24cis_section5
+    - ubtu24cis_rule_5_4_2_4
   tags: always
   block:
     - name: Ensure root password is set
@@ -65,7 +67,8 @@
 - name: Setup rules if container
   when:
     - ansible_connection == 'docker' or
-      ansible_facts.virtualization_type in ["docker", "lxc", "openvz", "podman", "container"]
+      (ansible_facts.virtualization_type is defined and
+       ansible_facts.virtualization_type in ["docker", "lxc", "openvz", "podman", "container"])
   tags: always
   block:
     - name: Discover and set container variable if required
@@ -168,6 +171,39 @@
   tags: run_audit
   ansible.builtin.import_tasks:
     file: post_remediation_audit.yml
+
+- name: Add ansible file showing Benchmark and levels applied if audit details not present
+  when:
+    - create_benchmark_facts
+    - (post_audit_summary is defined) or
+      (ansible_local['compliance_facts']['lockdown_audit_details']['audit_summary'] is undefined and post_audit_summary is undefined)
+  tags:
+    - always
+    - benchmark
+  block:
+    - name: Create ansible facts directory if audit facts not present
+      ansible.builtin.file:
+        path: "{{ ansible_facts_path }}"
+        state: directory
+        owner: root
+        group: root
+        mode: 'u=rwx,go=rx'
+
+    - name: Create ansible facts file and levels applied if audit facts not present
+      ansible.builtin.template:
+        src: etc/ansible/compliance_facts.j2
+        dest: "{{ ansible_facts_path }}/compliance_facts.fact"
+        owner: root
+        group: root
+        mode: 'u-x,go=r'
+
+- name: Fetch audit files
+  when:
+    - fetch_audit_output
+    - run_audit
+  tags: always
+  ansible.builtin.import_tasks:
+    file: fetch_audit_output.yml
 
 - name: Show Audit Summary
   when: run_audit

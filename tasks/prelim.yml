@@ -55,7 +55,7 @@
   tags: always
   ansible.builtin.package:
     update_cache: true
-  changed_when: not ignore_apt_update_changed_when
+  changed_when: not ubtu24cis_ignore_apt_update_changed_when
 
 - name: Include audit specific variables
   when:
@@ -150,6 +150,41 @@
         max_int_uid: "{{ prelim_uid_max_id.stdout }}"
         min_int_gid: "{{ prelim_gid_min_id.stdout }}"
 
+- name: "PRELIM | AUDIT | Capture pam configs related files"
+  tags: always
+  ansible.builtin.find:
+    paths:
+      - '/usr/share/pam-configs/'
+      - '/etc/pam.d/'
+  register: prelim_pam_conf_files
+
+- name: PRELIM | PATCH | Ensure conf.d directory exists required for 5.3.3.2.x
+  when:
+    - ubtu24cis_rule_5_3_3_2_1 or
+      ubtu24cis_rule_5_3_3_2_6
+  tags: always
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: "{{ item.state }}"
+    owner: root
+    group: root
+    mode: 'g-w,o-rwx'
+    modification_time: preserve
+    access_time: preserve
+  register: prelim_pwquality_dummy
+  changed_when: prelim_pwquality_dummy.diff == "absent"
+  loop:
+    - { path: '/etc/security/pwquality.conf.d', state: 'directory' }
+    - { path: '/etc/security/pwquality.conf.d/cis_dummy.conf', state: 'touch' }
+
+- name: "PRELIM | AUDIT | Capture pam security related files"
+  tags: always
+  ansible.builtin.find:
+    paths:
+      - /etc/security/pwquality.conf.d/
+    patterns: '*.conf'
+  register: prelim_pam_pwquality_confs
+
 - name: "PRELIM | AUDIT | Interactive Users"
   tags: always
   ansible.builtin.shell: >
@@ -241,6 +276,22 @@
   tags: always
   ansible.builtin.package:
     name: acl
+    state: present
+
+- name: "PRELIM | PATCH | Install cron"
+  when: ubtu24cis_rule_2_4_1_1
+  tags: always
+  ansible.builtin.package:
+    name: cron
+    state: present
+
+- name: "PRELIM | PATCH | Install UFW"
+  when:
+    - ubtu24cis_rule_2_4_1_1
+    - ubtu24cis_firewall_package == "ufw"
+  tags: always
+  ansible.builtin.package:
+    name: ufw
     state: present
 
 ## Optional
