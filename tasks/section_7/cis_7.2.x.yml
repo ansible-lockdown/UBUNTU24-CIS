@@ -378,4 +378,3 @@
           ansible.builtin.command: "mv {{ item }} {{ item }}_CIS_TOBEREVIEWED"
           changed_when: true
           loop: "{{ discovered_homedir_hidden_files.stdout_lines }}"
-
