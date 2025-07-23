@@ -155,7 +155,7 @@
       changed_when: true
       failed_when: false
       with_items:
-        - "{{ ubtu24cis_passwd | map(attribute='id') | list | intersect(discovered_passwd_inactive_users.stdout_lines) | list }}"
+        - "{{ prelim_captured_passwd_data | map(attribute='id') | list | intersect(discovered_passwd_inactive_users.stdout_lines) | list }}"
 
 - name: "5.4.1.6 | PATCH | Ensure all users last password change date is in the past"
   when: ubtu24cis_rule_5_4_1_6
