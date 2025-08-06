@@ -196,7 +196,7 @@
     regexp: \s*umask
     line: "umask {{ ubtu24cis_root_umask }}"
     create: true
-    mode: 'u+x,go-rwx'
+    mode: 'go-rwx'
 
 - name: "5.4.2.7 | PATCH | Ensure system accounts do not have a valid login shell"
   when:
@@ -217,7 +217,7 @@
   ansible.builtin.user:
     name: "{{ item.id }}"
     shell: /usr/sbin/nologin
-  loop: "{{ ubtu24cis_passwd }}"
+  loop: "{{ prelim_captured_passwd_data }}"
   loop_control:
     label: "{{ item.id }}"
 
@@ -240,6 +240,6 @@
   ansible.builtin.user:
     name: "{{ item.id }}"
     password_lock: true
-  loop: "{{ ubtu24cis_passwd }}"
+  loop: "{{ prelim_captured_passwd_data }}"
   loop_control:
     label: "{{ item.id }}"
