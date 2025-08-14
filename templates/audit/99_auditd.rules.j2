@@ -14,7 +14,7 @@
 {% set arch_syscalls = [] %}
 {% for syscall in syscalls  %}
 {% if syscall in supported_syscalls %}
-{{ arch_syscalls.append( syscall) }}
+{% arch_syscalls.append( syscall) %}
 {% endif %}
 {% endfor %}
 -a always,exit -F arch=b64 -C euid!=uid -F auid!=unset -S {{ arch_syscalls|join(',') }} -k user_emulation
@@ -28,7 +28,7 @@
 {% set arch_syscalls = [] %}
 {% for syscall in syscalls  %}
 {% if syscall in supported_syscalls %}
-{{ arch_syscalls.append( syscall) }}
+{% arch_syscalls.append( syscall) %}
 {% endif %}
 {% endfor %}
 -a always,exit -F arch=b64 -S {{ arch_syscalls|join(',') }} -k time-change
@@ -40,7 +40,7 @@
 {% set arch_syscalls = [] %}
 {% for syscall in syscalls  %}
 {% if syscall in supported_syscalls %}
-{{ arch_syscalls.append( syscall) }}
+{% arch_syscalls.append( syscall) %}
 {% endif %}
 {% endfor %}
 -a always,exit -F arch=b64 -S {{ arch_syscalls|join(',') }} -k system-locale
@@ -64,7 +64,7 @@
 {% set arch_syscalls = [] %}
 {% for syscall in syscalls  %}
 {% if syscall in supported_syscalls %}
-{{ arch_syscalls.append( syscall) }}
+{% arch_syscalls.append( syscall) %}
 {% endif %}
 {% endfor %}
 -a always,exit -F arch=b64 -S {{ arch_syscalls|join(',') }} -F exit=-EACCES -F auid>=1000 -F auid!=unset -k access
@@ -87,7 +87,7 @@
 {% set arch_syscalls = [] %}
 {% for syscall in syscalls  %}
 {% if syscall in supported_syscalls %}
-{{ arch_syscalls.append( syscall) }}
+{% arch_syscalls.append( syscall) %}
 {% endif %}
 {% endfor %}
 -a always,exit -F arch=b64 -S {{ arch_syscalls|join(',') }} -F auid>=1000 -F auid!=unset -k perm_mod
@@ -95,7 +95,7 @@
 {% set arch_syscalls = [] %}
 {% for syscall in syscalls  %}
 {% if syscall in supported_syscalls %}
-{{ arch_syscalls.append( syscall) }}
+{% arch_syscalls.append( syscall) %}
 {% endif %}
 {% endfor %}
 -a always,exit -F arch=b64 -S {{ arch_syscalls|join(',') }} -F auid>=1000 -F auid!=unset -k perm_mod
@@ -103,7 +103,7 @@
 {% set arch_syscalls = [] %}
 {% for syscall in syscalls  %}
 {% if syscall in supported_syscalls %}
-{{ arch_syscalls.append( syscall) }}
+{% arch_syscalls.append( syscall) %}
 {% endif %}
 {% endfor %}
 -a always,exit -F arch=b64 -S {{ arch_syscalls|join(',') }} -F auid>=1000 -F auid!=unset -k perm_mod
@@ -111,7 +111,7 @@
 {% set arch_syscalls = [] %}
 {% for syscall in syscalls  %}
 {% if syscall in supported_syscalls %}
-{{ arch_syscalls.append( syscall) }}
+{% arch_syscalls.append( syscall) %}
 {% endif %}
 {% endfor %}
 -a always,exit -F arch=b32 -S {{ arch_syscalls|join(',') }} -F auid>=1000 -F auid!=unset -k perm_mod
@@ -119,7 +119,7 @@
 {% set arch_syscalls = [] %}
 {% for syscall in syscalls  %}
 {% if syscall in supported_syscalls %}
-{{ arch_syscalls.append( syscall) }}
+{% arch_syscalls.append( syscall) %}
 {% endif %}
 {% endfor %}
 -a always,exit -F arch=b32 -S {{ arch_syscalls|join(',') }} -F auid>=1000 -F auid!=unset -k perm_mod
@@ -127,7 +127,7 @@
 {% set arch_syscalls = [] %}
 {% for syscall in syscalls  %}
 {% if syscall in supported_syscalls %}
-{{ arch_syscalls.append( syscall) }}
+{% arch_syscalls.append( syscall) %}
 {% endif %}
 {% endfor %}
 -a always,exit -F arch=b32 -S {{ arch_syscalls|join(',') }} -F auid>=1000 -F auid!=unset -k perm_mod
@@ -137,7 +137,7 @@
 {% set arch_syscalls = [] %}
 {% for syscall in syscalls  %}
 {% if syscall in supported_syscalls %}
-{{ arch_syscalls.append( syscall) }}
+{% arch_syscalls.append( syscall) %}
 {% endif %}
 {% endfor %}
 -a always,exit -F arch=b64 -S {{ arch_syscalls|join(',') }} -F auid>=1000 -F auid!=unset -k mounts
@@ -157,7 +157,7 @@
 {% set arch_syscalls = [] %}
 {% for syscall in syscalls  %}
 {% if syscall in supported_syscalls %}
-{{ arch_syscalls.append( syscall) }}
+{% arch_syscalls.append( syscall) %}
 {% endif %}
 {% endfor %}
 -a always,exit -F arch=b64 -S {{ arch_syscalls|join(',') }} -F auid>=1000 -F auid!=unset -k delete
@@ -185,7 +185,7 @@
 {% set arch_syscalls = [] %}
 {% for syscall in syscalls  %}
 {% if syscall in supported_syscalls %}
-{{ arch_syscalls.append( syscall) }}
+{% arch_syscalls.append( syscall) %}
 {% endif %}
 {% endfor %}
 -a always,exit -F arch=b64 -S {{ arch_syscalls|join(',') }} -F auid>=1000 -F auid!=-1 -k kernel_modules
