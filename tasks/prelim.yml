@@ -289,7 +289,7 @@
 
 ## Optional
 
-- name: "Optional | PATCH | UFW firewall force to use /etc/sysctl.conf settings"
+- name: "OPTIONAL | PATCH | UFW firewall force to use /etc/sysctl.conf settings"
   when:
     - ubtu24cis_firewall_package == "ufw"
     - ubtu24cis_ufw_use_sysctl
