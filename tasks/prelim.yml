@@ -54,7 +54,7 @@
 - name: "PRELIM | PATCH | Run apt update"
   tags: always
   ansible.builtin.package:
-    update_cache: true
+    cache_valid_time: 3600
   changed_when: not ubtu24cis_ignore_apt_update_changed_when
 
 - name: Include audit specific variables
