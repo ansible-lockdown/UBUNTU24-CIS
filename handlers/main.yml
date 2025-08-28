@@ -238,7 +238,7 @@
   changed_when: true
 
 - name: Auditd rules reload
-  when: ('"No change" not in discovered_augenrules_check.stdout') or prelim_auditd_immutable_check.rc == 1
+  when: ("'No change' not in discovered_augenrules_check.stdout") or prelim_auditd_immutable_check.rc == 1
   ansible.builtin.command: augenrules --load
   changed_when: true
   failed_when: discovered_augenrule_load.rc not in [ 0, 1 ]
