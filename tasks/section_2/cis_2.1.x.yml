@@ -423,7 +423,7 @@
         - ubtu24cis_rsync_mask
       notify: Systemd_daemon_reload
       ansible.builtin.systemd:
-        name: rsyncd.service
+        name: rsync.service
         enabled: false
         state: stopped
         masked: true

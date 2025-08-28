@@ -134,15 +134,13 @@
     - apparmor
   block:
     - name: "1.3.1.3 | AUDIT | Ensure all AppArmor Profiles are in enforce or complain | Set ubtu24cis_apparmor_enforce_only true for GOSS"
-      when:
-        - ubtu24cis_apparmor_mode == "enforce"
+      when: ubtu24cis_apparmor_mode == "enforce"
       ansible.builtin.set_fact:
         ubtu24cis_apparmor_enforce_only: true
       changed_when: false
 
     - name: "1.3.1.3 | AUDIT | Ensure all AppArmor Profiles are in enforce or complain | Set ubtu24cis_apparmor_enforce_only false for GOSS"
-      when:
-        - ubtu24cis_apparmor_mode == "complain"
+      when: ubtu24cis_apparmor_mode == "complain"
       ansible.builtin.set_fact:
         ubtu24cis_apparmor_enforce_only: false
       changed_when: false
