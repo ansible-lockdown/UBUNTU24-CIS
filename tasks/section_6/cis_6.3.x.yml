@@ -108,7 +108,9 @@
         - aidecheck.timer
 
 - name: "6.3.3 | Ensure cryptographic mechanisms are used to protect the integrity of audit tools"
-  when: ubtu24cis_rule_6_3_3
+  when:
+    - ubtu24cis_rule_6_3_3
+    - ubtu24cis_config_aide
   tags:
     - level1-server
     - level1-workstation
