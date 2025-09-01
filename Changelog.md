@@ -15,6 +15,13 @@ thanks to @dderemiah
 thanks to @dvic
 - issues #62
 
+thanks to @matt-j-griffin
+- 60
+- 63
+
+thanks to @piotr1212
+- 65
+
 ### 1.0.3 - based on Benchmark CIS 1.0.0
 pre-commit updates
 password data variable update - 7.2.10
