@@ -65,8 +65,7 @@
     mode: 'u-x,go-wx'
 
 - name: "7.1.5 | PATCH | Ensure permissions on /etc/shadow are configured"
-  when:
-    - ubtu24cis_rule_7_1_5
+  when: ubtu24cis_rule_7_1_5
   tags:
     - level1-server
     - level1-workstation

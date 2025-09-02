@@ -54,13 +54,12 @@
 - name: "PRELIM | PATCH | Run apt update"
   tags: always
   ansible.builtin.package:
-    update_cache: true
+    cache_valid_time: 3600
   changed_when: not ubtu24cis_ignore_apt_update_changed_when
 
 - name: Include audit specific variables
   when:
-    - run_audit or audit_only
-    - setup_audit
+    - run_audit or audit_only or setup_audit
   tags:
     - setup_audit
     - run_audit
@@ -68,11 +67,10 @@
     file: audit.yml
 
 - name: Include pre-remediation audit tasks
-  when:
-    - run_audit or audit_only
-    - setup_audit
+  when: run_audit or audit_only or setup_audit
   tags:
     - run_audit
+    - setup_audit
   ansible.builtin.import_tasks:
     file: pre_remediation_audit.yml
 
@@ -99,9 +97,7 @@
       register: prelim_wireless_modules
 
 - name: "PRELIM | PATCH | Find all sudoers files."
-  when:
-    - ubtu24cis_rule_5_2_4 or
-      ubtu24cis_rule_5_2_5
+  when: ubtu24cis_rule_5_2_4 or ubtu24cis_rule_5_2_5
   tags: always
   ansible.builtin.shell: "find /etc/sudoers /etc/sudoers.d/ -type f ! -name '*~' ! -name '*.*'"
   changed_when: false
@@ -159,9 +155,7 @@
   register: prelim_pam_conf_files
 
 - name: PRELIM | PATCH | Ensure conf.d directory exists required for 5.3.3.2.x
-  when:
-    - ubtu24cis_rule_5_3_3_2_1 or
-      ubtu24cis_rule_5_3_3_2_6
+  when: ubtu24cis_rule_5_3_3_2_1 or ubtu24cis_rule_5_3_3_2_6
   tags: always
   ansible.builtin.file:
     path: "{{ item.path }}"
@@ -172,7 +166,6 @@
     modification_time: preserve
     access_time: preserve
   register: prelim_pwquality_dummy
-  changed_when: prelim_pwquality_dummy.diff == "absent"
   loop:
     - { path: '/etc/security/pwquality.conf.d', state: 'directory' }
     - { path: '/etc/security/pwquality.conf.d/cis_dummy.conf', state: 'touch' }
@@ -296,7 +289,7 @@
 
 ## Optional
 
-- name: "Optional | PATCH | UFW firewall force to use /etc/sysctl.conf settings"
+- name: "OPTIONAL | PATCH | UFW firewall force to use /etc/sysctl.conf settings"
   when:
     - ubtu24cis_firewall_package == "ufw"
     - ubtu24cis_ufw_use_sysctl

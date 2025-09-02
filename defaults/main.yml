@@ -556,7 +556,7 @@ ubtu24cis_rule_7_2_10: true
 # Options are
 # true to leave installed if exists not changes take place
 # false - this removes the package
-# mask - if a dependancy for product so cannot be removed
+# mask - if a dependency for product so cannot be removed
 # Server Services
 ubtu24cis_autofs_services: false
 ubtu24cis_autofs_mask: false
@@ -650,7 +650,7 @@ ubtu24cis_ignore_apt_update_changed_when: false
 ## Section 1 Control Variables
 ##
 
-## Ability to enabe debug on mounts to assist in troubleshooting
+## Ability to enable debug on mounts to assist in troubleshooting
 # Mount point changes are set based upon facts created in Prelim
 # these then build the variable and options that is passed to the handler to set the mount point for the controls in section1.
 ubtu24cis_debug_mount_data: false
@@ -709,7 +709,7 @@ ubtu24_ptrace_value: 1
 # Noe that the banner text must not contain the below items in order to be
 # compliant with CIS: \m, \r, \s, \v or references to the OS platform
 ubtu24cis_warning_banner: |
-        Authorized uses only. All activity may be monitored and reported.
+        Authorized users only. All activity may be monitored and reported.
 
 # This variable governs, whether dynamic motd is disabled (as required by control 1.7.1)
 ubtu24cis_disable_dynamic_motd: true
@@ -772,11 +772,11 @@ ubtu24cis_ipv6_disable: grub
 ubtu24cis_install_network_manager: true
 
 ## Control 3.1.3 - Ensure bluetooth Services are not in use
-# This control managed how the bluetooth service is managaed
+# This control managed how the bluetooth service is managed
 # Options are
 # true to leave installed if exists not changes take place
 # false - this removes the package
-# mask - if a dependancy for product so cannot be removed
+# mask - if a dependency for product so cannot be removed
 ubtu24cis_bluetooth_service: false
 ubtu24cis_bluetooth_mask: false
 

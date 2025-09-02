@@ -214,7 +214,7 @@
     validate: 'sshd -t -f %s'
   notify: Restart sshd
 
-- name: "5.1.9 | PATCH | Ensure sshd GSSAPIAuthentication is  is disabled"
+- name: "5.1.9 | PATCH | Ensure sshd GSSAPIAuthentication is disabled"
   when: ubtu24cis_rule_5_1_9
   tags:
     - level2-server
