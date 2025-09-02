@@ -1,8 +1,7 @@
 ---
 
 - name: "6.1.4.1 | PATCH | Ensure access to all logfiles has been configured"
-  when:
-    - ubtu24cis_rule_6_1_4_1
+  when: ubtu24cis_rule_6_1_4_1
   tags:
     - level1-server
     - level1-workstation

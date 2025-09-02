@@ -57,8 +57,7 @@
         - discovered_gid0_members.stdout_lines
 
 - name: "5.4.2.3 | AUDIT | Ensure group root is the only GID 0 group"
-  when:
-    - ubtu24cis_rule_5_4_2_3
+  when: ubtu24cis_rule_5_4_2_3
   tags:
     - level1-server
     - level1-workstation
@@ -97,8 +96,7 @@
         warn_control_id: '5.4.2.3'
 
 - name: "5.4.2.4 | PATCH | Ensure root password is set"
-  when:
-    - ubtu24cis_rule_5_4_2_4
+  when: ubtu24cis_rule_5_4_2_4
   tags:
     - level1-server
     - level1-workstation
@@ -110,8 +108,7 @@
     msg: "This is set as an assert in tasks/main"
 
 - name: "5.4.2.5 | PATCH | Ensure root PATH Integrity"
-  when:
-    - ubtu24cis_rule_5_4_2_5
+  when: ubtu24cis_rule_5_4_2_5
   tags:
     - level1-server
     - level1-workstation
@@ -181,8 +178,7 @@
             label: "{{ item }}"
 
 - name: "5.4.2.6 | PATCH | Ensure root user umask is configured"
-  when:
-    - ubtu24cis_rule_5_4_2_6
+  when: ubtu24cis_rule_5_4_2_6
   tags:
     - level1-server
     - level1-workstation

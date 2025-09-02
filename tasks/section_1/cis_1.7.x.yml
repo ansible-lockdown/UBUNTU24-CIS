@@ -322,8 +322,7 @@
       notify: Update dconf
 
 - name: "1.7.10 | PATCH | Ensure XDCMP is not enabled"
-  when:
-    - ubtu24cis_rule_1_7_10
+  when: ubtu24cis_rule_1_7_10
   tags:
     - level1-server
     - level1-workstation

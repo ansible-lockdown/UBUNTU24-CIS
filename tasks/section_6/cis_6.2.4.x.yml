@@ -77,8 +77,7 @@
     label: "{{ item.path }}"
 
 - name: "6.2.4.7 | PATCH | Ensure audit configuration files group owner is configured"
-  when:
-    - ubtu24cis_rule_6_2_4_7
+  when: ubtu24cis_rule_6_2_4_7
   tags:
     - level1-server
     - level1-workstation
