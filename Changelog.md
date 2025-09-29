@@ -7,6 +7,7 @@ pre-commit updates
 Enabled for ansible 2.19
 lint an alignment
 tidy up spacing 1.3.1.3
+max-concurrent added to auditd options - RTD also updated
 
 Issue Fixed:
 thanks to @dderemiah
