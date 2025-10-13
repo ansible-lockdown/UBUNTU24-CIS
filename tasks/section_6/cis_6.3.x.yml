@@ -84,6 +84,17 @@
         weekday: "{{ ubtu24cis_aide_cron_weekday | default('*') }}"
         job: "{{ ubtu24cis_aide_cron_job }}"
 
+    - name: "6.3.2 | PATCH | Ensure filesystem integrity is regularly checked | cron service"
+      when: ubtu24cis_aide_scan == 'cron'
+      ansible.builtin.systemd:
+        name: "{{ item }}"
+        state: stopped
+        enabled: false
+        daemon_reload: true
+      loop:
+        - aidecheck.service
+        - aidecheck.timer
+
     - name: "6.3.2 | PATCH | Ensure filesystem integrity is regularly checked | timer template"
       when: ubtu24cis_aide_scan == 'timer'
       ansible.builtin.template:
