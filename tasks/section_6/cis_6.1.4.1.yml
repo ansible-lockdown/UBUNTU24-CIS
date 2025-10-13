@@ -27,6 +27,8 @@
         path: "{{ item }}"
         mode: 'u-x,g-wx,o-rwx'
       loop: "{{ discovered_logfiles.stdout_lines }}"
+      failed_when: discovered_file_exists.state not in '[ file, absent ]'
+      register: discovered_file_exists
 
     - name: "6.1.4.1 | PATCH | Ensure access to all logfiles has been configured | change permissions"
       when:
@@ -40,3 +42,5 @@
         path: "{{ item }}"
         mode: 'ug-x,o-wx'
       loop: "{{ discovered_system_logfiles.stdout_lines }}"
+      failed_when: discovered_file_exists.state not in '[ file, absent ]'
+      register: discovered_file_exists
