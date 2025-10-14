@@ -1,7 +1,6 @@
 ---
 
 - name: "SECTION | 6.1.1.x | Configure systemd-journald service"
-  when: ubtu24cis_syslog_service == 'journald'
   ansible.builtin.import_tasks:
     file: cis_6.1.1.x.yml
 

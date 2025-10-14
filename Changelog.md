@@ -2,26 +2,36 @@
 
 ## Based on CIS v1.0.0
 
-### 1.0.4 - based on Benchmark CIS 1.0.0
-pre-commit updates
-Enabled for ansible 2.19
-lint an alignment
-tidy up spacing 1.3.1.3
-max-concurrent added to auditd options - RTD also updated
+1.0.4 - based on Benchmark CIS 1.0.0
+- pre-commit updates
+- workflow updates
+- Enabled for ansible 2.19 lint an alignment tidy up spacing 1.3.1.3
+- max-concurrent added to auditd options
+  - RTD also updated
 
-Issue Fixed:
-thanks to @dderemiah
-- issue #59
+Issue Fixed: thanks to @dderemiah
 
+issue #59
 thanks to @dvic
-- issues #62
 
+issues #62
 thanks to @matt-j-griffin
-- 60
-- 63
+- #60
+- #63
 
 thanks to @piotr1212
-- 65
+- #65
+
+thanks to @ericwong3
+- #71
+
+thanks to @golflimaechoecho
+- 75
+
+thanks to @huan086
+- 76
+- 77
+
 
 ### 1.0.3 - based on Benchmark CIS 1.0.0
 pre-commit updates

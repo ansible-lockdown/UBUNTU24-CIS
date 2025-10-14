@@ -84,6 +84,17 @@
         weekday: "{{ ubtu24cis_aide_cron_weekday | default('*') }}"
         job: "{{ ubtu24cis_aide_cron_job }}"
 
+    - name: "6.3.2 | PATCH | Ensure filesystem integrity is regularly checked | cron service"
+      when: ubtu24cis_aide_scan == 'cron'
+      ansible.builtin.systemd:
+        name: "{{ item }}"
+        state: stopped
+        enabled: false
+        daemon_reload: true
+      loop:
+        - dailyaidecheck.service
+        - dailyaidecheck.timer
+
     - name: "6.3.2 | PATCH | Ensure filesystem integrity is regularly checked | timer template"
       when: ubtu24cis_aide_scan == 'timer'
       ansible.builtin.template:
@@ -93,8 +104,8 @@
         group: root
         mode: 'go-r'
       loop:
-        - etc/systemd/system/aidecheck.service
-        - etc/systemd/system/aidecheck.timer
+        - etc/systemd/system/dailyaidecheck.service
+        - etc/systemd/system/dailyaidecheck.timer
 
     - name: "6.3.2 | PATCH | Ensure filesystem integrity is regularly checked | timer service"
       when: ubtu24cis_aide_scan == 'timer'
@@ -104,8 +115,8 @@
         enabled: true
         daemon_reload: true
       loop:
-        - aidecheck.service
-        - aidecheck.timer
+        - dailyaidecheck.service
+        - dailyaidecheck.timer
 
 - name: "6.3.3 | Ensure cryptographic mechanisms are used to protect the integrity of audit tools"
   when:
