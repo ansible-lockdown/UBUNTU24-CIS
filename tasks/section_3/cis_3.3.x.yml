@@ -264,8 +264,7 @@
       notify: Flush ipv6 route table
 
 - name: "3.3.9 | PATCH | Ensure suspicious packets are logged"
-  when:
-    - ubtu24cis_rule_3_3_9
+  when: ubtu24cis_rule_3_3_9
   tags:
     - level1-server
     - level1-workstation
@@ -292,8 +291,7 @@
   notify: Flush ipv4 route table
 
 - name: "3.3.10 | PATCH | Ensure tcp syn cookies is enabled"
-  when:
-    - ubtu24cis_rule_3_3_10
+  when: ubtu24cis_rule_3_3_10
   tags:
     - level1-server
     - level1-workstation
