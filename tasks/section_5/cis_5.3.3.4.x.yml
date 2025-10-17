@@ -46,7 +46,7 @@
     - name: "5.3.3.4.2 | PATCH | Ensure pam_unix does not include remember | Ensure remember removed"
       when: discovered_pam_remember.stdout | length > 0
       ansible.builtin.replace:
-        path: "{{ item }}"
+        path: "/{{ ubtu24cis_pam_confd_dir }}{{ ubtu24cis_pam_pwunix_file }}"
         regexp: remember=\d+
         replace: ''
       loop: "{{ discovered_pam_remember.stdout_lines }}"

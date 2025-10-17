@@ -950,7 +950,7 @@ ubtu24cis_pam_confd_dir: 'usr/share/pam-configs/'
 
 # Controls 5.3.2.1 - pam_unix
 # Name of file
-ubtu24cis_pam_pwunix_file: 'pam_unix'
+ubtu24cis_pam_pwunix_file: 'unix'
 # Should NOT be enabled if allowing custom config that enabled pam_faillock
 ubtu24cis_pam_create_pamunix_file: false
 # Allow pam-auth-update --enable ubtu24cis_pam_pwunix_file to run
