@@ -2,6 +2,13 @@
 
 ## Based on CIS v1.0.0
 
+### 1.0.5 - based on benchmark CIS 1.0.0
+#92 1.1.1.7 logic improved and updating inline with audit branches - thanks @jbruno
+#93 ufw logic improved thanks to @ToonSpinTUe
+#94 Fixed var names dailychecktimer thanks to #94 @huan086
+pre-commit updates
+typo fixes
+
 1.0.4 - based on Benchmark CIS 1.0.0
 - pre-commit updates
 - workflow updates
