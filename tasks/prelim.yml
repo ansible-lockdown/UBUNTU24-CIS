@@ -264,7 +264,8 @@
 
 - name: "PRELIM | PATCH | Install UFW"
   when:
-    - ubtu24cis_rule_2_4_1_1
+    - ubtu24cis_rule_4_2_1
+    - ubtu24cis_section4
     - ubtu24cis_firewall_package == "ufw"
   tags: always
   ansible.builtin.package:
