@@ -206,7 +206,8 @@
 - name: "1.1.1.7 | PATCH | Ensure squashfs kernel module is not available"
   when:
     - ubtu24cis_rule_1_1_1_7
-    - prelim_squashfs_builtin.rc != 0 or prelim_snap_pkg_mgr.rc == 0
+    - prelim_squashfs_builtin.rc != 0
+    - prelim_snap_pkg_mgr.rc == 1
   tags:
     - level2-server
     - level2-workstation
