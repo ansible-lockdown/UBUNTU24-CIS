@@ -67,7 +67,9 @@
     file: audit.yml
 
 - name: Include pre-remediation audit tasks
-  when: run_audit or audit_only or setup_audit
+  when:
+    - run_audit or audit_only
+    - setup_audit
   tags:
     - run_audit
     - setup_audit
