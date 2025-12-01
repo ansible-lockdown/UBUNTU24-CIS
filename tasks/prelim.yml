@@ -6,21 +6,21 @@
     ubtu24cis_apparmor_enforce_only: false
   changed_when: false
 
-- name: "PRELIM | AUDIT | Register if snap being used"
+- name: "PRELIM | AUDIT | squashfs logic"
   when: ubtu24cis_rule_1_1_1_7
   tags: always
-  ansible.builtin.shell: df -h | grep -wc "/snap"
-  changed_when: false
-  failed_when: prelim_snap_pkg_mgr.rc not in [ 0, 1 ]
-  register: prelim_snap_pkg_mgr
+  block:
+    - name: "PRELIM | AUDIT | Register if snap being used"
+      ansible.builtin.shell: lsblk | grep -wc "/snap"
+      changed_when: false
+      failed_when: prelim_snap_pkg_mgr.rc not in [ 0, 1 ]
+      register: prelim_snap_pkg_mgr
 
-- name: "PRELIM | AUDIT | Register if squashfs is built into the kernel"
-  when: ubtu24cis_rule_1_1_1_7
-  tags: always
-  ansible.builtin.shell: cat /lib/modules/$(uname -r)/modules.builtin | grep -c "squashfs"
-  changed_when: false
-  failed_when: prelim_squashfs_builtin.rc not in [ 0, 1 ]
-  register: prelim_squashfs_builtin
+    - name: "PRELIM | AUDIT | Register if squashfs is built into the kernel"
+      ansible.builtin.shell: cat /lib/modules/$(uname -r)/modules.builtin | grep "squashfs"
+      changed_when: false
+      failed_when: prelim_squashfs_builtin.rc not in [ 0, 1 ]
+      register: prelim_squashfs_builtin
 
 - name: PRELIM | AUDIT | Section 1.1 | Create list of mount points
   tags: always
@@ -67,7 +67,9 @@
     file: audit.yml
 
 - name: Include pre-remediation audit tasks
-  when: run_audit or audit_only or setup_audit
+  when:
+    - run_audit or audit_only
+    - setup_audit
   tags:
     - run_audit
     - setup_audit
@@ -264,7 +266,8 @@
 
 - name: "PRELIM | PATCH | Install UFW"
   when:
-    - ubtu24cis_rule_2_4_1_1
+    - ubtu24cis_rule_4_2_1
+    - ubtu24cis_section4
     - ubtu24cis_firewall_package == "ufw"
   tags: always
   ansible.builtin.package:
