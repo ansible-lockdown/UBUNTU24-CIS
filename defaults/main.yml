@@ -620,7 +620,7 @@ ubtu24cis_bootloader_password_hash: "grub.pbkdf2.sha512.changethispassword"  # p
 # Whether to set `ubtu24cis_bootloader_password_hash` or not. You might set this variable to
 # `false` to set an individual password on (each of) your machine(s) yourself manually instead of
 # storing the password-hash in the `ubtu24cis_bootloader_password_hash` variable here.
-ubtu24cis_set_boot_pass: false
+ubtu24cis_set_boot_pass: true
 
 ## Control 1.4.2 - Ensure access to bootloader config is configured
 # The grub configuration file contains sensitive information, for example boot parameters or passwords.
@@ -799,7 +799,7 @@ ubtu24cis_ftp_client: false
 ## Control 2.3.1.1 - Ensure a single time synchronization daemon is in use
 # This variable chooses the tool used for time synchronization
 # The two options are `chrony`and `systemd-timesyncd`.
-ubtu24cis_time_sync_tool: "systemd-timesyncd"
+ubtu24cis_time_sync_tool: "chrony"
 
 ## Controls 2.3.x - Configure time pools & servers for chrony and timesyncd
 # The following variable represents a list of time server pools used
