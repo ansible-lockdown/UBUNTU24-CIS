@@ -1272,6 +1272,28 @@ ubtu24cis_aide_cron_month: '*'
 # can be given in the range `0-7` (both `0` and `7` represent Sunday); several weekdays
 # can be concatenated with commas.
 ubtu24cis_aide_cron_weekday: '*'
+# These variables define the schedule for the cron job, if aide is selected to be scanned with timer
+# This variable governs the day of the month when the AIDE cronjob is run.
+# `*` signifies that the job is run on all days; furthermore, specific days
+# can be given in the range `1-31`; several days can be concatenated with a comma.
+# The specified day(s) can must be in the range  `1-31`.
+ubtu24cis_aide_cron_aide_day: '*'
+# This variable governs months when the AIDE cronjob is run.
+# `*` signifies that the job is run in every month; furthermore, specific months
+# can be given in the range `1-12`; several months can be concatenated with commas.
+# The specified month(s) can must be in the range  `1-12`.
+ubtu24cis_aide_cron_aide_month: '*'
+# This variable governs the weekdays, when the AIDE cronjob is run.
+# `*` signifies that the job is run on all weekdays; furthermore, specific weekdays
+# can be given in the range `0-7` (both `0` and `7` represent Sunday); several weekdays
+# can be concatenated with comm
+ubtu24cis_aide_cron_aide_weekday: '*'
+# This variable governs the hour of the time of day when the AIDE cronjob is run.
+# It must be in the range `0-23`.
+ubtu24cis_aide_cron_aide_hour: 5
+# This variable governs the minute of the time of day when the AIDE cronjob is run.
+# It must be in the range `0-59`.
+ubtu24cis_aide_cron_aide_minute: 0
 
 ##
 ## Section 7 Control Variables

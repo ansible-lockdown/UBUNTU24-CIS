@@ -84,12 +84,24 @@
         weekday: "{{ ubtu24cis_aide_cron_weekday | default('*') }}"
         job: "{{ ubtu24cis_aide_cron_job }}"
 
+    - name: "6.3.2 | PATCH | Ensure filesystem integrity is regularly checked | cron template"
+      when: ubtu24cis_aide_scan == 'cron'
+      ansible.builtin.template:
+        src: "{{ item }}.j2"
+        dest: "/{{ item }}"
+        owner: root
+        group: root
+        mode: 'go-r'
+      loop:
+        - etc/systemd/system/dailyaidecheck.service
+        - etc/systemd/system/dailyaidecheck.timer
+
     - name: "6.3.2 | PATCH | Ensure filesystem integrity is regularly checked | cron service"
       when: ubtu24cis_aide_scan == 'cron'
       ansible.builtin.systemd:
         name: "{{ item }}"
-        state: stopped
-        enabled: false
+        state: started
+        enabled: true
         daemon_reload: true
       loop:
         - dailyaidecheck.service
