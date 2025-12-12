@@ -58,6 +58,22 @@
           async: "{{ ubtu24cis_aide_init_async }}"
           poll: "{{ ubtu24cis_aide_init_poll }}"
 
+    - name: "6.3.1 | PATCH | Ensure AIDE is installed | Ensure AIDE logfiles have the appropriate permissions"
+      block:
+        - name: "6.3.1 | AUDIT | Ensure AIDE is installed | Ensure AIDE logfiles have the appropriate permissions | Find AIDE logfiles"
+          ansible.builtin.shell: find /var/log/aide/ -type f -exec ls {} \;
+          changed_when: false
+          failed_when: false
+          register: discovered_AIDE_logfiles
+
+        - name: "6.3.1 | AUDIT | Ensure AIDE is installed | Ensure AIDE logfiles have the appropriate permissions | Apply the permissions"
+          ansible.builtin.file:
+            path: "{{ item }}"
+            mode: 'u-x,g-wx,o-rwx'
+          loop: "{{ discovered_AIDE_logfiles.stdout_lines }}"
+          failed_when: discovered_AIDE_file_exists.state not in '[ file, absent ]'
+          register: discovered_AIDE_file_exists
+
 - name: "6.3.2 | PATCH | Ensure filesystem integrity is regularly checked"
   when:
     - ubtu24cis_config_aide
