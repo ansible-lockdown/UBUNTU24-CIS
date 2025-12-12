@@ -1488,6 +1488,7 @@ ubtu24cis_aide_cron_file: /etc/cron.d/aide_cron
 # This variable represents the actual command or script that the cron job
 # will execute for running AIDE.
 ubtu24cis_aide_cron_job: '/usr/bin/aide --config /etc/aide/aide.conf --check'
+# These variables define the schedule for the cron job, if aide is selected to be scanned with cron
 # The following variable represents a setting for periodical checking of the filesystem's
 # integrity using AIDE. It provides a parameter required to configure the cron job on
 # the target system. Cron is a time-based job scheduling program in Unix OS, which
