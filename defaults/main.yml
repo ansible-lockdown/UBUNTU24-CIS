@@ -21,8 +21,11 @@ skip_reboot: true
 benchmark: UBUNTU24-CIS
 benchmark_version: v1.0.0
 
-# Create managed not custom local_facts files
+# This variable governs the execution of a task that creates a file containing info
+# about the benchmark and levels applied, if the audit details are not present
 create_benchmark_facts: true
+# This variable holds the path of the file containing the info about the benchmark
+# and levels applied, if the audit details are not present
 ansible_facts_path: /etc/ansible/facts.d
 
 # Used for audit
@@ -44,7 +47,7 @@ ubtu24cis_ask_passwd_to_boot: false
 ## Usage on containerized images
 # The role discovers dynamically (in tasks/main.yml) whether it
 # is executed on a container image and sets the variable
-# system_is_container the true. Otherwise, the default value
+# system_is_container to `true`. Otherwise, the default value
 # 'false' is left unchanged.
 container_vars_file: is_container.yml
 
@@ -62,7 +65,7 @@ ubtu24cis_uses_root: false
 ### Goss is required on the remote host ###
 ### vars/auditd.yml for other settings  ###
 
-# Allow audit to setup the requirements including installing git (if option chosen and downloading and adding goss binary to system)
+# Allow audit to set up the requirements including installing git (if option chosen and downloading and adding goss binary to system)
 setup_audit: false
 
 # enable audits to run - this runs the audit and get the latest content
@@ -108,11 +111,11 @@ audit_conf_dest: "/opt"
 # Where the audit logs are stored
 audit_log_dir: '/opt'
 
-# Method of getting,uploading the summary files
-## Enable the collection of audit files
+## Method of getting,uploading the summary files
+# Enable the collection of audit files
 fetch_audit_output: false
-## Ensure access and permissions are available for these to occur.
-## options are
+# Ensure access and permissions are available for these to occur.
+# options are:
 # fetch - fetches from server and moves to location on the ansible controller (could be a mount point available to controller)
 # copy - copies file to a location available to the managed node
 audit_output_collection_method: fetch
@@ -138,7 +141,6 @@ system_is_ec2: false
 ## Section 1 Fixes
 # Section 1 is Initial setup (FileSystem Configuration, Configure Software Updates, Filesystem Integrity Checking, Secure Boot Settings,
 # Additional Process Hardening, Mandatory Access Control, Command Line Warning Banners, and GNOME Display Manager)
-
 # 1.1 Filesystems
 # 1.1.1 Configure Filesystem Kernel Modules
 ubtu24cis_rule_1_1_1_1: true
@@ -151,42 +153,35 @@ ubtu24cis_rule_1_1_1_7: true
 ubtu24cis_rule_1_1_1_8: true
 ubtu24cis_rule_1_1_1_9: true
 ubtu24cis_rule_1_1_1_10: true
-
 # 1.1.2 Configure Filesystem Partitions
 # /tmp
 ubtu24cis_rule_1_1_2_1_1: true
 ubtu24cis_rule_1_1_2_1_2: true
 ubtu24cis_rule_1_1_2_1_3: true
 ubtu24cis_rule_1_1_2_1_4: true
-
 # /dev/shm
 ubtu24cis_rule_1_1_2_2_1: true
 ubtu24cis_rule_1_1_2_2_2: true
 ubtu24cis_rule_1_1_2_2_3: true
 ubtu24cis_rule_1_1_2_2_4: true
-
 # /home
 ubtu24cis_rule_1_1_2_3_1: true
 ubtu24cis_rule_1_1_2_3_2: true
 ubtu24cis_rule_1_1_2_3_3: true
-
 # /var
 ubtu24cis_rule_1_1_2_4_1: true
 ubtu24cis_rule_1_1_2_4_2: true
 ubtu24cis_rule_1_1_2_4_3: true
-
 # /var/tmp
 ubtu24cis_rule_1_1_2_5_1: true
 ubtu24cis_rule_1_1_2_5_2: true
 ubtu24cis_rule_1_1_2_5_3: true
 ubtu24cis_rule_1_1_2_5_4: true
-
 # /var/log
 ubtu24cis_rule_1_1_2_6_1: true
 ubtu24cis_rule_1_1_2_6_2: true
 ubtu24cis_rule_1_1_2_6_3: true
 ubtu24cis_rule_1_1_2_6_4: true
-
 # /var/log/audit
 ubtu24cis_rule_1_1_2_7_1: true
 ubtu24cis_rule_1_1_2_7_2: true
@@ -199,25 +194,21 @@ ubtu24cis_rule_1_2_1_1: true
 ubtu24cis_rule_1_2_1_2: true
 # 1.2.2 Configure Package updates
 ubtu24cis_rule_1_2_2_1: true
-
 # 1.3 Mandatory Access Control
-## 1.3.1 Configure AppArmor
+# 1.3.1 Configure AppArmor
 ubtu24cis_rule_1_3_1_1: true
 ubtu24cis_rule_1_3_1_2: true
 ubtu24cis_rule_1_3_1_3: true
 ubtu24cis_rule_1_3_1_4: true
-
 # 1.4 Configure Bootloader
 ubtu24cis_rule_1_4_1: true
 ubtu24cis_rule_1_4_2: true
-
 # 1.5 Configure additional Process Hardening
 ubtu24cis_rule_1_5_1: true
 ubtu24cis_rule_1_5_2: true
 ubtu24cis_rule_1_5_3: true
 ubtu24cis_rule_1_5_4: true
 ubtu24cis_rule_1_5_5: true
-
 # 1.6 Configure Command Line Warning Banners
 ubtu24cis_rule_1_6_1: true
 ubtu24cis_rule_1_6_2: true
@@ -225,7 +216,6 @@ ubtu24cis_rule_1_6_3: true
 ubtu24cis_rule_1_6_4: true
 ubtu24cis_rule_1_6_5: true
 ubtu24cis_rule_1_6_6: true
-
 # 1.7 Configure GNOME Display Manager
 ubtu24cis_rule_1_7_1: true
 ubtu24cis_rule_1_7_2: true
@@ -240,7 +230,6 @@ ubtu24cis_rule_1_7_10: true
 
 ## Section 2 Fixes
 # Section 2 is Services (Special Purpose Services, and service clients)
-
 # 2.1 Configure Server Services
 ubtu24cis_rule_2_1_1: true
 ubtu24cis_rule_2_1_2: true
@@ -264,7 +253,6 @@ ubtu24cis_rule_2_1_19: true
 ubtu24cis_rule_2_1_20: true
 ubtu24cis_rule_2_1_21: true
 ubtu24cis_rule_2_1_22: true
-
 # 2.2 Configure client services
 ubtu24cis_rule_2_2_1: true
 ubtu24cis_rule_2_2_2: true
@@ -272,17 +260,15 @@ ubtu24cis_rule_2_2_3: true
 ubtu24cis_rule_2_2_4: true
 ubtu24cis_rule_2_2_5: true
 ubtu24cis_rule_2_2_6: true
-
-# Ensure time synchronization is in use
+# 2.3.1 Ensure time synchronization is in use
 ubtu24cis_rule_2_3_1_1: true
-# Configure systemd-timesyncd
+# 2.3.2 Configure systemd-timesyncd
 ubtu24cis_rule_2_3_2_1: true
 ubtu24cis_rule_2_3_2_2: true
-# Configure Chrony
+# 2.3.3 Configure Chrony
 ubtu24cis_rule_2_3_3_1: true
 ubtu24cis_rule_2_3_3_2: true
 ubtu24cis_rule_2_3_3_3: true
-
 # 2.4 Job Schedulers
 # 2.4.1 Configure Cron
 ubtu24cis_rule_2_4_1_1: true
@@ -293,10 +279,12 @@ ubtu24cis_rule_2_4_1_5: true
 ubtu24cis_rule_2_4_1_6: true
 ubtu24cis_rule_2_4_1_7: true
 ubtu24cis_rule_2_4_1_8: true
-# Configure At
+# 2.4.2 Configure At
 ubtu24cis_rule_2_4_2_1: true
 
-## Section 3 Network Configuration
+## Section 3 Fixes
+# Section 3 is Network Configuration (Configure network devices, Configure network kernel modules,
+# Configure network kernel parameters)
 # 3.1 Configure Network Devices
 ubtu24cis_rule_3_1_1: true
 ubtu24cis_rule_3_1_2: true
@@ -319,11 +307,11 @@ ubtu24cis_rule_3_3_9: true
 ubtu24cis_rule_3_3_10: true
 ubtu24cis_rule_3_3_11: true
 
-## Section 4 Host Based Firewall
-
+## Section 4 Fixes
+# Section 4 is Firewall configuration (Configure single firewall utility, Configure Uncomplicated Firewall,
+# Configure nftables and Configure iptables)
 # 4.1 single firewall
 ubtu24cis_rule_4_1_1: true
-
 # 4.2 Configure UncomplicatedFirewall
 ubtu24cis_rule_4_2_1: true
 ubtu24cis_rule_4_2_2: true
@@ -343,12 +331,10 @@ ubtu24cis_rule_4_3_7: true
 ubtu24cis_rule_4_3_8: true
 ubtu24cis_rule_4_3_9: true
 ubtu24cis_rule_4_3_10: true
-
 # 4.4.1 Configure iptables software
 ubtu24cis_rule_4_4_1_1: true
 ubtu24cis_rule_4_4_1_2: true
 ubtu24cis_rule_4_4_1_3: true
-
 # 4.4.2 Configure IPv4 iptables
 ubtu24cis_rule_4_4_2_1: true
 ubtu24cis_rule_4_4_2_2: true
@@ -360,7 +346,9 @@ ubtu24cis_rule_4_4_3_2: true
 ubtu24cis_rule_4_4_3_3: true
 ubtu24cis_rule_4_4_3_4: true
 
-## Section 5 Access Control
+## Section 5 Fixes
+# Section 5 is Access Control (Configure SSH Server, Configure PAM
+# and User Accounts and Environment)
 # 5.1 Configure SSH Server
 ubtu24cis_rule_5_1_1: true
 ubtu24cis_rule_5_1_2: true
@@ -415,7 +403,7 @@ ubtu24cis_rule_5_3_3_2_6: true
 ubtu24cis_rule_5_3_3_2_7: true
 ubtu24cis_rule_5_3_3_2_8: true
 # 5.3.3.3 Configure pam_history module
-# This are added as part of 5.3.2.4 using jinja2 template
+# These are added as part of 5.3.2.4 using jinja2 template
 ubtu24cis_rule_5_3_3_3_1: true
 ubtu24cis_rule_5_3_3_3_2: true
 ubtu24cis_rule_5_3_3_3_3: true
@@ -441,19 +429,19 @@ ubtu24cis_rule_5_4_2_5: true
 ubtu24cis_rule_5_4_2_6: true
 ubtu24cis_rule_5_4_2_7: true
 ubtu24cis_rule_5_4_2_8: true
-# 5.4.2 Configure user default environment
+# 5.4.3 Configure user default environment
 ubtu24cis_rule_5_4_3_1: true
 ubtu24cis_rule_5_4_3_2: true
 ubtu24cis_rule_5_4_3_3: true
 
-## Section 6
-
-# 6.2.1.x Configure systemd-journald service
+## Section 6 Fixes
+# Section 6 is Logging and Auditing (System Logging, System Auditing, Configure Integrity Checking)
+# 6.1.1.x Configure systemd-journald service
 ubtu24cis_rule_6_1_1_1: true
 ubtu24cis_rule_6_1_1_2: true
 ubtu24cis_rule_6_1_1_3: true
 ubtu24cis_rule_6_1_1_4: true
-# 6.1.2.1 Configure journald
+# 6.1.2.1 Configure systemd-journal-remote
 ubtu24cis_rule_6_1_2_1_1: true
 ubtu24cis_rule_6_1_2_1_2: true
 ubtu24cis_rule_6_1_2_1_3: true
@@ -521,7 +509,8 @@ ubtu24cis_rule_6_3_1: true
 ubtu24cis_rule_6_3_2: true
 ubtu24cis_rule_6_3_3: true
 
-## Section 7
+## Section 7 Fixes
+# Section 7 is System Maintenance (System File Permissions and User and Group Settings)
 # 7.1 System File Permissions
 ubtu24cis_rule_7_1_1: true
 ubtu24cis_rule_7_1_2: true
@@ -548,71 +537,6 @@ ubtu24cis_rule_7_2_8: true
 ubtu24cis_rule_7_2_9: true
 ubtu24cis_rule_7_2_10: true
 
-##
-## Service configuration variables.
-##
-## Set the respective variable to true to keep the service.
-## otherwise the service is stopped and disabled
-##
-# Service configuration
-# Options are
-# true to leave installed if exists not changes take place
-# false - this removes the package
-# mask - if a dependency for product so cannot be removed
-# Server Services
-ubtu24cis_autofs_services: false
-ubtu24cis_autofs_mask: false
-ubtu24cis_avahi_server: false
-ubtu24cis_avahi_mask: false
-ubtu24cis_dhcp_server: false
-ubtu24cis_dhcp_mask: false
-ubtu24cis_dns_server: false
-ubtu24cis_dns_mask: false
-ubtu24cis_dnsmasq_server: false
-ubtu24cis_dnsmasq_mask: false
-ubtu24cis_ftp_server: false
-ubtu24cis_ftp_mask: false
-ubtu24cis_ldap_server: false
-ubtu24cis_ldap_mask: false
-ubtu24cis_message_server: false  # This is for messaging dovecot and cyrus-imap
-ubtu24cis_message_mask: false
-ubtu24cis_nfs_server: true
-ubtu24cis_nfs_mask: true
-ubtu24cis_nis_server: true  # set to mask if nis client required
-ubtu24cis_nis_mask: false
-ubtu24cis_print_server: false  # replaces cups
-ubtu24cis_print_mask: false
-ubtu24cis_rpc_server: true
-ubtu24cis_rpc_mask: true
-ubtu24cis_rsync_server: false
-ubtu24cis_rsync_mask: false
-ubtu24cis_samba_server: false
-ubtu24cis_samba_mask: false
-ubtu24cis_snmp_server: false
-ubtu24cis_snmp_mask: false
-ubtu24cis_telnet_server: false
-ubtu24cis_telnet_mask: false
-ubtu24cis_tftp_server: false
-ubtu24cis_tftp_mask: false
-ubtu24cis_squid_server: false
-ubtu24cis_squid_mask: false
-ubtu24cis_apache2_server: false
-ubtu24cis_apache2_mask: false
-ubtu24cis_nginx_server: false
-ubtu24cis_nginx_mask: false
-ubtu24cis_xinetd_server: false
-ubtu24cis_xinetd_mask: false
-ubtu24cis_xwindow_server: false  # will remove mask not an option
-ubtu24cis_is_mail_server: false
-
-# Client Services
-ubtu24cis_nis_client_required: false  # Same package as NIS server
-ubtu24cis_rsh_client: false
-ubtu24cis_talk_client: false
-ubtu24cis_telnet_required: false
-ubtu24cis_ldap_clients_required: false
-ubtu24cis_ftp_client: false
-
 ## System functionality configuration variables
 ##
 ## There are certain functionalities of a system
@@ -620,11 +544,6 @@ ubtu24cis_ftp_client: false
 ## or install certain packages.
 ## Set the respective variable to `true` in order to
 ## enable a certain functionality on the system
-
-# This variable governs whether specific CIS rules
-# concerned with acceptance and routing of packages
-# are skipped.
-ubtu24cis_is_router: false
 
 ## IPv4 requirement toggle
 # This variable governs whether ipv4 is enabled or disabled.
@@ -645,7 +564,7 @@ ubtu24cis_desktop_required: false
 ubtu24cis_purge_apt: false
 
 ## Ignore change_when for apt update task
-# Modifies behavior of 'changed_when' for 'apt update' task  in prelim that always changes
+# This variable modifies behavior of 'changed_when' for 'apt update' task in prelim that always changes
 ubtu24cis_ignore_apt_update_changed_when: false
 
 ##
@@ -654,10 +573,11 @@ ubtu24cis_ignore_apt_update_changed_when: false
 
 ## Ability to enable debug on mounts to assist in troubleshooting
 # Mount point changes are set based upon facts created in Prelim
-# these then build the variable and options that is passed to the handler to set the mount point for the controls in section1.
+# these then build the variable and options that is passed to the handler to set the
+# mount point for the controls in section1.
 ubtu24cis_debug_mount_data: false
 
-## Control 1.1.2
+## Control 1.1.2.x
 # If set to `true`, rule will be implemented using the `tmp.mount` systemd-service,
 # otherwise fstab configuration will be used.
 # These /tmp settings will include nosuid,nodev,noexec to conform to CIS standards.
@@ -666,10 +586,8 @@ ubtu24cis_tmp_svc: false
 ## Controls 1.3.1.x - apparmor
 # AppArmor security policies define what system resources applications can access and their privileges.
 # This automatically limits the damage that the software can do to files accessible by the calling user.
-# The following variables are related to the set of rules from section 1.6.1.x
 
 ## Controls 1.3.1.3 and 1.3.1.4 Ensure all AppArmor Profiles are in enforce (1.3.1.3/4) or complain (1.3.1.3) mode
-control_1_3_1_4_was_run: false
 
 # This variable disables the implementation of rules 1.3.1.3 and 1.3.1.4
 # regarding enforcing profiles or putting them in complain mode
@@ -680,26 +598,57 @@ ubtu24cis_apparmor_disable: false
 # ATTENTION: if Control 1.3.1.4 is run (e.g., when running level 2 rules), it OVERRIDES control 1.3.1.3
 # and sets `enforce` mode, no matter what this variable's value is.
 ubtu24cis_apparmor_mode: complain
+# This variable is used as a check for the implementation of control 1.3.1.3.
+# As explained in the variable's description from above, if control 1.3.1.4 is run
+# it overrides this control. So this control will get skipped if control 1.3.1.4
+# is executed. Default value is `false`, and it will only get changed to `true`
+# automatically by the role if the tasks associated for control 1.3.1.4 are executed.
+control_1_3_1_4_was_run: false
 
-## Controls 1.4.x - Boot password
-#
-# THIS VARIABLE SHOULD BE CHANGED AND INCORPORATED INTO VAULT
-# THIS VALUE IS WHAT THE ROOT PW WILL BECOME!!!!!!!!
-# HAVING THAT PW EXPOSED IN RAW TEXT IS NOT SECURE!!!!
+## Controls 1.4.1 - Ensure bootloader password is set
+# The name of the user in the single-user mode. You have to login with this user for example in
+# the recovery console, which would be otherwise unprotected. This must be `root`.
 ubtu24cis_grub_user: root
-ubtu24cis_set_grub_user_pass: false
+# The file in which the grub superuser is specified. The password hash of `ubtu24cis_grub_user_file`
+# will end up here. The file will be overwritten by this Ansible role and must be in a
+# location where the command `update-grub` will parse it – i.e. usually /etc/grub.d/*.
 ubtu24cis_grub_user_file: /etc/grub.d/00_user
+# This variable will store the hashed GRUB bootloader password to be stored in '/boot/grub2/user.cfg' file. The default
+# value must be changed to a value that may be generated with this command 'grub2-mkpasswd-pbkdf2' and must comply with
+# this format: 'grub.pbkdf2.sha512.<Rounds>.<Salt>.<Checksum>'.
 ubtu24cis_bootloader_password_hash: "grub.pbkdf2.sha512.changethispassword"  # pragma: allowlist secret
+# Whether to set `ubtu24cis_bootloader_password_hash` or not. You might set this variable to
+# `false` to set an individual password on (each of) your machine(s) yourself manually instead of
+# storing the password-hash in the `ubtu24cis_bootloader_password_hash` variable here.
 ubtu24cis_set_boot_pass: false
 
+## Control 1.4.2 - Ensure access to bootloader config is configured
+# The grub configuration file contains sensitive information, for example boot parameters or passwords.
+# Specify the file here which is used by GRUB during boot.
 ubtu24cis_grub_file: /boot/grub/grub.cfg
 
 ## Controls 1.5.x
-# Ability to set file in which the kernel systcl changes are placed
+# Ability to set file in which the kernel sysctl changes are placed
 ubtu24cis_sysctl_kernel_conf: /etc/sysctl.d/98_cis_kernel.conf
 
-# 1.5.2 Ability to choose ptrace value
-# options = 1, 2 or 3
+## Control 1.5.2 - Ensure ptrace_scope is restricted
+# This variable allows the user to choose the ptrace value.
+# The ptrace() system call provides a means by which one
+# process (the "tracer") may observe and control the execution
+# of another process (the "tracee"), and examine and change
+# the tracee's memory and registers.
+# Options are:
+# - 1 ->   restricted ptrace: a process must have a predefined
+#          relationship with the inferior it wants to call PTRACE_ATTACH on.
+#          By default, this relationship is that of only its descendants when
+#          the above classic criteria is also met. To change the relationship,
+#          an inferior can call prctl(PR_SET_PTRACER, debugger, ...) to declare
+#          an allowed debugger PID to call PTRACE_ATTACH on the inferior.
+#          Using PTRACE_TRACEME is unchanged.
+# - 2 ->   admin-only attach: only processes with CAP_SYS_PTRACE may use ptrace
+#          with PTRACE_ATTACH, or through children calling PTRACE_TRACEME.
+# - 3 ->   no attach: no processes may use ptrace with PTRACE_ATTACH nor
+#          via PTRACE_TRACEME. Once set, this sysctl value cannot be changed.
 ubtu24_ptrace_value: 1
 
 ## Controls 1.6.x  - Warning banners
@@ -713,7 +662,8 @@ ubtu24_ptrace_value: 1
 ubtu24cis_warning_banner: |
         Authorized users only. All activity may be monitored and reported.
 
-# This variable governs, whether dynamic motd is disabled (as required by control 1.7.1)
+## Control 1.6.1 - Ensure message of the day is configured properly
+# This variable governs, whether dynamic motd is disabled
 ubtu24cis_disable_dynamic_motd: true
 
 ## Controls 1.7.x - Settings for GDM
@@ -730,13 +680,129 @@ ubtu24cis_screensaver_lock_delay: 5
 ## Section 2 Control Variables
 ##
 
-## Control 2.3.1.1
-# This variable choses the tool used for time synchronization
+###
+### The set of rules that make up section 2.1, are used for ensuring that
+### certain services are not installed on the OS.
+### The following list of variables contain two types: the ones that end in '_services', and the ones that end in '_mask'
+### in '_mask'. For completely removing a service both those variables referencing that service shall be set to 'false'.
+### For masking a service the type that ends in '_mask' shall be set to 'true'.
+### Set this variable to `true` to keep service `autofs`; otherwise, the service is uninstalled.
+###
+
+###########################################
+
+## Controls 2.1.x - Configure Server Services
+# Set this variable to `true` to keep service `autofs`; otherwise, the service is uninstalled.
+ubtu24cis_autofs_services: false
+# Set this variable to `true` to mask service `autofs`.
+ubtu24cis_autofs_mask: false
+# Set this variable to `true` to keep service `avahi`; otherwise, the service is uninstalled.
+ubtu24cis_avahi_server: false
+# Set this variable to `true` to mask service `avahi`.
+ubtu24cis_avahi_mask: false
+# Set this variable to `true` to keep service `dhcp`; otherwise, the service is uninstalled.
+ubtu24cis_dhcp_server: false
+# Set this variable to `true` to mask service `dhcp`.
+ubtu24cis_dhcp_mask: false
+# Set this variable to `true` to keep service `dns`; otherwise, the service is uninstalled.
+ubtu24cis_dns_server: false
+# Set this variable to `true` to mask service `dns`.
+ubtu24cis_dns_mask: false
+# Set this variable to `true` to keep service `dnsmasq`; otherwise, the service is uninstalled.
+ubtu24cis_dnsmasq_server: false
+# Set this variable to `true` to mask service `dnsmasq`.
+ubtu24cis_dnsmasq_mask: false
+# Set this variable to `true` to keep service `ftp`; otherwise, the service is uninstalled.
+ubtu24cis_ftp_server: false
+# Set this variable to `true` to mask service `ftp`.
+ubtu24cis_ftp_mask: false
+# Set this variable to `true` to keep service `ldap`; otherwise, the service is uninstalled.
+ubtu24cis_ldap_server: false
+# Set this variable to `true` to mask service `ldap`.
+ubtu24cis_ldap_mask: false
+# Set this variable to `true` to keep service `message`; otherwise, the service is uninstalled.
+ubtu24cis_message_server: false  # This is for messaging dovecot and cyrus-imap
+# Set this variable to `true` to mask service `message`.
+ubtu24cis_message_mask: false
+# Set this variable to `true` to keep service `nfs`; otherwise, the service is uninstalled.
+ubtu24cis_nfs_server: true
+# Set this variable to `true` to mask service `nfs`.
+ubtu24cis_nfs_mask: true
+# Set this variable to `true` to keep service `nis`; otherwise, the service is uninstalled.
+ubtu24cis_nis_server: true  # set to mask if nis client required
+# Set this variable to `true` to mask service `nis`.
+ubtu24cis_nis_mask: false
+# Set this variable to `true` to keep service `print`; otherwise, the service is uninstalled.
+ubtu24cis_print_server: false  # replaces cups
+# Set this variable to `true` to mask service `print`.
+ubtu24cis_print_mask: false
+# Set this variable to `true` to keep service `rpc`; otherwise, the service is uninstalled.
+ubtu24cis_rpc_server: true
+# Set this variable to `true` to mask service `rpc`.
+ubtu24cis_rpc_mask: true
+# Set this variable to `true` to keep service `rsync`; otherwise, the service is uninstalled.
+ubtu24cis_rsync_server: false
+# Set this variable to `true` to mask service `rsync`.
+ubtu24cis_rsync_mask: false
+# Set this variable to `true` to keep service `samba`; otherwise, the service is uninstalled.
+ubtu24cis_samba_server: false
+# Set this variable to `true` to mask service `samba`.
+ubtu24cis_samba_mask: false
+# Set this variable to `true` to keep service `snmp`; otherwise, the service is uninstalled.
+ubtu24cis_snmp_server: false
+# Set this variable to `true` to mask service `snmp`.
+ubtu24cis_snmp_mask: false
+# Set this variable to `true` to keep service `telnet`; otherwise, the service is uninstalled.
+ubtu24cis_telnet_server: false
+# Set this variable to `true` to mask service `telnet`.
+ubtu24cis_telnet_mask: false
+# Set this variable to `true` to keep service `tftp`; otherwise, the service is uninstalled.
+ubtu24cis_tftp_server: false
+# Set this variable to `true` to mask service `tftp`.
+ubtu24cis_tftp_mask: false
+# Set this variable to `true` to keep service `squid`; otherwise, the service is uninstalled.
+ubtu24cis_squid_server: false
+# Set this variable to `true` to mask service `squid`.
+ubtu24cis_squid_mask: false
+# Set this variable to `true` to keep service `apache2`; otherwise, the service is uninstalled.
+ubtu24cis_apache2_server: false
+# Set this variable to `true` to mask service `apache2`.
+ubtu24cis_apache2_mask: false
+# Set this variable to `true` to keep service `nginx`; otherwise, the service is uninstalled.
+ubtu24cis_nginx_server: false
+# Set this variable to `true` to mask service `nginx`.
+ubtu24cis_nginx_mask: false
+# Set this variable to `true` to keep service `xinetd`; otherwise, the service is uninstalled
+ubtu24cis_xinetd_server: false
+# Set this variable to `true` to mask service `xinetd`.
+ubtu24cis_xinetd_mask: false
+# Set this variable to `true` to keep service `xwindow`; otherwise, the service is uninstalled.
+ubtu24cis_xwindow_server: false  # will remove mask not an option
+
+## Control 2.1.21 - Ensure mail transfer agent is configured for local-only mode
+# This variable if set to 'false', ensures that the mail transfer agent is configured for
+# local-only mode.
+ubtu24cis_is_mail_server: false
+
+## Controls 2.2.x - Configure Client Services
+# Set this variable to `true` to keep package `rsh`; otherwise, the package is uninstalled.
+ubtu24cis_rsh_client: false
+# Set this variable to `true` to keep package `talk`; otherwise, the package is uninstalled.
+ubtu24cis_talk_client: false
+# Set this variable to `true` to keep package `telnet`; otherwise, the package is uninstalled.
+ubtu24cis_telnet_required: false
+# Set this variable to `true` to keep package `ldap_clients`; otherwise, the package is uninstalled.
+ubtu24cis_ldap_clients_required: false
+# Set this variable to `true` to keep package `ftp`; otherwise, the package is uninstalled.
+ubtu24cis_ftp_client: false
+
+## Control 2.3.1.1 - Ensure a single time synchronization daemon is in use
+# This variable chooses the tool used for time synchronization
 # The two options are `chrony`and `systemd-timesyncd`.
 ubtu24cis_time_sync_tool: "systemd-timesyncd"
 
 ## Controls 2.3.x - Configure time pools & servers for chrony and timesyncd
-# The following variable represents a list of of time server pools used
+# The following variable represents a list of time server pools used
 # for configuring chrony and timesyncd.
 # Each list item contains two settings, `name` (the domain name of the pool) and synchronization `options`.
 # The default setting for the `options` is `iburst maxsources 4` -- please refer to the documentation
@@ -744,8 +810,8 @@ ubtu24cis_time_sync_tool: "systemd-timesyncd"
 ubtu24cis_time_pool:
   - name: time.nist.gov
     options: iburst maxsources 4
-# The following variable represents a list of of time servers used
-# for configuring chrony and timesyncd
+# The following variable represents a list of time servers used
+# for configuring chrony and timesyncd.
 # Each list item contains two settings, `name` (the domain name of the server) and synchronization `options`.
 # The default setting for the `options` is `iburst` -- please refer to the documentation
 # of the time synchronization mechanism you are using.
@@ -761,49 +827,32 @@ ubtu24cis_time_servers:
 ## Section 3 Control Variables
 ##
 
-## Control 3.1.1 - Ensure system is checked to determine if IPv6 is enabled
+## Control 3.x
 # This variable governs the mechanism of how the disabling of IPV6 is carried out.
 # Its possible values are `grub` and `sysctl`.
 ubtu24cis_ipv6_disable: grub
 
-## Control 3.1.2 - Ensure wireless interfaces are disabled
-# This variable is used for a preliminary task regarding the installation of Network Manager
-# If it is set to `true`, Network Manager is installed during the "prelim" section of
-# the role. If set to `false`, Network Manager is not installed. Bear in mind that without
-# it, ensuring that wireless interfaces are disabled will not be possible!
-ubtu24cis_install_network_manager: true
-
 ## Control 3.1.3 - Ensure bluetooth Services are not in use
-# This control managed how the bluetooth service is managed
-# Options are
-# true to leave installed if exists not changes take place
-# false - this removes the package
-# mask - if a dependency for product so cannot be removed
+# Set this variable to `true` to keep service `bluetooth`; otherwise, the service is uninstalled.
 ubtu24cis_bluetooth_service: false
+# Set this variable to `true` to mask service `bluetooth`.
 ubtu24cis_bluetooth_mask: false
 
-## Control 3.3.x - Networking configuration
+## Controls 3.3.x - Configure Network Kernel Parameters
+
 # This variable contains the path to the file in which, sysctl saves its configurations.
 # Its default value is `/etc/sysctl.conf`.
 ubtu24cis_sysctl_network_conf: /etc/sysctl.conf
+# This variable governs whether specific CIS rules
+# concerned with acceptance and routing of packages
+# are skipped.
+ubtu24cis_is_router: false
 
 ##
 ## Section 4 Control Variables
 ##
 
-## Controls 4.1.x, 4.2.x, and 4.3.x - Firewall configuration
-# This variable represents the toggle for which firewall package is used.
-# The options that have an effect on the system are `ufw` and `iptables`.
-# The option `nftables` is also possible, but will only result in a message,
-# that `nftables` has been chosen; all settings have to be carried out manually.
-# Any other value, e.g. `none` will skip all firewall-related controls.
-ubtu24cis_firewall_package: "ufw"
-
-# This variable is used in a preliminary task that forces the UFW firewall to use /etc/sysctl.conf
-# settings. If set to "true" the task will get done in the prelim section of the role.
-ubtu24cis_ufw_use_sysctl: true
-
-## Control 4.1.5 - Ensure ufw outbound connections are configured
+## Control 4.2.5 - Ensure ufw outbound connections are configured
 # The value of this variable represents the ports for the firewall to allow oubound traffic from.
 # If you want to allow outbound traffic on all ports, set the variable to  `all`, e.g.,
 # `ubtu24cis_ufw_allow_out_ports: "all"`.
@@ -820,30 +869,67 @@ ubtu24cis_ufw_allow_out_ports:
 # nftables configs are applied to.
 # ubtu24cis_nftables_table_name: "inet filter"
 
+## Controls 4.3.x, 4.4.1.x and 4.4.2.x - Firewall configuration
+# This variable represents the toggle for which firewall package is used.
+# The options that have an effect on the system are `ufw` and `iptables`.
+# The option `nftables` is also possible, but will only result in a message,
+# that `nftables` has been chosen; all settings have to be carried out manually.
+# Any other value, e.g. `none` will skip all firewall-related controls.
+ubtu24cis_firewall_package: "ufw"
+
+# This variable is used in a preliminary task that forces the UFW firewall to use /etc/sysctl.conf
+# settings. If set to "true" the task will get done in the prelim section of the role.
+ubtu24cis_ufw_use_sysctl: true
+
 ##
 ## Section 5 Control Variables
 ##
+
 ## Controls 5.1.x -- various sshd settings
+# The following variable is used to control the verbosity of the logging, produced by the SSH server.
+# The options for setting it are as follows:
+# - `QUIET`: Minimal logging;
+# - `FATAL`: logs only fatal errors;
+# - `ERROR`: logs error messages;
+# - `INFO`: logs informational messages in addition to errors;
+# - `VERBOSE`: logs a higher level of detail, including login attempts and key exchanges;
+# - `DEBUG`: generates very detailed debugging information including sensitive information.
 ubtu24cis_sshd_default_log_level: "INFO"
+# This variable specifies the maximum number of authentication attempts that are
+# allowed for a single SSH session.
 ubtu24cis_sshd_default_max_auth_tries: 4
+# This variable is used to set the maximum number of open sessions per connection.
 ubtu24cis_sshd_default_max_sessions: 8
+# This variable specifies the amount of seconds allowed for successful authentication to
+# the SSH server.
 ubtu24cis_sshd_default_login_grace_time: 60
+# This variable sets the time interval in seconds between sending "keep-alive"
+# messages from the server to the client. These types of messages are intended to
+# keep the connection alive and prevent it being terminated due to inactivity.
 ubtu24cis_sshd_default_client_alive_interval: 300
+# This variable sets the maximum number of unresponsive "keep-alive" messages
+# that can be sent from the server to the client before the connection is considered
+# inactive and thus, closed.
 ubtu24cis_sshd_default_client_alive_count_max: 3
-# Removed chacha20-poly1305 due to cve2023-48795
-# all Ciphers, KEX and Macs set to FIPS 140
-# This will nee dto be adjusted according to your site requirements
+# This variable specifies the encryption algorithms that can be used for securing
+# data transmission. Algorithms such as chacha20-poly1305 are removed from the list
+# due to cve2023-48795. This will need to be adjusted according to your site requirements.
+# All Ciphers, KEX and Macs set to FIPS 140
 ubtu24cis_sshd_default_ciphers:
   - aes256-gcm@openssh.com
   - aes128-gcm@openssh.com
   - aes256-ctr
   - aes192-ctr
   - aes128-ctr
+# This variable specifies a list of message authentication code algorithms (MACs) that are allowed for verifying
+# the integrity of data exchanged. (the 'hmac-sha2-384' option is not available anymore as it is seen as bad ssh2 MAC)
 ubtu24cis_sshd_default_macs:
   - hmac-sha1
   - hmac-sha2-256
   #  - hmac-sha2-384  # hashed out seen as bad ssh2 MAC
   - hmac-sha2-512
+# This variable is used to state the key exchange algorithms used to establish secure encryption
+# keys during the initial connection setup.
 ubtu24cis_sshd_default_kex_algorithms:
   - ecdh-sha2-nistp256
   - ecdh-sha2-nistp384
@@ -915,162 +1001,255 @@ ubtu24cis_sshd_deny_users: ""
 # For more info, see https://linux.die.net/man/5/sshd_config
 ubtu24cis_sshd_deny_groups: ""
 
-## Control 5.2.1
+## Control 5.2.1 - Ensure sudo is installed
 # This variable represents the name of the sudo package to install
 # CIS recommends `sudo` or, if LDAP functionality is required, `sudo-ldap`.
 ubtu24cis_sudo_package: "sudo"
 
-## Control 5.2.3
+## Control 5.2.3 - Ensure sudo log file exists
 # This variable defines the path and file name of the sudo log file.
 ubtu24cis_sudo_logfile: "/var/log/sudo.log"
 
-## control 5.2.4 sudoers NOPASSWD
-# This will leave NOPASSWD intact for these users
+## Control 5.2.4 sudoers NOPASSWD
+# The following variable specifies a list of users that should not be required to provide a password
+# for escalation. Feel free to edit it according to your needs.
 ubtu24cis_sudoers_exclude_nopasswd_list:
   - ec2-user
   - vagrant
 
-##  Control 5.2.6
+##  Control 5.2.6 - Ensure sudo authentication timeout is configured correctly
 # This variable sets the duration (in minutes) during which a user's authentication credentials
 # are cached after successfully authenticating using "sudo". This allows the user to execute
 # multiple commands with elevated privileges without needing to re-enter their password for each
 # command within the specified time period. CIS requires a value of at most 15 minutes.
 ubtu24cis_sudo_timestamp_timeout: 15
-## Control 5.2.7
+
+## Control 5.2.7 - Ensure access to the su command is restricted
 # This variable determines the group of users that are allowed to use the su command.
-# one to specify a user group that is allowed to use the "su" command.
 # CIS requires that such a group be created (named according to site policy) and be kept empty.
 ubtu24cis_sugroup: nosugroup
 
-## 5.3.2.x
-# Path to find templates and where to put file for pam-auth
+## Controls 5.3.2.x
+# This variable sets the name of the directory where the templates for pam are stored.
+# These templates are used to create the files which will implement the CIS controls
+# regarding pam. This variable is also used for Controls 5.3.3.3.x and Controls 5.3.3.4.x.
 ubtu24cis_pam_confd_dir: 'usr/share/pam-configs/'
 ### Note: controls also managed with disruption high due to the nature of pam changes
 # Create file will create/replace with the name
 
-# Controls 5.3.2.1 - pam_unix
-# Name of file
+## Control 5.3.2.1 - Ensure pam_unix module is enabled
+# This variable stores the name of the file that ensures that pam_unix module is enabled.
+# This file can be found at the path given by the 'ubtu24cis_pam_confd_dir' variable.
+# This variable is also used for Controls 5.3.3.4.x.
 ubtu24cis_pam_pwunix_file: 'unix'
-# Should NOT be enabled if allowing custom config that enabled pam_faillock
+# The following variable conditions the task that implements the CIS control
+# regarding pam-unix. The task creates a new configuration file using a jinja template,
+# or overwrites the existing file (that has the same name) of the target, implementing
+# the needed configuration.
+# Should NOT be enabled, if allowing custom config that enabled pam_faillock
+# NOTE that you also need to set `ubtu24cis_pam_auth_unix` to `true`:
+# 'Pam_auth_update_pwunix' will only be run if both these variables
+# are set to `true`.
 ubtu24cis_pam_create_pamunix_file: false
 # Allow pam-auth-update --enable ubtu24cis_pam_pwunix_file to run
+# NOTE that you also need to set `ubtu24cis_pam_create_pamunix_file`
+# to `true`: 'Pam_auth_update_pwunix' will only be run if both these
+# variables are set to `true`.
 ubtu24cis_pam_auth_unix: true
 
-# 5.3.2.2 - pam_faillock
-# Name of files
+## Control 5.3.2.2 - Ensure pam_faillock module is enabled
+# This variable stores the name of one of the files that ensure that pam_faillock module is enabled.
+# This file can be found at the path given by the 'ubtu24cis_pam_confd_dir' variable.
 ubtu24cis_pam_faillock_file: 'faillock'
+# This variable stores the name of one of the files that implement the measures
+# regarding pam-faillock. This file can be found at the path given by
+# the 'ubtu24cis_pam_confd_dir' variable.
 ubtu24cis_pam_faillock_notify_file: 'faillock_notify'
 # Allow pam-auth-update --enable ubtu24cis_pam_faillock_file
-# and
-# Allow pam-auth-update --enable ubtu24cis_pam_faillock_notify_file
+# and Allow pam-auth-update --enable ubtu24cis_pam_faillock_notify_file
+# NOTE that you also need to set `ubtu24cis_pam_create_faillock_files`
+# to `true`: 'Pam_auth_update_pwfaillock' will only be run if both these
+# variables are set to `true`.
 ubtu24cis_pam_auth_faillock: true
-# Allow new file to be created or overwrite existing with same name
+# The following variable conditions the task that implements the CIS control
+# regarding pam-faillock. The task creates a new configuration file using a jinja template,
+# or overwrites the existing file of the target that has the same name, implementing
+# the needed configuration. NOTE that you also need to set `ubtu24cis_pam_auth_faillock`
+# to `true`: 'Pam_auth_update_pwfaillock' will only be run if both these
+# variables are set to `true`.
 ubtu24cis_pam_create_faillock_files: true
 
-# 5.3.2.3 - pam_pwquality
-# Name of files
+## Control 5.3.2.3 - Ensure pam_pwquality module is enabled
+# This variable stores the name of the file that ensures that pam_pwquality module is enabled.
+# This file can be found at the path given by the 'ubtu24cis_pam_confd_dir' variable.
 ubtu24cis_pam_pwquality_file: 'pwquality'
-# Allow new file to be created or overwrite existing with same name
+# The following variable conditions the task that implements the CIS control
+# regarding pam_pwquality. The task creates a new configuration file using a jinja template,
+# or overwrites the existing file of the target that has the same name, implementing
+# the needed configuration.
 ubtu24cis_pam_create_pwquality_files: true
-# Allow pam-auth-update --enable ubtu24cis_pam_pwquality_file
-ubtu24cis_pam_auth_pwquality: true
 
-# 5.3.2.4 - pam_pwhistory
-# Name of file
+## Control 5.3.2.4 - Ensure pam_pwhistory module is enabled
+# This variable stores the name of the file that ensures that pam_pwhistory module is enabled.
+# This file can be found at the path given by the 'ubtu24cis_pam_confd_dir' variable.
+# This variable is also used for Controls 5.3.3.3.x.
 ubtu24cis_pam_pwhistory_file: 'pwhistory'
-# Allow new file to be created or overwrite existing with same name
-# filepath also affects controls 5.3.3.3.1, 5.3.3.3.2, 5.3.3.3.3
+# The following variable conditions the task that implements the CIS control
+# regarding pam_pwhistory. The task creates a new configuration file using a jinja template,
+# or overwrites the existing file of the target that has the same name, implementing
+# the needed configuration.
 ubtu24cis_pam_create_pwhistory_files: true
-# Allow pam-auth-update --enable ubtu24cis_pam_pwhistory_file
-ubtu24cis_pam_auth_pwhistory: true
 
-# 5.3.3.1.1 - faillock_deny
+## Control 5.3.3.1.1 - Ensure password failed attempts lockout is configured
+# This variable holds the number of attempts before the account is locked.
+# CIS states that this value should be greater than 0 and no greater than 5.
 ubtu24cis_faillock_deny: 3
 
-# 5.3.3.1.2 - faillock unlock time
+## Control 5.3.3.1.2 - Ensure password unlock time is configured
+# This variable holds the time in seconds before the account is unlocked.
+# CIS states that this value should be at least 900 and should never be 0.
 ubtu24cis_faillock_unlock_time: 900
 
-# 5.3.3.1.3 - lock root
-# This allow optional - even_deny_root or root_unlock_time
+## Control 5.3.3.1.3 - Ensure password failed attempts lockout includes root account
+# This variable is used in the task that ensures that even the root account
+# is included in the password failed attempts lockout measure.
+# The following variable is used in the 'regexp' field. This field is used to find the
+# line in the file. If the line matches the regular expression, it will be replaced
+# with the line parameter's value, which in this case is the 'ubtu24cis_pamroot_lock_string'
+# variable's value.
 ubtu24cis_pamroot_lock_option: even_deny_root
+# This variable is used in the task that ensures that even the root account
+# is included in the password failed attempts lockout measure.
+# The following variable holds the exact line that needs to be added in the configuration
+# file so that the control is implemented.
 ubtu24cis_pamroot_lock_string: even_deny_root
 
-# 5.3.3.2.1 - password difok
+## Control 5.3.3.2.1 - Ensure password number of changed characters is configured
+# This variable holds the path to the configuration file that will be created (or overwritten if already existing)
+# in order to implement the 'Ensure password number of changed characters is configured' control.
 ubtu24cis_passwd_difok_file: etc/security/pwquality.conf.d/50-pwdifok.conf  # pragma: allowlist secret
+# This variable's value represents the minimum number of characters that must be different between
+# the new password and the old password. It helps ensure that users don't create new passwords that
+# are too similar to their previous ones, enhancing security. CIS states that this value should be at least 2.
 ubtu24cis_passwd_difok_value: 2
 
-# 5.3.3.2.2 - password minlength
+## Control 5.3.3.2.2 - Ensure minimum password length is configured
+# This variable holds the path to the configuration file that will be created (or overwritten if already existing)
+# in order to implement the 'Ensure minimum password length is configured' control.
 ubtu24cis_passwd_minlen_file: etc/security/pwquality.conf.d/50-pwlength.conf  # pragma: allowlist secret
+# This variable specifies the minimum length that a password must  have to be considered valid.
+# CIS states that this value should be at least 14.
 ubtu24cis_passwd_minlen_value: 14
 
-# 5.3.3.2.3 - password complex
+## Control 5.3.3.2.3 - Ensure password complexity is configured
+# This variable holds the path to the configuration file that will be created (or overwritten if already existing)
+# in order to implement the 'Ensure password complexity is configured' control.
 ubtu24cis_passwd_complex_file: etc/security/pwquality.conf.d/50-pwcomplexity.conf  # pragma: allowlist secret
+# The following variable sets the password complexity via 'minclass'. The 'minclass' option provides
+# the minimum number of classes of characters required in a new password. (digits, uppercase, lowercase, others). e.g.
+# For example a value of 4 would mean that it requires digits, uppercase, lower case, and special characters.
 ubtu24cis_passwd_minclass: 3
+# The following variables set the password complexity via the 'credits' option.
+# Each of the variables represents a requirement for complexity.
+# The 'dcredit' variable is the maximum credit for having digits in the new password.
+# If less than 0 it is the minimum number of digits in the new password.
+# e.g. dcredit = -1 requires at least one digit
 ubtu24cis_passwd_dcredit: -1
+# The 'ucredit' variable is the maximum credit for having uppercase characters in the new password.
+# If less than 0 it is the minimum number of uppercase characters in the new password.
+# e.g. ucredit = -1 requires at least one uppercase character
 ubtu24cis_passwd_ucredit: -2
+# The 'ocredit' variable is the maximum credit for having other characters in the new password.
+# If less than 0 it is the minimum number of other characters in the new password.
+# e.g. ocredit = -1 requires at least one special character
 ubtu24cis_passwd_ocredit: 0
+# The 'lcredit' variable is the maximum credit for having lowercase characters in the new password.
+# If less than 0 it is the minimum number of lowercase characters in the new password.
+# e.g. lcredit = -1 requires at least one lowercase character
 ubtu24cis_passwd_lcredit: -2
 
-# 5.3.3.2.4 - password maxrepeat
+## Control 5.3.3.2.4 - Ensure password same consecutive characters is configured
+# This variable holds the path to the configuration file that will be created (or overwritten if already existing)
+# in order to implement the 'Ensure password same consecutive characters is configured' control.
 ubtu24cis_passwd_maxrepeat_file: etc/security/pwquality.conf.d/50-pwrepeat.conf  # pragma: allowlist secret
+# The following variable sets the maximum number of allowed same consecutive characters in a new password.
 ubtu24cis_passwd_maxrepeat_value: 3
 
-# 5.3.3.2.5 - password maxsequence
+## Control 5.3.3.2.5 - Ensure password maximum sequential characters is configured
+# This variable holds the path to the configuration file that will be created (or overwritten if already existing)
+# in order to implement the 'Ensure password maximum sequential characters is configured' control.
 ubtu24cis_passwd_maxsequence_file: etc/security/pwquality.conf.d/50-pwmaxsequence.conf  # pragma: allowlist secret
+# The following variable sets the maximum length of monotonic character sequences in the new password.
+# Examples of such sequence are '12345' or 'fedcb' . The check is disabled if the value is 0 .
 ubtu24cis_passwd_maxsequence_value: 3
 
-# 5.3.3.2.6 - password dictcheck
+## Control 5.3.3.2.6 - Ensure password dictionary check is enabled
+# This variable holds the path to the configuration file that will be created (or overwritten if already existing)
+# in order to implement the 'Ensure password dictionary check is enabled' control.
 ubtu24cis_passwd_dictcheck_file: etc/security/pwquality.conf.d/50-pwdictcheck.conf  # pragma: allowlist secret
+# The following variable's value sets whether to check for the words from the cracklib dictionary.
+# When set to '1', this option enables dictionary checks, ensuring that passwords are not based on common
+# dictionary words, which helps prevent users from choosing easily guessable passwords.
+# When set to '0', dictionary checks are disabled. CIS states that it shall always be set to '1'.
 ubtu24cis_passwd_dictcheck_value: 1
 
-# 5.3.3.2.7 - password quality enforce
+## Control 5.3.3.2.7 - Ensure password quality checking is enforced
+# This variable holds the path to the configuration file that will be created (or overwritten if already existing)
+# in order to implement the 'Ensure password quality checking is enforced' control.
 ubtu24cis_passwd_quality_enforce_file: etc/security/pwquality.conf.d/50-pwquality_enforce.conf  # pragma: allowlist secret
+# The following variable if not set to '0' will mean that the password will be rejected if it fails the checks.
+# Otherwise, only a warning message will be provided. CIS states that it should never be set to `0`.
 ubtu24cis_passwd_quality_enforce_value: 1
 
-# 5.3.3.2.8 - password quality enforce for root included with 5.3.3.2.7
+## Control 5.3.3.2.8 - Ensure password quality is enforced for the root user
+# This variable holds the path to the configuration file that will be created (or overwritten if already existing)
+# in order to implement the 'Ensure password quality is enforced for the root user' control.
 ubtu24cis_passwd_quality_enforce_root_file: etc/security/pwquality.conf.d/50-pwroot.conf  # pragma: allowlist secret
+# The following variable enforces that the root user must adhere to the same password quality policies as other users.
 ubtu24cis_passwd_quality_enforce_root_value: enforce_for_root  # pragma: allowlist secret
 
-## 5.3.3.3 Configure pam_pwhistory module
-# Uses value for ubtu24cis_pam_pwhistory_file in 5.3.2.4
-# Control 5.3.3.3.1
+## Control 5.3.3.3.1 - Ensure password history remember is configured
 # This variable represents the number of password change cycles, after which
-# a user can re-use a password. # CIS requires a value of 24 or more.
+# a user can re-use a password. CIS requires a value of 24 or more.
 ubtu24cis_pamd_pwhistory_remember: 24
 
-## Controls 5.4.1.x - Password settings
-ubtu24cis_pass:
-## Control 5.4.1.1
+## Control 5.4.1.1 - Ensure password expiration is configured
 # This variable governs after how many days a  password expires.
 # CIS requires a value of 365 or less.
 ubtu24cis_pass_max_days: 365
-## Control 5.4.1.2
+
+## Control 5.4.1.2 - Ensure minimum password days is configured
 # This variable specifies the minimum number of days allowed between changing passwords.
 # CIS requires a value of at least 1.
 ubtu24cis_pass_min_days: 1
-## Control 5.5.1.3
+
+## Control 5.4.1.3 - Ensure password expiration warning days is configured
 # This variable governs, how many days before a password expires, the user will be warned.
 # CIS requires a value of at least 7.
 ubtu24cis_pass_warn_age: 7
-## Control 5.4.1.5
+
+## Control 5.4.1.4 - Ensure strong password hashing algorithm is configured
+# The following variable's value represents the hashing algorithm used
+ubtu24cis_passwd_hash_algo: yescrypt  # pragma: allowlist secret
+
+## Control 5.4.1.5 - Ensure inactive password lock is configured
 # This variable specifies the number of days of inactivity before an account will be locked.
 # CIS requires a value of 45 days or less.
 ubtu24cis_pass_inactive: 45
 
-# 5.4.2.6 root umask
+## Control 5.4.2.6 - Ensure root user umask is configured
+# The following variable specifies the "umask" to configure for the root user.
+# The user file-creation mode mask ( umask ) is used to determine the file
+# permission for newly created directories and files. In Linux, the default
+# permissions for any newly created directory is 0777 ( rwxrwxrwx ), and for
+# any newly created file it is 0666 ( rw-rw-rw- ). The umask modifies the default
+# Linux permissions by restricting (masking) these permissions. The umask is not
+# simply subtracted, but is processed bitwise. Bits set in the umask are cleared
+# in the resulting file mode. CIS recommends setting 'umask' to '0027' or more
+# restrictive.
 ubtu24cis_root_umask: '0027'  # 0027 or more restrictive
-## Control 5.4.4
-# ubtu24cis_passwd_hash_algo is the hashing algorithm used
-ubtu24cis_passwd_hash_algo: yescrypt  # pragma: allowlist secret
-# Set pam as well as login defs if PAM is required
-ubtu24cis_passwd_setpam_hash_algo: false
 
-## Control 5.4.3 - Default user mask
-# The following variable specifies the "umask" to set in the `/etc/bash.bashrc` and `/etc/profile`.
-# The value needs to be `027` or more restrictive to comply with CIS standards
-ubtu24cis_bash_umask: '027'
-
-## Control 5.4.3.2 - Configuring user shell timeout
+# Control 5.4.3.2 - Configuring user shell timeout
 # This dictionary is related to ensuring the rule about user shell timeout
 # This variable represents the amount of seconds a command or process is allowed to
 # run before being forcefully terminated.
@@ -1084,18 +1263,55 @@ ubtu24cis_shell_session_timeout: 900
 # - `/etc/bash.bashrc`.
 ubtu24cis_shell_session_file: /etc/profile.d/tmout.sh
 
+## Control 5.4.3.3 - Ensure default user umask is configured
+# The following variable specifies the "umask" to set in the `/etc/bash.bashrc` and `/etc/profile`.
+# The value needs to be `027` or more restrictive to comply with CIS standards.
+ubtu24cis_bash_umask: '027'
+
 ##
 ## Section 6 Control Variables
 ##
-# Set which syslog service
-# journald or rsyslog
+
+## Control 6.1.1.3 - Ensure journald log file rotation is configured
+# These variables specify how much disk space the journal may use up at most
+# Specify values in bytes or use K, M, G, T, P, E as units for the specified sizes.
+# See https://www.freedesktop.org/software/systemd/man/journald.conf.html for more information.
+# This variable determines the maximum disk space used by `journald`.
+# It defaults to 10% of the available file system.
+# Specify values in bytes or use K, M, G, T, P, E as units for the specified size.
+# ATTENTION: Uncomment the keyword `SystemMaxUse` when values are set!
+ubtu24cis_journald_systemmaxuse: "#SystemMaxUse="
+# This variable determines disk to be kept free by `journald`.
+# Specify values in bytes or use K, M, G, T, P, E as units for the specified size.
+# ATTENTION: Uncomment the keyword `SystemKeepFree` when values are set!
+ubtu24cis_journald_systemkeepfree: "#SystemKeepFree="
+# This variable determines the maximum disk space used by `journald`.
+# It defaults to 15% of the available file system.
+# Specify values in bytes or use K, M, G, T, P, E as units for the specified size.
+# ATTENTION: Uncomment the keyword `RuntimeMaxUse` when values are set!
+ubtu24cis_journald_runtimemaxuse: "#RuntimeMaxUse="
+# This variable determines disk to be kept free by `journald`.
+# Specify values in bytes or use K, M, G, T, P, E as units for the specified size.
+# ATTENTION: Uncomment the keyword `RuntimeKeepFree` when values are set!
+ubtu24cis_journald_runtimekeepfree: "#RuntimeKeepFree="
+# This variable specifies, the maximum time to store entries in a single journal
+# file before rotating to the next one. Set to 0 to turn off this feature.
+# The given values is interpreted as seconds, unless suffixed with the units
+# `year`, `month`, `week`, `day`, `h` or `m` to override the default time unit of seconds.
+# ATTENTION: Uncomment the keyword `MaxFileSec` when values are set!
+ubtu24cis_journald_maxfilesec: "#MaxFileSec="
+
+## Controls 6.1.2.x (`journald`) and 6.1.3.x (`rsyslog`)
+# This variable governs which logging system is used.
+# The options for this variable are `rsyslog` or `journald`.
 ubtu24cis_syslog_service: 'journald'
 
-# Enable rsyslog logging to be managed by ansible
+## Control 6.1.3.5 - Ensure rsyslog logging is configured
+# This variable governs whether the rsyslog configuration is to be set by this Ansible role.
+# Set it to `true` to configure via Ansible and to `false` otherwise.
 ubtu24cis_rsyslog_ansible_managed: true
 
-## Controls 6.1.1.x journald
-
+## Controls 6.1.2.1.2 (`journald`) and 6.1.3.6 (`rsyslog`)
 # This variable specifies the address of the remote log host where logs are being sent.
 ubtu24cis_remote_log_server: 192.168.2.100
 # This variable expresses whether the system is used as a log server or not.
@@ -1103,7 +1319,7 @@ ubtu24cis_remote_log_server: 192.168.2.100
 # require that own system logs be sent to some other log server are skipped.
 ubtu24cis_system_is_log_server: false
 
-## Controls 6.1.1.2.x & 6.1.1.x journald
+## Control 6.1.2.1.2 - Ensure systemd-journal-upload authentication is configured
 # This variable specifies the path to the private key file used by the remote journal
 # server to authenticate itself to the client. This key is used alongside the server's
 # public certificate to establish secure communication.
@@ -1116,29 +1332,10 @@ ubtu24cis_journal_servercertificatefile:
 # to validate the authenticity of the remote server's certificate.
 ubtu24cis_journal_trustedcertificatefile:
 
-# 6.1.1.1.3
-# These variable specifies how much disk space the journal may use up at most
-# Specify values in bytes or use K, M, G, T, P, E as units for the specified sizes.
-# See https://www.freedesktop.org/software/systemd/man/journald.conf.html for more information.
-# ATTENTION: Uncomment the keyword below when values are set!
-ubtu24cis_journald_systemmaxuse: "#SystemMaxUse="
-ubtu24cis_journald_systemkeepfree: "#SystemKeepFree="
-ubtu24cis_journald_runtimemaxuse: "#RuntimeMaxUse="
-ubtu24cis_journald_runtimekeepfree: "#RuntimeKeepFree="
-# This variable specifies, the maximum time to store entries in a single journal
-# file before rotating to the next one. Set to 0 to turn off this feature.
-# The given values is interpreted as seconds, unless suffixed with the units
-# `year`, `month`, `week`, `day`, `h` or `m` to override the default time unit of seconds.
-# ATTENTION: Uncomment the keyword below when values are set!
-ubtu24cis_journald_maxfilesec: "#MaxFileSec="
-
-# 6.1.3.8 LOGRotate
-# Optional to alow logrotate to be installed
-# While it is required for 6.1.3.8 its not installed by default on minimal image
-# or required for CIS to be installed, but in order to achieve ability to install has been added
+## Control 6.1.3.8 - Ensure logrotate is configured
+# This variable enables the installation of logrotate, which is needed for the implementation of Control 6.1.3.8
 ubtu24cis_logrotate_pkg_install: false
-
-# ubtu24cis_logrotate sets the daily, weekly, monthly, yearly value for the log rotation
+# This variable sets the daily, weekly, monthly, yearly value for the log rotation.
 # To conform to CIS standards this just needs to comply with your site policy
 ubtu24cis_logrotate: "daily"
 
@@ -1149,11 +1346,12 @@ ubtu24cis_logrotate: "daily"
 # to `false`.
 update_audit_template: false
 
-## Advanced option found in auditd post
-## users whose actions are not logged by auditd
+# This variable is used to condition the execution of a POST task
+# from the "auditd.yml" file. That task implements an advanced option,
+# and it only gets executed if this variable's value is set to 'true'.
+# The advance option sets users whose actions are not logged by auditd.
 ubtu24cis_allow_auditd_uid_user_exclusions: false
-
-# add a list of uids
+# This variable contains a list of uids to be excluded(users whose actions are not logged by auditd)
 ubtu24cis_auditd_uid_exclude:
   - 1999
 
@@ -1172,7 +1370,7 @@ ubtu24cis_audit_back_log_limit: 8192
 # This should be set based on your sites policy. CIS does not provide a specific value.
 ubtu24cis_max_log_file_size: 10
 
-## Control 6.2.3.2
+## Control 6.2.2.2 - Ensure audit logs are not automatically deleted
 # This variable determines what action the audit system should take when the maximum
 # size of a log file is reached.
 # The options for setting this variable are as follows:
@@ -1184,29 +1382,59 @@ ubtu24cis_max_log_file_size: 10
 # CIS prescribes the value `keep_logs`.
 ubtu24cis_auditd_max_log_file_action: keep_logs
 
-## Control 6.2.3.3
-# This variable determines how the system should act in case of issues with disk
-# The disk_full_action parameter tells the system what action to take when no free space is available on the partition that holds the audit log files.
+## Control 6.2.2.3 - Ensure system is disabled when audit logs are full
+# This variable determines how the system should act in case of issues with the disk.
+# The disk_full_action parameter tells the system what action to take when no free space is
+# available on the partition that holds the audit log files.
 # Valid values are ignore, syslog, rotate, exec, suspend, single, and halt.
-#
-# The disk_error_action parameter tells the system what action to take when an error is detected on the partition that holds the audit log files.
-# Valid values are ignore, syslog, exec, suspend, single, and halt.
-#
 # CIS prescribes
 # disk_full_action parameter:
-# Set to halt - the auditd daemon will shutdown the system when the disk partition containing the audit logs becomes full.
-# Set to single - the auditd daemon will put the computer system in single user mode when the disk partition containing the audit logs becomes full.
-#
-# disk_error_action parameter:
-# Set to halt - the auditd daemon will shutdown the system when an error is detected on the partition that holds the audit log files.
-# Set to single - the auditd daemon will put the computer system in single user mode when an error is detected on the partition that holds the audit log files.
-# Set to syslog - the auditd daemon will issue no more than 5 consecutive warnings to syslog when an error is detected on the partition that holds the audit log files.
+# Set to halt - the auditd daemon will shutdown the system when the disk partition containing
+# the audit logs becomes full.
+# Set to single - the auditd daemon will put the computer system in single user mode when the
+# disk partition containing the audit logs becomes full.
 ubtu24cis_auditd_disk_full_action: halt
+# This variable determines how the system should act in case of issues with the disk.
+# The disk_error_action parameter tells the system what action to take when an error is detected
+# on the partition that holds the audit log files.
+# Valid values are ignore, syslog, exec, suspend, single, and halt.
+# disk_error_action parameter:
+# Set to halt - the auditd daemon will shutdown the system when an error is detected on the
+# partition that holds the audit log files.
+# Set to single - the auditd daemon will put the computer system in single user mode when
+# an error is detected on the partition that holds the audit log files.
+# Set to syslog - the auditd daemon will issue no more than 5 consecutive warnings to syslog
+# when an error is detected on the partition that holds the audit log files.
 ubtu24cis_auditd_disk_error_action: syslog
 
-# Control 6.2.2.4
-# Wait to do when space left is low.
+## Control 6.2.2.4 - Ensure system warns when audit logs are low on space
+# This variable tells the system what action to take when the system has detected
+# that it is starting to get low on disk space.
+# The options for setting this variable are as follows:
+# "ignore"  - the system does nothing when presented with the aforementioned issue;
+# "syslog" - a message is sent to the system log about disk space running low;
+# "email"  - the system sends an email notification to the email address
+#            specified in the "action_mail_acct" variable;
+# "exec"   - the system executes a custom command when disk space is running
+#            low;
+# "suspend" - the system suspends recording audit events until more space is available;
+# "single"  - the audit daemon will put the computer system in single user mode;
+# "halt"    - the system is halted when disk space is critically low;
+# CIS prescribes either 'email', 'exec', `single` or `halt`.
 ubtu24cis_auditd_space_left_action: email
+# This variable tells the system what action to take when the system has detected
+# that it is low on disk space.
+# The options for setting this variable are as follows:
+# "ignore"  - the system does nothing when presented with the aforementioned issue;
+# "syslog"  - a message is sent to the system log about disk space running low;
+# "email"  - the system sends an email notification to the email address
+#            specified in the "action_mail_acct" variable;
+# "exec"   - the system executes a custom command when disk space is running
+#            low;
+# "suspend" - the system suspends recording audit events until more space is available;
+# "single"  - the audit daemon will put the computer system in single user mode;
+# "halt"    - the system is halted when disk space is critically low;
+# CIS prescribes either `halt` or `single`.
 ubtu24cis_auditd_admin_space_left_action: halt
 
 ## Control 6.3.x - allow aide to be configured
@@ -1216,57 +1444,86 @@ ubtu24cis_auditd_admin_space_left_action: halt
 # the AIDE quick start guide and AIDE documentation before proceeding.
 # By setting this variable to `true`, all of the settings related to AIDE will be applied!
 ubtu24cis_config_aide: true
-
-# If DB file older than below will automatically rebuild DB
-# e.g. options:1w = 1 week, 1d = 1day 1h = 1 hour
+# This variable sets a maximum allowed age of the AIDE database file until
+# the file is rebuilt. If the file is older than the value below, the role
+# will automatically rebuild the database file.
+# e.g. options: 1w = 1 week, 1d = 1day 1h = 1 hour
 ubtu24cis_aide_db_file_age: 1w
-
-# If aide already setup this forces a new DB to be created
+# If AIDE is already setup this variable forces a new database
+# file to be created.
 ubtu24cis_aide_db_recreate: false
-
-# allows to change db file, not config need to be adjusted too
+# This variable is used to check if there is already an existing database file
+# created by AIDE on the target system. If it is not present, the role will generate
+# a database file with the same name as the value of this variable.
 ubtu24cis_aide_db_file: /var/lib/aide/aide.db
-
-## When Initializing aide this can take longer on some systems
-# changing the values enables user to change to thier own requirements
-# Maximum Time in seconds
+# When Initializing aide this can take longer on some systems,
+# changing the values enables user to change to their own requirements.
+# The following variable represents the maximum time in seconds.
 ubtu24cis_aide_init_async: 600
-# Polling Interval in seconds
+# When Initializing aide this can take longer on some systems,
+# changing the values enables user to change to their own requirements.
+# The following variable represents the polling interval in seconds.
 ubtu24cis_aide_init_poll: 15
 
-## Control 6.3.x
-# Set how aide is scanned either cron or timer
+## Control 6.3.2 - Ensure filesystem integrity is regularly checked
+# The following variable sets how AIDE is scanned.
+# Available options are either cron or timer.
 ubtu24cis_aide_scan: cron
-# These are the crontab settings for periodical checking of the filesystem's integrity using AIDE.
-# The sub-settings of this variable provide the parameters required to configure
-# the cron job on the target system.
-# Cron is a time-based job scheduling program in Unix OS, which allows tasks to be scheduled
-# and executed automatically at a certain point in time.
-
+# The following variable represents a setting for periodical checking of the filesystem's
+# integrity using AIDE. It provides a parameter required to configure the cron job on
+# the target system. Cron is a time-based job scheduling program in Unix OS, which
+# allows tasks to be scheduled and executed automatically at a certain point in time.
 # This variable represents the user account under which the cron job for AIDE will run.
 ubtu24cis_aide_cron_user: root
+# The following variable represents a setting for periodical checking of the filesystem's
+# integrity using AIDE. It provides a parameter required to configure the cron job on
+# the target system. Cron is a time-based job scheduling program in Unix OS, which
+# allows tasks to be scheduled and executed automatically at a certain point in time.
 # This variable represents the path to the AIDE crontab file.
 ubtu24cis_aide_cron_file: /etc/cron.d/aide_cron
+# The following variable represents a setting for periodical checking of the filesystem's
+# integrity using AIDE. It provides a parameter required to configure the cron job on
+# the target system. Cron is a time-based job scheduling program in Unix OS, which
+# allows tasks to be scheduled and executed automatically at a certain point in time.
 # This variable represents the actual command or script that the cron job
 # will execute for running AIDE.
 ubtu24cis_aide_cron_job: '/usr/bin/aide --config /etc/aide/aide.conf --check'
-# These variables define the schedule for the cron job
+# The following variable represents a setting for periodical checking of the filesystem's
+# integrity using AIDE. It provides a parameter required to configure the cron job on
+# the target system. Cron is a time-based job scheduling program in Unix OS, which
+# allows tasks to be scheduled and executed automatically at a certain point in time.
 # This variable governs the minute of the time of day when the AIDE cronjob is run.
 # It must be in the range `0-59`.
 ubtu24cis_aide_cron_minute: 0
+# The following variable represents a setting for periodical checking of the filesystem's
+# integrity using AIDE. It provides a parameter required to configure the cron job on
+# the target system. Cron is a time-based job scheduling program in Unix OS, which
+# allows tasks to be scheduled and executed automatically at a certain point in time.
 # This variable governs the hour of the time of day when the AIDE cronjob is run.
 # It must be in the range `0-23`.
 ubtu24cis_aide_cron_hour: 5
+# The following variable represents a setting for periodical checking of the filesystem's
+# integrity using AIDE. It provides a parameter required to configure the cron job on
+# the target system. Cron is a time-based job scheduling program in Unix OS, which
+# allows tasks to be scheduled and executed automatically at a certain point in time.
 # This variable governs the day of the month when the AIDE cronjob is run.
 # `*` signifies that the job is run on all days; furthermore, specific days
 # can be given in the range `1-31`; several days can be concatenated with a comma.
 # The specified day(s) can must be in the range  `1-31`.
 ubtu24cis_aide_cron_day: '*'
+# The following variable represents a setting for periodical checking of the filesystem's
+# integrity using AIDE. It provides a parameter required to configure the cron job on
+# the target system. Cron is a time-based job scheduling program in Unix OS, which
+# allows tasks to be scheduled and executed automatically at a certain point in time.
 # This variable governs months when the AIDE cronjob is run.
 # `*` signifies that the job is run in every month; furthermore, specific months
 # can be given in the range `1-12`; several months can be concatenated with commas.
 # The specified month(s) can must be in the range  `1-12`.
 ubtu24cis_aide_cron_month: '*'
+# The following variable represents a setting for periodical checking of the filesystem's
+# integrity using AIDE. It provides a parameter required to configure the cron job on
+# the target system. Cron is a time-based job scheduling program in Unix OS, which
+# allows tasks to be scheduled and executed automatically at a certain point in time.
 # This variable governs the weekdays, when the AIDE cronjob is run.
 # `*` signifies that the job is run on all weekdays; furthermore, specific weekdays
 # can be given in the range `0-7` (both `0` and `7` represent Sunday); several weekdays
@@ -1277,14 +1534,6 @@ ubtu24cis_aide_cron_weekday: '*'
 ## Section 7 Control Variables
 ##
 
-## Controls 6.2.11 & 6.2.12
-# The minimum and maximum UIDs to be used when enforcing
-# and checking controls 6.2.11 and 6.2.12 can either be
-# discovered automatically via logins.def or set manually
-# in this file
-# If min/maxx UIDs are to be discovered automatically,
-# set this variable to `true`, otherwise to `false`.
-discover_int_uid: false
 # This variable sets the minimum number from which to search for UID
 # Note that the value will be dynamically overwritten if variable `dicover_int_uid` has
 # been set to `true`.
@@ -1295,35 +1544,35 @@ min_int_uid: 1000
 # been set to `true`.
 max_int_uid: 65533
 
-## Control 6.1.9
+## Control 7.1.11 - Ensure world writable files and directories are secured
 # The following variable is a toggle for enabling/disabling the automated
 # removal of world-writable permissions from all files.
 # Possible values are `true` and `false`.
 ubtu24cis_no_world_write_adjust: true
 
-## Control 6.2.7
-# This variable is a toggle foe enabling/disabling the automated modification of
-# permissions on dot files.
-# Possible values are `true` and `false`.
-ubtu24cis_dotperm_ansiblemanaged: true
-
-## Section 7
-
-# 7.1.12 Ensure no files or directories without an owner and a group exist
+## Control 7.1.12 - Ensure no files or directories without an owner and a group exist
+# This variable holds the part of the command that helps detect which files and
+# directories do not have an owner and an affiliated group.
 ubtu24cis_exclude_unowned_search_path: (! -path "/run/user/*" -a ! -path "/proc/*" -a ! -path "*/containerd/*" -a ! -path "*/kubelet/pods/*" -a ! -path "*/kubelet/plugins/*" -a ! -path "/sys/fs/cgroup/memory/*" -a ! -path "/var/*/private/*")
-
-# Control 7.1.12
 # The value of this variable specifies the owner that will be set for unowned files and directories.
 ubtu24cis_unowned_owner: root
+# The value of this variable specifies the group that will be set for ungrouped files and directories.
 ubtu24cis_ungrouped_group: root
 # This variable is a toggle for enabling/disabling the automated
-# setting of an owner (specified in variable `ubtu24cis_unowned_owner`)
-# for all unowned files and directories.
-# Possible values are `true` and `false`.
+# setting of an owner for all unowned or ungrouped files and
+# directories. Setting this variable to 'false' will only display a
+# warning with a list of the unowned and ungrouped files and directories,
+# asking the user to manually assign ownership.
 ubtu24cis_ownership_adjust: true
 
-## Control 7.1.13
+## Control 7.1.13 - Ensure SUID and SGID files are reviewed
 # This variable is a toggle for enabling/disabling the automated removal
 # of the SUID bit from all files on all mounts.
 # Possible values are `true` and `false`.
 ubtu24cis_suid_sgid_adjust: false
+
+## Control 7.2.10 - Ensure local interactive user dot files access is configured
+# This variable is a toggle foe enabling/disabling the automated modification of
+# permissions on dot files.
+# Possible values are `true` and `false`.
+ubtu24cis_dotperm_ansiblemanaged: true
