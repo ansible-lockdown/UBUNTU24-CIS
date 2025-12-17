@@ -1535,6 +1535,10 @@ ubtu24cis_aide_cron_weekday: '*'
 ## Section 7 Control Variables
 ##
 
+# If min/maxx UIDs are to be discovered automatically,
+# set this variable to `true`, otherwise to `false`.
+discover_int_uid: false
+
 # This variable sets the minimum number from which to search for UID
 # Note that the value will be dynamically overwritten if variable `dicover_int_uid` has
 # been set to `true`.
