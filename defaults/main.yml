@@ -1041,7 +1041,7 @@ ubtu24cis_pam_confd_dir: 'usr/share/pam-configs/'
 # This variable stores the name of the file that ensures that pam_unix module is enabled.
 # This file can be found at the path given by the 'ubtu24cis_pam_confd_dir' variable.
 # This variable is also used for Controls 5.3.3.4.x.
-ubtu24cis_pam_pwunix_file: 'unix'
+ubtu24cis_pam_pwunix_file: 'pam_unix'
 # The following variable conditions the task that implements the CIS control
 # regarding pam-unix. The task creates a new configuration file using a jinja template,
 # or overwrites the existing file (that has the same name) of the target, implementing
