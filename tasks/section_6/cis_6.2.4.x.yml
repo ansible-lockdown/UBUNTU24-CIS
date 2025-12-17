@@ -2,7 +2,7 @@
 
 - name: "6.2.4.1 | PATCH | Ensure audit log files mode is configured"
   when:
-    - deb12cis_rule_6_2_4_1
+    - ubtu24cis_rule_6_2_4_1
   tags:
     - level1-server
     - level1-workstation
@@ -15,7 +15,7 @@
     mode: 'o-x,g-wx,o-rwx'
 
 - name: "6.2.4.2 | PATCH | Ensure audit log files owner is configured"
-  when: deb12cis_rule_6_2_4_2
+  when: ubtu24cis_rule_6_2_4_2
   tags:
     - level1-server
     - level1-workstation
@@ -28,7 +28,7 @@
     owner: root
 
 - name: "6.2.4.3 | PATCH | Ensure audit log files group owner is configured"
-  when: deb12cis_rule_6_2_4_3
+  when: ubtu24cis_rule_6_2_4_3
   tags:
     - level1-server
     - level1-workstation
