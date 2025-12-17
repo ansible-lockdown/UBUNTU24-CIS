@@ -13,7 +13,7 @@ ubtu24cis_section6: true
 ubtu24cis_section7: true
 
 ## Reboot system before audit
-# System will reboot if false, can give better audit results
+# System will reboot if false, can give better audit results.
 skip_reboot: true
 
 ## Benchmark name and profiles used by auditing control role
@@ -22,39 +22,55 @@ benchmark: UBUNTU24-CIS
 benchmark_version: v1.0.0
 
 # This variable governs the execution of a task that creates a file containing info
-# about the benchmark and levels applied, if the audit details are not present
+# about the benchmark and levels applied, if the audit details are not present.
 create_benchmark_facts: true
 # This variable holds the path of the file containing the info about the benchmark
-# and levels applied, if the audit details are not present
+# and levels applied, if the audit details are not present.
 ansible_facts_path: /etc/ansible/facts.d
 
 # Used for audit
 ubtu24cis_level_1: true
 ubtu24cis_level_2: true
 
-## Possibly disruptive tasks
+###
+### Possibly disruptive tasks
+###
+
+#################################################
 # This variable governs whether tasks of a potentially disruptive nature on your system
 # (e.g., removing .forward and .netrc files for interactive users) are carried out.
 # If you set this variable to "true", the role will carry such tasks; if you set it to
 # "false", these tasks will be skipped.
 ubtu24cis_disruption_high: true
 
-## Unrestricted boot
+###
+### Unrestricted boot
+###
+
+#################################################
 # Setting this variable to false enables the system to
 # boot *without* querying for the bootloader password.
 ubtu24cis_ask_passwd_to_boot: false
 
-## Usage on containerized images
+###
+### Usage on containerized images
+###
+
+#################################################
 # The role discovers dynamically (in tasks/main.yml) whether it
 # is executed on a container image and sets the variable
 # system_is_container to `true`. Otherwise, the default value
 # 'false' is left unchanged.
 container_vars_file: is_container.yml
 
-## Root user used
-# Root by default is not used unless setup by user
-# The role will only run certain commands if set to true
-# This allows the ability to skip tasks that may cause an issue
+###
+### Root user used
+###
+
+#################################################
+# Root by default is not used unless setup by user.
+# The role will only run certain commands if set to true.
+# This allows the ability to skip tasks that may cause an issue.
 ubtu24cis_uses_root: false
 
 ###
@@ -111,8 +127,8 @@ audit_conf_dest: "/opt"
 # Where the audit logs are stored
 audit_log_dir: '/opt'
 
-## Method of getting,uploading the summary files
-# Enable the collection of audit files
+## Method of getting,uploading the summary files.
+# Enable the collection of audit files.
 fetch_audit_output: false
 # Ensure access and permissions are available for these to occur.
 # options are:
@@ -126,7 +142,11 @@ audit_output_destination: /opt/audit_summaries/
 ### Goss Settings ##
 ####### END ########
 
-## Running in EC2 pipeline
+###
+### Running in EC2 pipeline
+###
+
+#################################################
 # Skip events for EC2 instance testing pipeline.
 # This variable is set to true for automated tests
 # carried out for this role by the role maintainers.
@@ -560,11 +580,11 @@ ubtu24cis_desktop_required: false
 
 ## Purge apt packages
 # This will allow the purging of any packages that are marked to be removed
-# This will also purge any packages not removed via this playbook
+# This will also purge any packages not removed via this playbook.
 ubtu24cis_purge_apt: false
 
 ## Ignore change_when for apt update task
-# This variable modifies behavior of 'changed_when' for 'apt update' task in prelim that always changes
+# This variable modifies behavior of 'changed_when' for 'apt update' task in prelim that always changes.
 ubtu24cis_ignore_apt_update_changed_when: false
 
 ##
@@ -590,7 +610,7 @@ ubtu24cis_tmp_svc: false
 ## Controls 1.3.1.3 and 1.3.1.4 Ensure all AppArmor Profiles are in enforce (1.3.1.3/4) or complain (1.3.1.3) mode
 
 # This variable disables the implementation of rules 1.3.1.3 and 1.3.1.4
-# regarding enforcing profiles or putting them in complain mode
+# regarding enforcing profiles or putting them in complain mode.
 ubtu24cis_apparmor_disable: false
 
 # This variable specifies whether enforce mode or complain  mode is set in Control 1.3.1.3.
@@ -652,8 +672,6 @@ ubtu24cis_sysctl_kernel_conf: /etc/sysctl.d/98_cis_kernel.conf
 ubtu24_ptrace_value: 1
 
 ## Controls 1.6.x  - Warning banners
-# The controls 1.6.x set various warning banners and protect the respective files
-# by tightening the access rights.
 
 # This variable specifies the warning banner displayed to the user
 # after local login, remote login, and as motd (message of the day)
@@ -663,7 +681,7 @@ ubtu24cis_warning_banner: |
         Authorized users only. All activity may be monitored and reported.
 
 ## Control 1.6.1 - Ensure message of the day is configured properly
-# This variable governs, whether dynamic motd is disabled
+# This variable governs, whether dynamic motd is disabled.
 ubtu24cis_disable_dynamic_motd: true
 
 ## Controls 1.7.x - Settings for GDM
@@ -938,8 +956,6 @@ ubtu24cis_sshd_default_kex_algorithms:
   - diffie-hellman-group16-sha512
   - diffie-hellman-group18-sha512
   - diffie-hellman-group14-sha256
-
-# SSH Settings
 # This variable is used to control the verbosity of the logging produced by the SSH server.
 # The options for setting it are as follows:
 # - `QUIET`: Minimal logging;
@@ -979,26 +995,26 @@ ubtu24cis_sshd_max_sessions: "{{ ubtu24cis_sshd_default_max_sessions }}"
 # by setting the value of `AllowUsers` option in `/etc/ssh/sshd_config` file.
 # If an USER@HOST format will be used, the specified user will be allowed only on that particular host.
 # The allow/deny directives process order: DenyUsers, AllowUsers, DenyGroups, AllowGroups.
-# For more info, see https://linux.die.net/man/5/sshd_config
+# For more info, see https://linux.die.net/man/5/sshd_config.
 ubtu24cis_sshd_allow_users: ""
-# (String) This variable, if specified, configures a list of GROUP name patterns, separated by spaces, to allow SSH access
+# This variable, if specified, configures a list of GROUP name patterns, separated by spaces, to allow SSH access
 # for users whose primary group or supplementary group list matches one of the patterns. This is done
 # by setting the value of `AllowGroups` option in `/etc/ssh/sshd_config` file.
 # The allow/deny directives process order: DenyUsers, AllowUsers, DenyGroups, AllowGroups.
-# For more info, https://linux.die.net/man/5/sshd_config
+# For more info, https://linux.die.net/man/5/sshd_config.
 ubtu24cis_sshd_allow_groups: ""
 # This variable, if specified, configures a list of USER name patterns, separated by spaces, to prevent SSH access
 # for users whose user name matches one of the patterns. This is done
 # by setting the value of `DenyUsers` option in `/etc/ssh/sshd_config` file.
 # If an USER@HOST format will be used, the specified user will be restricted only on that particular host.
 # The allow/deny directives process order: DenyUsers, AllowUsers, DenyGroups, AllowGroups.
-# For more info, see https://linux.die.net/man/5/sshd_config
+# For more info, see https://linux.die.net/man/5/sshd_config.
 ubtu24cis_sshd_deny_users: ""
 # This variable, if specified, configures a list of GROUP name patterns, separated by spaces, to prevent SSH access
 # for users whose primary group or supplementary group list matches one of the patterns. This is done
 # by setting the value of `DenyGroups` option in `/etc/ssh/sshd_config` file.
 # The allow/deny directives process order: DenyUsers, AllowUsers, DenyGroups, AllowGroups.
-# For more info, see https://linux.die.net/man/5/sshd_config
+# For more info, see https://linux.die.net/man/5/sshd_config.
 ubtu24cis_sshd_deny_groups: ""
 
 ## Control 5.2.1 - Ensure sudo is installed
@@ -1153,19 +1169,19 @@ ubtu24cis_passwd_minclass: 3
 # Each of the variables represents a requirement for complexity.
 # The 'dcredit' variable is the maximum credit for having digits in the new password.
 # If less than 0 it is the minimum number of digits in the new password.
-# e.g. dcredit = -1 requires at least one digit
+# e.g. dcredit = -1 requires at least one digit.
 ubtu24cis_passwd_dcredit: -1
 # The 'ucredit' variable is the maximum credit for having uppercase characters in the new password.
 # If less than 0 it is the minimum number of uppercase characters in the new password.
-# e.g. ucredit = -1 requires at least one uppercase character
+# e.g. ucredit = -1 requires at least one uppercase character.
 ubtu24cis_passwd_ucredit: -2
 # The 'ocredit' variable is the maximum credit for having other characters in the new password.
 # If less than 0 it is the minimum number of other characters in the new password.
-# e.g. ocredit = -1 requires at least one special character
+# e.g. ocredit = -1 requires at least one special character.
 ubtu24cis_passwd_ocredit: 0
 # The 'lcredit' variable is the maximum credit for having lowercase characters in the new password.
 # If less than 0 it is the minimum number of lowercase characters in the new password.
-# e.g. lcredit = -1 requires at least one lowercase character
+# e.g. lcredit = -1 requires at least one lowercase character.
 ubtu24cis_passwd_lcredit: -2
 
 ## Control 5.3.3.2.4 - Ensure password same consecutive characters is configured
@@ -1229,7 +1245,7 @@ ubtu24cis_pass_min_days: 1
 ubtu24cis_pass_warn_age: 7
 
 ## Control 5.4.1.4 - Ensure strong password hashing algorithm is configured
-# The following variable's value represents the hashing algorithm used
+# The following variable's value represents the hashing algorithm used.
 ubtu24cis_passwd_hash_algo: yescrypt  # pragma: allowlist secret
 
 ## Control 5.4.1.5 - Ensure inactive password lock is configured
@@ -1247,9 +1263,9 @@ ubtu24cis_pass_inactive: 45
 # simply subtracted, but is processed bitwise. Bits set in the umask are cleared
 # in the resulting file mode. CIS recommends setting 'umask' to '0027' or more
 # restrictive.
-ubtu24cis_root_umask: '0027'  # 0027 or more restrictive
+ubtu24cis_root_umask: '0027'
 
-# Control 5.4.3.2 - Configuring user shell timeout
+## Control 5.4.3.2 - Configuring user shell timeout
 # This dictionary is related to ensuring the rule about user shell timeout
 # This variable represents the amount of seconds a command or process is allowed to
 # run before being forcefully terminated.
@@ -1333,10 +1349,10 @@ ubtu24cis_journal_servercertificatefile:
 ubtu24cis_journal_trustedcertificatefile:
 
 ## Control 6.1.3.8 - Ensure logrotate is configured
-# This variable enables the installation of logrotate, which is needed for the implementation of Control 6.1.3.8
+# This variable enables the installation of logrotate, which is needed for the implementation of Control 6.1.3.8.
 ubtu24cis_logrotate_pkg_install: false
 # This variable sets the daily, weekly, monthly, yearly value for the log rotation.
-# To conform to CIS standards this just needs to comply with your site policy
+# To conform to CIS standards this just needs to comply with your site policy.
 ubtu24cis_logrotate: "daily"
 
 ## Controls 6.2.3.x - Audit template
@@ -1351,7 +1367,7 @@ update_audit_template: false
 # and it only gets executed if this variable's value is set to 'true'.
 # The advance option sets users whose actions are not logged by auditd.
 ubtu24cis_allow_auditd_uid_user_exclusions: false
-# This variable contains a list of uids to be excluded(users whose actions are not logged by auditd)
+# This variable contains a list of uids to be excluded (users whose actions are not logged by auditd).
 ubtu24cis_auditd_uid_exclude:
   - 1999
 
@@ -1447,7 +1463,7 @@ ubtu24cis_config_aide: true
 # This variable sets a maximum allowed age of the AIDE database file until
 # the file is rebuilt. If the file is older than the value below, the role
 # will automatically rebuild the database file.
-# e.g. options: 1w = 1 week, 1d = 1day 1h = 1 hour
+# e.g. options: 1w = 1 week, 1d = 1day 1h = 1 hour.
 ubtu24cis_aide_db_file_age: 1w
 # If AIDE is already setup this variable forces a new database
 # file to be created.
