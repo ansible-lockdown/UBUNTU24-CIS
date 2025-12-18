@@ -571,7 +571,7 @@ ubtu24cis_ipv4_required: true
 
 ## IPv6 requirement toggle
 # This variable governs whether ipv6 is enabled or disabled.
-ubtu24cis_ipv6_required: false
+ubtu24cis_ipv6_required: true
 
 ## Desktop requirement toggle
 # This variable governs, whether CIS rules regarding GDM
@@ -848,7 +848,7 @@ ubtu24cis_time_servers:
 ## Control 3.x
 # This variable governs the mechanism of how the disabling of IPV6 is carried out.
 # Its possible values are `grub` and `sysctl`.
-ubtu24cis_ipv6_disable: sysctl
+ubtu24cis_ipv6_disable: grub
 
 ## Control 3.1.3 - Ensure bluetooth Services are not in use
 # Set this variable to `true` to keep service `bluetooth`; otherwise, the service is uninstalled.
