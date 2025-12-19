@@ -96,3 +96,32 @@
         - '^(\s*RuntimeMaxUse\s*=)'
         - '^(\s*RuntimeKeepFree\s*=.*)'
         - '^(\s*MaxFileSec\s*=.*)'
+
+- name: "6.1.1.4 | PATCH | Ensure only one logging system is in use"
+  when: ubtu24cis_rule_6_1_1_4
+  tags:
+    - level1-server
+    - level1-workstation
+    - patch
+    - journald
+    - rule_6.1.1.4
+    - NIST800-53R5_AU-2
+    - NIST800-53R5_AU-7
+    - NIST800-53R5_AU-12
+  block:
+    - name: "6.1.1.4 | PATCH | Ensure only one logging system is in use | Check if rsyslog is active"
+      ansible.builtin.command: systemctl is-active rsyslog
+      register: rsyslog_status
+      changed_when: false
+      failed_when: false
+
+    - name: "6.1.1.4 | PATCH | Ensure only one logging system is in use | Check if systemd-journald is active"
+      ansible.builtin.command: systemctl is-active systemd-journald
+      register: systemd_journald_status
+      changed_when: false
+      failed_when: false
+
+    - name: "6.1.1.4 | PATCH | Ensure only one logging system is in use | Fail if both of the services are active"
+      ansible.builtin.fail:
+        msg: "Both logging systems seem to be active! Ensure that only one logging system is in use!"
+      when: rsyslog_status.stdout == 'active' and systemd_journald_status.stdout == 'active'
