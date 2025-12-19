@@ -1310,7 +1310,7 @@ ubtu24cis_dotperm_ansiblemanaged: true
 ## Section 7
 
 # 7.1.12 Ensure no files or directories without an owner and a group exist
-ubtu24cis_exclude_unowned_search_path: (! -path "/run/user/*" -a ! -path "/proc/*" -a ! -path "*/containerd/*" -a ! -path "*/kubelet/pods/*" -a ! -path "*/kubelet/plugins/*" -a ! -path "/sys/fs/cgroup/memory/*" -a ! -path "/var/*/private/*")
+ubtu24cis_exclude_unowned_search_path: \( ! -path "/run/user/*" -a ! -path "/proc/*" -a ! -path "*/containerd/*" -a ! -path "*/kubelet/pods/*" -a ! -path "*/kubelet/plugins/*" -a ! -path "/sys/fs/cgroup/memory/*" -a ! -path "/var/*/private/*" -a ! -path "/snap/*" \)
 
 # Control 7.1.12
 # The value of this variable specifies the owner that will be set for unowned files and directories.
