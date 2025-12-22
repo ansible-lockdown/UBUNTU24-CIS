@@ -5,6 +5,8 @@
 ## based on benchmark CIS 1.0.0
 precommit update Public issues address
 
+4.2.5 ufw port variables and improvements to include ntp and protocol options
+
 Many thanks to @DianaMariaDDM for the issues or PRs for following:
 - #109 6.3.1 - Enhancements
 - #110 6.2.3.6 - improvement to privilege command collection

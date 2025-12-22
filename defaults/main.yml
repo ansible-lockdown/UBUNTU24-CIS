@@ -804,13 +804,18 @@ ubtu24cis_firewall_package: "ufw"
 ubtu24cis_ufw_use_sysctl: true
 
 ## Control 4.1.5 - Ensure ufw outbound connections are configured
-# The value of this variable represents the ports for the firewall to allow oubound traffic from.
+# The value of this variable represents the ports for the firewall to allow outbound traffic from.
 # If you want to allow outbound traffic on all ports, set the variable to  `all`, e.g.,
 # `ubtu24cis_ufw_allow_out_ports: "all"`.
-ubtu24cis_ufw_allow_out_ports:
-  - 53
-  - 80
-  - 443
+deb12cis_ufw_allow_out_ports:
+  - port: 53
+    proto: tcp
+  - port: 80
+    proto: tcp
+  - port: 123
+    proto: udp
+  - port: 443
+    proto: tcp
 
 ## Controls 4.2.x - nftables
 # Nftables is not supported in this role. Some tasks have parts of them commented out, this is one example
