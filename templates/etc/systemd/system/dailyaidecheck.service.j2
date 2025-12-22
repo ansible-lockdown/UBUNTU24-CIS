@@ -1,11 +1,9 @@
 [Unit]
 Description=daily AIDE check
 Documentation=file:/usr/share/doc/aide/README.Debian.gz
-StartLimitIntervalSec=7200
-StartLimitBurst=1
 
 [Service]
-Type=oneshot
+Type=simple
 User=_aide
 Group=_aide
 AmbientCapabilities=CAP_DAC_READ_SEARCH CAP_AUDIT_WRITE
@@ -14,4 +12,7 @@ PrivateDevices=no
 # We cannot use any of systemd's sandboxing features here since
 # that would mask away a couple of /run subdirectories including
 # /run/credentials
-ExecStart=/usr/share/aide/bin/dailyaidecheck --systemdservice
+ExecStart=/usr/bin/aide --check --config /etc/aide/aide.conf
+
+[Install]
+WantedBy=multi-user.target
