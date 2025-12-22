@@ -807,7 +807,7 @@ ubtu24cis_ufw_use_sysctl: true
 # The value of this variable represents the ports for the firewall to allow outbound traffic from.
 # If you want to allow outbound traffic on all ports, set the variable to  `all`, e.g.,
 # `ubtu24cis_ufw_allow_out_ports: "all"`.
-deb12cis_ufw_allow_out_ports:
+ubtu24cis_ufw_allow_out_ports:
   - port: 53
     proto: tcp
   - port: 80
