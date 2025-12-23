@@ -804,13 +804,20 @@ ubtu24cis_firewall_package: "ufw"
 ubtu24cis_ufw_use_sysctl: true
 
 ## Control 4.1.5 - Ensure ufw outbound connections are configured
-# The value of this variable represents the ports for the firewall to allow oubound traffic from.
+# The value of this variable represents the ports for the firewall to allow outbound traffic from.
 # If you want to allow outbound traffic on all ports, set the variable to  `all`, e.g.,
 # `ubtu24cis_ufw_allow_out_ports: "all"`.
 ubtu24cis_ufw_allow_out_ports:
-  - 53
-  - 80
-  - 443
+  - port: 53
+    proto: tcp
+  - port: 53
+    proto: udp
+  - port: 80
+    proto: tcp
+  - port: 123
+    proto: udp
+  - port: 443
+    proto: tcp
 
 ## Controls 4.2.x - nftables
 # Nftables is not supported in this role. Some tasks have parts of them commented out, this is one example
@@ -824,27 +831,27 @@ ubtu24cis_ufw_allow_out_ports:
 ## Section 5 Control Variables
 ##
 ## Controls 5.1.x -- various sshd settings
-ubtu24cis_sshd_default_log_level: "INFO"
-ubtu24cis_sshd_default_max_auth_tries: 4
-ubtu24cis_sshd_default_max_sessions: 8
-ubtu24cis_sshd_default_login_grace_time: 60
-ubtu24cis_sshd_default_client_alive_interval: 300
-ubtu24cis_sshd_default_client_alive_count_max: 3
+ubtu24cis_sshd_log_level: "INFO"
+ubtu24cis_sshd_max_auth_tries: 4
+ubtu24cis_sshd_max_sessions: 8
+ubtu24cis_sshd_login_grace_time: 60
+ubtu24cis_sshd_client_alive_interval: 300
+ubtu24cis_sshd_client_alive_count_max: 3
 # Removed chacha20-poly1305 due to cve2023-48795
 # all Ciphers, KEX and Macs set to FIPS 140
 # This will nee dto be adjusted according to your site requirements
-ubtu24cis_sshd_default_ciphers:
+ubtu24cis_sshd_ciphers:
   - aes256-gcm@openssh.com
   - aes128-gcm@openssh.com
   - aes256-ctr
   - aes192-ctr
   - aes128-ctr
-ubtu24cis_sshd_default_macs:
+ubtu24cis_sshd_macs:
   - hmac-sha1
   - hmac-sha2-256
   #  - hmac-sha2-384  # hashed out seen as bad ssh2 MAC
   - hmac-sha2-512
-ubtu24cis_sshd_default_kex_algorithms:
+ubtu24cis_sshd_kex_algorithms:
   - ecdh-sha2-nistp256
   - ecdh-sha2-nistp384
   - ecdh-sha2-nistp521
@@ -853,41 +860,6 @@ ubtu24cis_sshd_default_kex_algorithms:
   - diffie-hellman-group18-sha512
   - diffie-hellman-group14-sha256
 
-# SSH Settings
-# This variable is used to control the verbosity of the logging produced by the SSH server.
-# The options for setting it are as follows:
-# - `QUIET`: Minimal logging;
-# - `FATAL`: logs only fatal errors;
-# - `ERROR`: logs error messages;
-# - `INFO`: logs informational messages in addition to errors;
-# - `VERBOSE`: logs a higher level of detail, including login attempts and key exchanges;
-# - `DEBUG`: generates very detailed debugging information including sensitive information.
-ubtu24cis_sshd_log_level: "{{ ubtu24cis_sshd_default_log_level }}"
-# This variable specifies the maximum number of authentication attempts that are
-# allowed for a single SSH session.
-ubtu24cis_sshd_max_auth_tries: "{{ ubtu24cis_sshd_default_max_auth_tries }}"
-# This variable specifies the encryption algorithms that can be used for securing
-# data transmission.
-ubtu24cis_sshd_ciphers: "{{ ubtu24cis_sshd_default_ciphers }}"
-# This variable specifies a list of message authentication code algorithms (MACs) that are allowed for verifying
-# the integrity of data exchanged.
-ubtu24cis_sshd_macs: "{{ ubtu24cis_sshd_default_macs }}"
-# This variable is used to state the key exchange algorithms used to establish secure encryption
-# keys during the initial connection setup.
-ubtu24cis_sshd_kex_algorithms: "{{ ubtu24cis_sshd_default_kex_algorithms }}"
-# This variable sets the time interval in seconds between sending "keep-alive"
-# messages from the server to the client. These types of messages are intended to
-# keep the connection alive and prevent it being terminated due to inactivity.
-ubtu24cis_sshd_client_alive_interval: "{{ ubtu24cis_sshd_default_client_alive_interval }}"
-# This variable sets the maximum number of unresponsive "keep-alive" messages
-# that can be sent from the server to the client before the connection is considered
-# inactive and thus, closed.
-ubtu24cis_sshd_client_alive_count_max: "{{ ubtu24cis_sshd_default_client_alive_count_max }}"
-# This variable specifies the amount of seconds allowed for successful authentication to
-# the SSH server.
-ubtu24cis_sshd_login_grace_time: "{{ ubtu24cis_sshd_default_login_grace_time }}"
-# This variables is used to set the maximum number of open sessions per connection.
-ubtu24cis_sshd_max_sessions: "{{ ubtu24cis_sshd_default_max_sessions }}"
 # This variable, if specified, configures a list of USER name patterns, separated by spaces, to allow SSH
 # access for users whose user name matches one of the patterns. This is done
 # by setting the value of `AllowUsers` option in `/etc/ssh/sshd_config` file.

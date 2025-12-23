@@ -96,3 +96,49 @@
         - '^(\s*RuntimeMaxUse\s*=)'
         - '^(\s*RuntimeKeepFree\s*=.*)'
         - '^(\s*MaxFileSec\s*=.*)'
+
+- name: "6.1.1.4 | PATCH | Ensure only one logging system is in use"
+  when: ubtu24cis_rule_6_1_1_4
+  tags:
+    - level1-server
+    - level1-workstation
+    - patch
+    - journald
+    - rule_6.1.1.4
+    - NIST800-53R5_AU-2
+    - NIST800-53R5_AU-7
+    - NIST800-53R5_AU-12
+  block:
+    - name: "6.1.1.4 | PATCH | Ensure only one logging system is in use | If journald"
+      when: ubtu24cis_syslog_service == "journald"
+      block:
+        - name: "6.1.1.4 | PATCH | Ensure only one logging system is in use | If journald"
+          ansible.builtin.systemd:
+            name: systemd-journald.service
+            state: started
+            enabled: true
+
+        - name: "6.1.1.4 | PATCH | Ensure only one logging system is in use | If journald"
+          when: "'rsyslog' in ansible_facts.packages"
+          ansible.builtin.systemd:
+            name: rsyslog.service
+            state: stopped
+            enabled: false
+
+    - name: "6.1.1.4 | PATCH | Ensure only one logging system is in use | If rsyslog"
+      when: ubtu24cis_syslog_service == "rsyslog"
+      block:
+        - name: "6.1.1.4 | PATCH | Ensure only one logging system is in use | If rsyslog"
+          ansible.builtin.systemd:
+            name: rsyslog.service
+            state: started
+            enabled: true
+
+        - name: "6.1.1.4 | PATCH | Ensure only one logging system is in use | If rsyslog"
+          when: "'systemd-journal' in ansible_facts.packages"
+          ansible.builtin.systemd:
+            name: systemd-journald.service
+            state: stopped
+            enabled: false
+          failed_when: discovered_missing_service.changed or "'Could not find' not in discovered_missing_service.msg"
+          register: discovered_missing_service
