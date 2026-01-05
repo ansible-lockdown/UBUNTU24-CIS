@@ -17,6 +17,7 @@
         name: ['aide', 'aide-common']
         state: present
         update_cache: true
+        install_recommends: false
       register: discovered_aide_pkgs_added
 
     - name: "6.3.1 | PATCH | Ensure AIDE is installed | Recapture packages"
