@@ -2,11 +2,31 @@
 
 ## Based on CIS v1.0.0
 
+## based on benchmark CIS 1.0.0
+precommit update Public issues address
+
+4.2.5 ufw port variables and improvements to include ntp and protocol options
+
+Many thanks to @DianaMariaDDM for the issues or PRs for following:
+- #109 6.3.1 - Enhancements
+- #110 6.2.3.6 - improvement to privilege command collection
+- #111 6.3.2 - template for service fixed
+- #112 7.1.2 - Enhancements
+- #113 variable documentation tidy up
+- #114 sshd tidy up of variables
+- #119 tidy up typos
+- #120 3.3.3.1/5/8 - fix variables used
+- #121 6.1.1.4 added missing control
+- #122 separate 6.2.4.1/2/3
+- #124 removed unused template
+
 ### 1.0.5 - based on benchmark CIS 1.0.0
-#92 1.1.1.7 logic improved and updating inline with audit branches - thanks @jbruno
-#93 ufw logic improved thanks to @ToonSpinTUe
-#94 Fixed var names dailychecktimer thanks to #94 @huan086
-pre-commit updates
+
+- #92 1.1.1.7 logic improved and updating inline with audit branches - thanks @jbruno
+- #93 ufw logic improved thanks to @ToonSpinTUe
+- #94 Fixed var names dailychecktimer thanks to #94 @huan086
+- pre-commit updates
+
 typo fixes
 
 1.0.4 - based on Benchmark CIS 1.0.0
@@ -38,7 +58,6 @@ thanks to @golflimaechoecho
 thanks to @huan086
 - 76
 - 77
-
 
 ### 1.0.3 - based on Benchmark CIS 1.0.0
 pre-commit updates

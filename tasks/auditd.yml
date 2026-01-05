@@ -9,6 +9,12 @@
   failed_when: discovered_auditd_syscalls.rc not in [ 0, 1 ]
   register: discovered_auditd_syscalls
 
+- name: "POST | AUDITD | Get list of privileged programs"
+  ansible.builtin.shell: for i in  $(findmnt -n -l -k -it $(awk '/nodev/ { print $2 }' /proc/filesystems | paste -sd,) | grep -Pv "noexec|nosuid" | awk '{print $1}'); do find $i -xdev -type f -perm -4000 -o -type f -perm -2000 2>/dev/null; done
+  changed_when: false
+  check_mode: false
+  register: discovered_privilege_processes
+
 - name: "POST | AUDITD | Apply auditd template for section 6.2.4.x"
   when: update_audit_template
   vars:

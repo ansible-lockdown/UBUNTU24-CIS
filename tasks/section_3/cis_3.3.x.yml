@@ -30,7 +30,7 @@
         - Flush ipv4 route table
 
     - name: "3.3.1 | PATCH | Ensure IP forwarding is disabled | IPv6 settings"
-      when: ubtu24cis_ipv6_disable == 'sysctl'
+      when: ubtu24cis_ipv6_required
       ansible.posix.sysctl:
         name: net.ipv6.conf.all.forwarding
         value: '0'
@@ -157,7 +157,7 @@
         state: present
         reload: true
         ignoreerrors: true
-      when: ubtu24cis_ipv6_disable == 'sysctl'
+      when: ubtu24cis_ipv6_required
       loop:
         - net.ipv6.conf.all.accept_redirects
         - net.ipv6.conf.default.accept_redirects
@@ -257,7 +257,7 @@
         state: present
         reload: true
         ignoreerrors: true
-      when: ubtu24cis_ipv6_disable == 'sysctl'
+      when: ubtu24cis_ipv6_required
       loop:
         - net.ipv6.conf.all.accept_source_route
         - net.ipv6.conf.default.accept_source_route

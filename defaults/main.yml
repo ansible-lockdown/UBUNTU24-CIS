@@ -875,9 +875,16 @@ ubtu24cis_is_router: false
 # If you want to allow outbound traffic on all ports, set the variable to  `all`, e.g.,
 # `ubtu24cis_ufw_allow_out_ports: "all"`.
 ubtu24cis_ufw_allow_out_ports:
-  - 53
-  - 80
-  - 443
+  - port: 53
+    proto: tcp
+  - port: 53
+    proto: udp
+  - port: 80
+    proto: tcp
+  - port: 123
+    proto: udp
+  - port: 443
+    proto: tcp
 
 ## Controls 4.2.x - nftables
 # Nftables is not supported in this role. Some tasks have parts of them commented out, this is one example
@@ -912,28 +919,28 @@ ubtu24cis_ufw_use_sysctl: true
 # - `INFO`: logs informational messages in addition to errors;
 # - `VERBOSE`: logs a higher level of detail, including login attempts and key exchanges;
 # - `DEBUG`: generates very detailed debugging information including sensitive information.
-ubtu24cis_sshd_default_log_level: "INFO"
+ubtu24cis_sshd_log_level: "INFO"
 # This variable specifies the maximum number of authentication attempts that are
 # allowed for a single SSH session.
-ubtu24cis_sshd_default_max_auth_tries: 4
+ubtu24cis_sshd_max_auth_tries: 4
 # This variable is used to set the maximum number of open sessions per connection.
-ubtu24cis_sshd_default_max_sessions: 8
+ubtu24cis_sshd_max_sessions: 8
 # This variable specifies the amount of seconds allowed for successful authentication to
 # the SSH server.
-ubtu24cis_sshd_default_login_grace_time: 60
+ubtu24cis_sshd_login_grace_time: 60
 # This variable sets the time interval in seconds between sending "keep-alive"
 # messages from the server to the client. These types of messages are intended to
 # keep the connection alive and prevent it being terminated due to inactivity.
-ubtu24cis_sshd_default_client_alive_interval: 300
+ubtu24cis_sshd_client_alive_interval: 300
 # This variable sets the maximum number of unresponsive "keep-alive" messages
 # that can be sent from the server to the client before the connection is considered
 # inactive and thus, closed.
-ubtu24cis_sshd_default_client_alive_count_max: 3
+ubtu24cis_sshd_client_alive_count_max: 3
 # This variable specifies the encryption algorithms that can be used for securing
 # data transmission. Algorithms such as chacha20-poly1305 are removed from the list
 # due to cve2023-48795. This will need to be adjusted according to your site requirements.
 # All Ciphers, KEX and Macs set to FIPS 140
-ubtu24cis_sshd_default_ciphers:
+ubtu24cis_sshd_ciphers:
   - aes256-gcm@openssh.com
   - aes128-gcm@openssh.com
   - aes256-ctr
@@ -941,14 +948,14 @@ ubtu24cis_sshd_default_ciphers:
   - aes128-ctr
 # This variable specifies a list of message authentication code algorithms (MACs) that are allowed for verifying
 # the integrity of data exchanged. (the 'hmac-sha2-384' option is not available anymore as it is seen as bad ssh2 MAC)
-ubtu24cis_sshd_default_macs:
+ubtu24cis_sshd_macs:
   - hmac-sha1
   - hmac-sha2-256
   #  - hmac-sha2-384  # hashed out seen as bad ssh2 MAC
   - hmac-sha2-512
 # This variable is used to state the key exchange algorithms used to establish secure encryption
 # keys during the initial connection setup.
-ubtu24cis_sshd_default_kex_algorithms:
+ubtu24cis_sshd_kex_algorithms:
   - ecdh-sha2-nistp256
   - ecdh-sha2-nistp384
   - ecdh-sha2-nistp521
@@ -956,40 +963,6 @@ ubtu24cis_sshd_default_kex_algorithms:
   - diffie-hellman-group16-sha512
   - diffie-hellman-group18-sha512
   - diffie-hellman-group14-sha256
-# This variable is used to control the verbosity of the logging produced by the SSH server.
-# The options for setting it are as follows:
-# - `QUIET`: Minimal logging;
-# - `FATAL`: logs only fatal errors;
-# - `ERROR`: logs error messages;
-# - `INFO`: logs informational messages in addition to errors;
-# - `VERBOSE`: logs a higher level of detail, including login attempts and key exchanges;
-# - `DEBUG`: generates very detailed debugging information including sensitive information.
-ubtu24cis_sshd_log_level: "{{ ubtu24cis_sshd_default_log_level }}"
-# This variable specifies the maximum number of authentication attempts that are
-# allowed for a single SSH session.
-ubtu24cis_sshd_max_auth_tries: "{{ ubtu24cis_sshd_default_max_auth_tries }}"
-# This variable specifies the encryption algorithms that can be used for securing
-# data transmission.
-ubtu24cis_sshd_ciphers: "{{ ubtu24cis_sshd_default_ciphers }}"
-# This variable specifies a list of message authentication code algorithms (MACs) that are allowed for verifying
-# the integrity of data exchanged.
-ubtu24cis_sshd_macs: "{{ ubtu24cis_sshd_default_macs }}"
-# This variable is used to state the key exchange algorithms used to establish secure encryption
-# keys during the initial connection setup.
-ubtu24cis_sshd_kex_algorithms: "{{ ubtu24cis_sshd_default_kex_algorithms }}"
-# This variable sets the time interval in seconds between sending "keep-alive"
-# messages from the server to the client. These types of messages are intended to
-# keep the connection alive and prevent it being terminated due to inactivity.
-ubtu24cis_sshd_client_alive_interval: "{{ ubtu24cis_sshd_default_client_alive_interval }}"
-# This variable sets the maximum number of unresponsive "keep-alive" messages
-# that can be sent from the server to the client before the connection is considered
-# inactive and thus, closed.
-ubtu24cis_sshd_client_alive_count_max: "{{ ubtu24cis_sshd_default_client_alive_count_max }}"
-# This variable specifies the amount of seconds allowed for successful authentication to
-# the SSH server.
-ubtu24cis_sshd_login_grace_time: "{{ ubtu24cis_sshd_default_login_grace_time }}"
-# This variables is used to set the maximum number of open sessions per connection.
-ubtu24cis_sshd_max_sessions: "{{ ubtu24cis_sshd_default_max_sessions }}"
 # This variable, if specified, configures a list of USER name patterns, separated by spaces, to allow SSH
 # access for users whose user name matches one of the patterns. This is done
 # by setting the value of `AllowUsers` option in `/etc/ssh/sshd_config` file.
@@ -1574,7 +1547,7 @@ ubtu24cis_no_world_write_adjust: true
 ## Control 7.1.12 - Ensure no files or directories without an owner and a group exist
 # This variable holds the part of the command that helps detect which files and
 # directories do not have an owner and an affiliated group.
-ubtu24cis_exclude_unowned_search_path: (! -path "/run/user/*" -a ! -path "/proc/*" -a ! -path "*/containerd/*" -a ! -path "*/kubelet/pods/*" -a ! -path "*/kubelet/plugins/*" -a ! -path "/sys/fs/cgroup/memory/*" -a ! -path "/var/*/private/*")
+ubtu24cis_exclude_unowned_search_path: \( ! -path "/run/user/*" -a ! -path "/proc/*" -a ! -path "*/containerd/*" -a ! -path "*/kubelet/pods/*" -a ! -path "*/kubelet/plugins/*" -a ! -path "/sys/fs/cgroup/memory/*" -a ! -path "/var/*/private/*" -a ! -path "/snap/*" \)
 # The value of this variable specifies the owner that will be set for unowned files and directories.
 ubtu24cis_unowned_owner: root
 # The value of this variable specifies the group that will be set for ungrouped files and directories.
