@@ -977,10 +977,10 @@ ubtu24cis_passwd_minlen_value: 14
 
 # 5.3.3.2.3 - password complex
 ubtu24cis_passwd_complex_file: etc/security/pwquality.conf.d/50-pwcomplexity.conf  # pragma: allowlist secret
-ubtu24cis_passwd_minclass: 3
+ubtu24cis_passwd_minclass: 4
 ubtu24cis_passwd_dcredit: -1
 ubtu24cis_passwd_ucredit: -2
-ubtu24cis_passwd_ocredit: 0
+ubtu24cis_passwd_ocredit: -1
 ubtu24cis_passwd_lcredit: -2
 
 # 5.3.3.2.4 - password maxrepeat
