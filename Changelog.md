@@ -7,8 +7,9 @@
 ### Jan26 updates
 pre-commit
 #92 readdressed thanks to @bizrad and @jbruno
-#127 addressed thanks to @rronneburger
+#127 addressed thanks to @rronneburger incl #84
 #129 addressed thanks to @stelucz
+#131 thanks to @Jurka007
 
 ### Dec26_updates
 
