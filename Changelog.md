@@ -3,6 +3,15 @@
 ## Based on CIS v1.0.0
 
 ## based on benchmark CIS 1.0.0
+
+### Jan26 updates
+pre-commit
+#92 readdressed thanks to @bizrad and @jbruno
+#127 addressed thanks to @rronneburger
+#129 addressed thanks to @stelucz
+
+### Dec26_updates
+
 precommit update Public issues address
 
 4.2.5 ufw port variables and improvements to include ntp and protocol options
