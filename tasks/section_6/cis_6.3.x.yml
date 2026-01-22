@@ -17,6 +17,7 @@
         name: ['aide', 'aide-common']
         state: present
         update_cache: true
+        install_recommends: false
       register: discovered_aide_pkgs_added
 
     - name: "6.3.1 | PATCH | Ensure AIDE is installed | Recapture packages"
@@ -118,7 +119,7 @@
         - dailyaidecheck.service
         - dailyaidecheck.timer
 
-- name: "6.3.3 | Ensure cryptographic mechanisms are used to protect the integrity of audit tools"
+- name: "6.3.3 | PATCH | Ensure cryptographic mechanisms are used to protect the integrity of audit tools"
   when:
     - ubtu24cis_rule_6_3_3
     - ubtu24cis_config_aide

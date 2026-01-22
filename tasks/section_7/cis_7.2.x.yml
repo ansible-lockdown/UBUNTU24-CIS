@@ -94,7 +94,7 @@
     - level1-server
     - level1-workstation
     - patch
-    - rule_6.2.4
+    - rule_7.2.4
     - NIST800-53R5_IA-5
     - user
   vars:
@@ -196,7 +196,7 @@
     - NIST800-53R5_IA-5
     - user
   vars:
-    warn_control_id: '7.2.67'
+    warn_control_id: '7.2.7'
   block:
     - name: "7.2.7 | AUDIT | Ensure no duplicate user names exist | Check for duplicate User Names"
       ansible.builtin.shell: "pwck -r | awk -F: '{if ($1 in users) print $1 ; else users[$1]}' /etc/passwd"

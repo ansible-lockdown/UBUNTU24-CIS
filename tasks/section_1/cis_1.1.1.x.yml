@@ -184,16 +184,16 @@
     - name: "1.1.1.6 | PATCH | Ensure overlayfs kernel module is not available | Edit modprobe config"
       ansible.builtin.lineinfile:
         path: /etc/modprobe.d/CIS.conf
-        regexp: "^(#)?install overlayfs(\\s|$)"
-        line: "install overlayfs /bin/true"
+        regexp: "^(#)?install overlay(\\s|$)"
+        line: "install overlay /bin/true"
         create: true
         mode: 'go-rwx'
 
     - name: "1.1.1.6 | PATCH | Ensure overlayfs kernel module is not available | blacklist"
       ansible.builtin.lineinfile:
         path: /etc/modprobe.d/blacklist.conf
-        regexp: "^(#)?blacklist overlayfs(\\s|$)"
-        line: "blacklist overlayfs"
+        regexp: "^(#)?blacklist overlay(\\s|$)"
+        line: "blacklist overlay"
         create: true
         mode: 'go-rwx'
 
@@ -206,8 +206,8 @@
 - name: "1.1.1.7 | PATCH | Ensure squashfs kernel module is not available"
   when:
     - ubtu24cis_rule_1_1_1_7
-    - not prelim_squashfs_builtin
-    - prelim_snap_pkg_mgr.rc != 0
+    - prelim_squashfs_builtin.rc != 0
+    - prelim_snap_pkg_mgr.rc == 1
   tags:
     - level2-server
     - level2-workstation

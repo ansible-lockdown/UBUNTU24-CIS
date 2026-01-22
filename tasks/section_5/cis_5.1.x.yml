@@ -105,7 +105,7 @@
       when: "ubtu24cis_sshd_allow_users| default('') | length > 0 "
       ansible.builtin.lineinfile:
         path: /etc/ssh/sshd_config
-        regexp: '(?i)^(#|)\s*AllowUsers'
+        regexp: '(?i)^(#?)\s*AllowUsers'
         line: 'AllowUsers {{ ubtu24cis_sshd_allow_users }}'
         validate: 'sshd -t -f %s'
       notify: Restart sshd
@@ -114,7 +114,7 @@
       when: "ubtu24cis_sshd_allow_groups| default('') | length > 0"
       ansible.builtin.lineinfile:
         path: /etc/ssh/sshd_config
-        regexp: '(?i)^(#|)\s*AllowGroups'
+        regexp: '(?i)^(#?)\s*AllowGroups'
         line: 'AllowGroups {{ ubtu24cis_sshd_allow_groups }}'
         validate: 'sshd -t -f %s'
       notify: Restart sshd
@@ -123,7 +123,7 @@
       when: "ubtu24cis_sshd_deny_users| default('') | length > 0"
       ansible.builtin.lineinfile:
         path: /etc/ssh/sshd_config
-        regexp: '(?i)^(#|)\s*DenyUsers'
+        regexp: '(?i)^(#?)\s*DenyUsers'
         line: 'DenyUsers {{ ubtu24cis_sshd_deny_users }}'
         validate: 'sshd -t -f %s'
       notify: Restart sshd
@@ -194,8 +194,8 @@
     line: "{{ item.line }}"
     validate: 'sshd -t -f %s'
   with_items:
-    - { regexp: '^ClientAliveInterval', line: 'ClientAliveInterval {{ ubtu24cis_sshd_client_alive_interval | default(ubtu24cis_sshd_default_client_alive_interval) }}' }
-    - { regexp: '^ClientAliveCountMax', line: 'ClientAliveCountMax {{ ubtu24cis_sshd_client_alive_count_max | default(ubtu24cis_sshd_default_client_alive_count_max) }}' }
+    - { regexp: '^ClientAliveInterval', line: 'ClientAliveInterval {{ ubtu24cis_sshd_client_alive_interval }}' }
+    - { regexp: '^ClientAliveCountMax', line: 'ClientAliveCountMax {{ ubtu24cis_sshd_client_alive_count_max }}' }
   notify: Restart sshd
 
 - name: "5.1.8 | PATCH | Ensure sshd DisableForwarding is enabled"
@@ -209,7 +209,7 @@
     - sshd
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
-    regexp: (?i)^(#|)\s*DisableForwarding
+    regexp: (?i)^(#?)\s*DisableForwarding
     line: 'DisableForwarding yes'
     validate: 'sshd -t -f %s'
   notify: Restart sshd
@@ -229,7 +229,7 @@
     - sshd
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
-    regexp: (?i)^(#|)\s*GSSAPIAuthentication
+    regexp: (?i)^(#?)\s*GSSAPIAuthentication
     line: 'GSSAPIAuthentication no'
     validate: 'sshd -t -f %s'
   notify: Restart sshd
@@ -249,7 +249,7 @@
     - sshd
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
-    regexp: (?i)^(#|)\s*HostbasedAuthentication
+    regexp: (?i)^(#?)\s*HostbasedAuthentication
     line: 'HostbasedAuthentication no'
     validate: 'sshd -t -f %s'
   notify: Restart sshd
@@ -269,7 +269,7 @@
     - sshd
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
-    regexp: (?i)^(#|)\s*IgnoreRhosts
+    regexp: (?i)^(#?)\s*IgnoreRhosts
     line: 'IgnoreRhosts yes'
     validate: 'sshd -t -f %s'
   notify: Restart sshd
@@ -285,8 +285,8 @@
     - sshd
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
-    regexp: (?i)^(#|)\s*KexAlgorithms
-    line: "KexAlgorithms {{ ubtu24cis_sshd_kex_algorithms | default(ubtu24cis_sshd_default_kex_algorithms) | join(',') }}"
+    regexp: (?i)^(#?)\s*KexAlgorithms
+    line: "KexAlgorithms {{ ubtu24cis_sshd_kex_algorithms | join(',') }}"
     insertafter: '^# Ciphers and keying'
     validate: 'sshd -t -f %s'
   notify: Restart sshd
@@ -302,8 +302,8 @@
     - sshd
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
-    regexp: (?i)^(#|)\s*LoginGraceTime
-    line: 'LoginGraceTime {{ ubtu24cis_sshd_login_grace_time | default(ubtu24cis_sshd_default_login_grace_time) }}'
+    regexp: (?i)^(#?)\s*LoginGraceTime
+    line: 'LoginGraceTime {{ ubtu24cis_sshd_login_grace_time }}'
     insertafter: '^# Authentication'
     validate: 'sshd -t -f %s'
   notify: Restart sshd
@@ -321,8 +321,8 @@
     - sshd
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
-    regexp: (?i)^(#|)\s*LogLevel
-    line: 'LogLevel {{ ubtu24cis_sshd_log_level | default(ubtu24cis_sshd_default_log_level) }}'
+    regexp: (?i)^(#?)\s*LogLevel
+    line: 'LogLevel {{ ubtu24cis_sshd_log_level }}'
     insertafter: '^# Logging'
     validate: 'sshd -t -f %s'
   notify: Restart sshd
@@ -342,8 +342,8 @@
     - sshd
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
-    regexp: (?i)^(#|)\s*MACs
-    line: "MACs {{ ubtu24cis_sshd_macs | default(ubtu24cis_sshd_default_macs) | join(',') }}"
+    regexp: (?i)^(#?)\s*MACs
+    line: "MACs {{ ubtu24cis_sshd_macs | join(',')}}"
     insertafter: '^# Ciphers and keying'
     validate: 'sshd -t -f %s'
   notify: Restart sshd
@@ -359,8 +359,8 @@
     - sshd
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
-    regexp: (?i)^(#|)\s*MaxAuthTries
-    line: 'MaxAuthTries {{ ubtu24cis_sshd_max_auth_tries | default(ubtu24cis_sshd_default_max_auth_tries) }}'
+    regexp: (?i)^(#?)\s*MaxAuthTries
+    line: 'MaxAuthTries {{ ubtu24cis_sshd_max_auth_tries }}'
     insertafter: '^# Authentication'
     validate: 'sshd -t -f %s'
   notify: Restart sshd
@@ -380,8 +380,8 @@
     - sshd
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
-    regexp: (?i)^(#|)\s*MaxSessions
-    line: 'MaxSessions {{ ubtu24cis_sshd_max_sessions | default(ubtu24cis_sshd_default_max_sessions) }}'
+    regexp: (?i)^(#?)\s*MaxSessions
+    line: 'MaxSessions {{ ubtu24cis_sshd_max_sessions }}'
     insertafter: '^# Authentication'
     validate: 'sshd -t -f %s'
   notify: Restart sshd
@@ -401,7 +401,7 @@
     - sshd
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
-    regexp: (?i)^(#|)\s*MaxStartups
+    regexp: (?i)^(#?)\s*MaxStartups
     line: 'MaxStartups 10:30:60'
     validate: 'sshd -t -f %s'
   notify: Restart sshd
@@ -421,7 +421,7 @@
     - sshd
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
-    regexp: (?i)^(#|)\s*PermitEmptyPasswords
+    regexp: (?i)^(#?)\s*PermitEmptyPasswords
     line: 'PermitEmptyPasswords no'
     insertafter: '# To disable tunneled clear text passwords'
     validate: 'sshd -t -f %s'
@@ -438,7 +438,7 @@
     - sshd
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
-    regexp: (?i)^(#|)\s*PermitRootLogin
+    regexp: (?i)^(#?)\s*PermitRootLogin
     line: 'PermitRootLogin no'
     validate: 'sshd -t -f %s'
   notify: Restart sshd
@@ -458,7 +458,7 @@
     - sshd
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
-    regexp: (?i)^(#|)\s*PermitUserEnvironment
+    regexp: (?i)^(#?)\s*PermitUserEnvironment
     line: 'PermitUserEnvironment no'
     validate: 'sshd -t -f %s'
   notify: Restart sshd
@@ -479,7 +479,7 @@
     - pam
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
-    regexp: (?i)^(#|)\s*UsePAM
+    regexp: (?i)^(#?)\s*UsePAM
     line: 'UsePAM yes'
     insertafter: '^# and ChallengeResponseAuthentication'
     validate: 'sshd -t -f %s'
