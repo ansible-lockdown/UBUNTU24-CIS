@@ -33,21 +33,21 @@
     - name: "5.4.1.1 | AUDIT | Ensure password expiration is configured | Add warning if ansible user found as break connection"
       when:
         - ubtu24cis_disruption_high
-        - ansible_user in discovered_passwd_max_days.stdout
+        - (ansible_user | default(ansible_env.USER)) in discovered_passwd_max_days.stdout
       ansible.builtin.debug:
         msg: "Warning!! Your ansible user found to be not compliant with maxdays - Manual intervention required"
 
     - name: 5.4.1.1 | AUDIT | Ensure password expiration is configured | Warn count"
       when:
         - ubtu24cis_disruption_high
-        - ansible_user in discovered_passwd_max_days.stdout
+        - (ansible_user | default(ansible_env.USER)) in discovered_passwd_max_days.stdout
       ansible.builtin.import_tasks:
         file: warning_facts.yml
 
     - name: "5.4.1.1 | PATCH | Ensure password expiration is configured | Set existing users PASS_MAX_DAYS"
       when:
         - ubtu24cis_disruption_high
-        - item != (ansible_user)
+        - item != (ansible_user | default(ansible_env.USER))
       ansible.builtin.command: "chage --maxdays {{ ubtu24cis_pass_max_days }} {{ item }}"
       failed_when: false
       changed_when: discovered_passwd_max_days.stdout | length > 0
@@ -81,21 +81,21 @@
     - name: "5.4.1.2 | AUDIT | Ensure minimum password age is configured | Add warning if ansible user found as break connection"
       when:
         - ubtu24cis_disruption_high
-        - ansible_user in discovered_passwd_min_days.stdout
+        - (ansible_user | default(ansible_env.USER)) in discovered_passwd_min_days.stdout
       ansible.builtin.debug:
         msg: "Warning!! Your ansible user found to be not compliant with mindays - Manual intervention required"
 
     - name: "5.4.1.2 | AUDIT | Ensure minimum password age is configured | Warn count"
       when:
         - ubtu24cis_disruption_high
-        - ansible_user in discovered_passwd_min_days.stdout
+        - (ansible_user | default(ansible_env.USER)) in discovered_passwd_min_days.stdout
       ansible.builtin.import_tasks:
         file: warning_facts.yml
 
     - name: "5.4.1.2 | PATCH | Ensure minimum password age is configured | Set existing users PASS_MIN_DAYS"
       when:
         - ubtu24cis_disruption_high
-        - item != (ansible_user)
+        - item != (ansible_user | default(ansible_env.USER))
       ansible.builtin.command: chage --mindays {{ ubtu24cis_pass_min_days }} {{ item }}
       failed_when: false
       changed_when: discovered_passwd_min_days.stdout | length > 0
@@ -128,7 +128,7 @@
     - name: "5.4.1.3 | PATCH | Ensure password expiration warning days is configured | Set existing users PASS_WARN_AGE"
       when:
         - ubtu24cis_disruption_high
-        - item != (ansible_user)
+        - item != (ansible_user | default(ansible_env.USER))
       ansible.builtin.command: chage --warndays {{ ubtu24cis_pass_warn_age }} {{ item }}
       failed_when: false
       changed_when: discovered_passwd_warn_days.stdout | length > 0
