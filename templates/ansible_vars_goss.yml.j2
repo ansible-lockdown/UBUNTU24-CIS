@@ -470,7 +470,7 @@ ubtu24cis_desktop_required: {{ ubtu24cis_desktop_required }}
 ## Section 1
 
 # If system uses squashfs e.gf. snap package manager set true
-ubtu24cis_squashfs_skip:{% if prelim_squashfs_builtin.rc == 0 or prelim_snap_pkg_mgr.rc == 0 %} true{% else %} false{% endif %}
+ubtu24cis_squashfs_skip:{% if (prelim_squashfs_builtin.rc | default(1)) == 0  or (prelim_snap_pkg_mgr.rc | default(1)) == 0 %} true{% else %} false{% endif %}
 
 ## Controls 1.3.1.3 and 1.3.1.4 Ensure all AppArmor Profiles are in enforce (1.3.1.3/4) or complain (1.3.1.3) mode
 
