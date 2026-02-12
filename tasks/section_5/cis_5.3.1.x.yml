@@ -38,3 +38,4 @@
   ansible.builtin.package:
     name: libpam-pwquality
     state: latest
+    lock_timeout: "{{ ubtu24cis_apt_lock_timeout }}"
