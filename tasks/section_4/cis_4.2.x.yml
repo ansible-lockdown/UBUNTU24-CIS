@@ -112,13 +112,13 @@
         direction: out
         proto: "{{ item.proto }}"
         to_port: '{{ item.port }}'
-      loop: "{{ ubtu24cis_ufw_allow_out_ports }}"
+      loop: "{{ ubtu24cis_ufw_allow_out_ports if ubtu24cis_ufw_allow_out_ports != 'all' else [] }}"
       loop_control:
         label: "{{ item.port }}"
       notify: Reload ufw
 
     - name: "4.2.5 | PATCH | Ensure ufw outbound connections are configured | Allow all"
-      when: "'all' in ubtu24cis_ufw_allow_out_ports"
+      when: ubtu24cis_ufw_allow_out_ports == "all"
       community.general.ufw:
         rule: allow
         direction: out
