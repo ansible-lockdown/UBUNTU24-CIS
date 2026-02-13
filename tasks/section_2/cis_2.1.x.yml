@@ -50,7 +50,7 @@
       ansible.builtin.package:
         name:
           - avahi-autoipd
-          - avahi
+          - avahi-daemon
         state: absent
         purge: "{{ ubtu24cis_purge_apt }}"
 
