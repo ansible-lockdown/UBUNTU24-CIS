@@ -56,7 +56,7 @@
         path: "{{ item.path }}"
         owner: root
         group: root
-        mode: 'o-x,go-rwx'
+        mode: 'u-x,go-rwx'
       with_items:
         - "{{ discovered_ssh_host_priv_keys.files }}"
       loop_control:
@@ -84,7 +84,7 @@
         path: "{{ item.path }}"
         owner: root
         group: root
-        mode: 'go-wx'
+        mode: 'u-x,go-wx'
       with_items:
         - "{{ discovered_ssh_host_pub_keys.files }}"
       loop_control:
