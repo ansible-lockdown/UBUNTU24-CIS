@@ -17,7 +17,10 @@
         line: "deny = {{ ubtu24cis_faillock_deny }}"
         insertafter: '^# end of pam-auth-update config'
         create: true
-        mode: 'go-wx'
+        <<: &etc_security_faillock_secure_perms
+          owner: root
+          group: root
+          mode: 'u-x,go-rwx'
 
     - name: "5.3.3.1.1 | AUDIT | Ensure password failed attempts lockout is configured | discover pam config with deny"
       ansible.builtin.shell: grep -Pl -- '\bpam_faillock\.so\h+([^#\n\r]+\h+)?deny\b' /usr/share/pam-configs/*
@@ -50,7 +53,7 @@
         line: "unlock_time = {{ ubtu24cis_faillock_unlock_time }}"
         insertafter: '^# end of pam-auth-update config'
         create: true
-        mode: 'go-wx'
+        <<: *etc_security_faillock_secure_perms
 
     - name: "5.3.3.1.2 | AUDIT | Ensure password unlock time is configured | discover pam config with unlock_time"
       ansible.builtin.shell: grep -Pl -- '\bpam_faillock\.so\h+([^#\n\r]+\h+)?unlock_time\b' /usr/share/pam-configs/*
@@ -83,7 +86,7 @@
         line: "{{ ubtu24cis_pamroot_lock_string }}"
         insertafter: '^# end of pam-auth-update config'
         create: true
-        mode: 'go-wx'
+        <<: *etc_security_faillock_secure_perms
 
     - name: "5.3.3.1.3 | AUDIT | Ensure password failed attempts lockout includes root account | discover pam config with unlock_time"
       ansible.builtin.shell: grep -Pl -- '\bpam_faillock\.so\h+([^#\n\r]+\h+)?(even_deny_root\b|root_unlock_time\s*=\s*\d+\b)' /usr/share/pam-configs/*
