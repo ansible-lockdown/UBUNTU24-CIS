@@ -19,7 +19,7 @@
       failed_when: discovered_pwhistory_remember.rc not in [0, 1]
 
     - name: "5.3.3.3.1 | PATCH | Ensure password number of changed characters is configured | Ensure remember is set"
-      when: discovered_pwhistory_remember.stdout | length > 0
+      when: discovered_pwhistory_remember.stdout | length == 0
       ansible.builtin.lineinfile:
         path: "/{{ ubtu24cis_pam_confd_dir }}{{ ubtu24cis_pam_pwhistory_file }}"
         regexp: ^(password\s+[^#\n\r]+\s+pam_pwhistory\.so\s+)(.*)(remember=\d+)
@@ -46,7 +46,7 @@
       failed_when: discovered_pwhistory_enforce_for_root.rc not in [0, 1]
 
     - name: "5.3.3.3.2 | PATCH | Ensure password history is enforced for the root user | Ensure remember is set"
-      when: discovered_pwhistory_enforce_for_root.stdout | length > 0
+      when: discovered_pwhistory_enforce_for_root.stdout | length == 0
       ansible.builtin.lineinfile:
         path: "/{{ ubtu24cis_pam_confd_dir }}{{ ubtu24cis_pam_pwhistory_file }}"
         regexp: ^(password\s+[^#\n\r]+\s+pam_pwhistory\.so\s+)(.*)(enforce_for_root)
@@ -73,7 +73,7 @@
       failed_when: discovered_pwhistory_use_authtok.rc not in [0, 1]
 
     - name: "5.3.3.3.3 | PATCH | Ensure pam_pwhistory includes use_authtok | Ensure remember is set"
-      when: discovered_pwhistory_use_authtok.stdout | length > 0
+      when: discovered_pwhistory_use_authtok.stdout | length == 0
       ansible.builtin.lineinfile:
         path: "/{{ ubtu24cis_pam_confd_dir }}{{ ubtu24cis_pam_pwhistory_file }}"
         regexp: ^(password\s+[^#\n\r]+\s+pam_pwhistory\.so\s+)(.*)(use_authtok)
