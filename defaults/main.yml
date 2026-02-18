@@ -1093,16 +1093,16 @@ ubtu24cis_journal_trustedcertificatefile:
 # Specify values in bytes or use K, M, G, T, P, E as units for the specified sizes.
 # See https://www.freedesktop.org/software/systemd/man/journald.conf.html for more information.
 # ATTENTION: Uncomment the keyword below when values are set!
-ubtu24cis_journald_systemmaxuse: "#SystemMaxUse="
-ubtu24cis_journald_systemkeepfree: "#SystemKeepFree="
-ubtu24cis_journald_runtimemaxuse: "#RuntimeMaxUse="
-ubtu24cis_journald_runtimekeepfree: "#RuntimeKeepFree="
+ubtu24cis_journald_systemmaxuse: "#SystemMaxUse=1G"
+ubtu24cis_journald_systemkeepfree: "#SystemKeepFree=500M"
+ubtu24cis_journald_runtimemaxuse: "#RuntimeMaxUse=200M"
+ubtu24cis_journald_runtimekeepfree: "#RuntimeKeepFree=50M"
 # This variable specifies, the maximum time to store entries in a single journal
 # file before rotating to the next one. Set to 0 to turn off this feature.
 # The given values is interpreted as seconds, unless suffixed with the units
 # `year`, `month`, `week`, `day`, `h` or `m` to override the default time unit of seconds.
 # ATTENTION: Uncomment the keyword below when values are set!
-ubtu24cis_journald_maxfilesec: "#MaxFileSec="
+ubtu24cis_journald_maxfilesec: "#MaxFileSec=1month"
 
 # 6.1.3.8 LOGRotate
 # Optional to alow logrotate to be installed
