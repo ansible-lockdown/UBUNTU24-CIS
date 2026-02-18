@@ -148,7 +148,6 @@
   ansible.builtin.file:
     path: "{{ item }}"
     owner: root
-    group: root
   loop: "{{ audit_bins }}"
 
 - name: "6.2.4.10 | PATCH | Ensure audit tools group owner is configured"
