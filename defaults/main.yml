@@ -687,7 +687,6 @@ ubtu24cis_apparmor_mode: complain
 # THIS VALUE IS WHAT THE ROOT PW WILL BECOME!!!!!!!!
 # HAVING THAT PW EXPOSED IN RAW TEXT IS NOT SECURE!!!!
 ubtu24cis_grub_user: root
-ubtu24cis_set_grub_user_pass: false
 ubtu24cis_grub_user_file: /etc/grub.d/00_user
 ubtu24cis_bootloader_password_hash: "grub.pbkdf2.sha512.changethispassword"  # pragma: allowlist secret
 ubtu24cis_set_boot_pass: false
