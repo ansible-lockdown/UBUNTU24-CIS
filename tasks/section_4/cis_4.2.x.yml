@@ -112,7 +112,7 @@
         direction: out
         proto: "{{ item.proto }}"
         to_port: '{{ item.port }}'
-      loop: "{{ ubtu24cis_ufw_allow_out_ports }}"
+      loop: "{{ ubtu24cis_ufw_allow_out_ports if 'all' not in ubtu24cis_ufw_allow_out_ports else [] }}"
       loop_control:
         label: "{{ item.port }}"
       notify: Reload ufw
