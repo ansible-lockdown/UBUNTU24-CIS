@@ -86,7 +86,7 @@
         mode: 'go-wx'
 
     - name: "5.3.3.1.3 | AUDIT | Ensure password failed attempts lockout includes root account | discover pam config with unlock_time"
-      ansible.builtin.shell: grep -Pl -- '\bpam_faillock\.so\h+([^#\n\r]+\h+)?(even_deny_root\b|root_unlock_time\s*=\s*\d+\b)' /usr/share/pam-configs/*
+      ansible.builtin.shell: grep -Pl -- '\bpam_faillock\.so\h+([^#\n\r]+\h+)?(even_deny_root|root_unlock_time)' /usr/share/pam-configs/*
       register: discovered_faillock_rootlock_files
       changed_when: false
       failed_when: discovered_faillock_rootlock_files.rc not in [ 0, 1 ]
