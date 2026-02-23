@@ -26,9 +26,9 @@
       ansible.builtin.file:
         path: "{{ item }}"
         mode: 'u-x,g-wx,o-rwx'
-      loop: "{{ discovered_logfiles.stdout_lines }}"
-      failed_when: discovered_file_exists.state not in '[ file, absent ]'
-      register: discovered_file_exists
+      loop: "{{ discovered_logfiles_nottmp.stdout_lines }}"
+      failed_when: discovered_file_exists_nottmp.state not in '[ file, absent ]'
+      register: discovered_file_exists_nottmp
 
     - name: "6.1.4.1 | PATCH | Ensure access to all logfiles has been configured | change permissions"
       when:
@@ -41,6 +41,6 @@
       ansible.builtin.file:
         path: "{{ item }}"
         mode: 'ug-x,o-wx'
-      loop: "{{ discovered_system_logfiles.stdout_lines }}"
-      failed_when: discovered_file_exists.state not in '[ file, absent ]'
-      register: discovered_file_exists
+      loop: "{{ discovered_system_logfiles_tmp.stdout_lines }}"
+      failed_when: discovered_file_exists_tmp.state not in '[ file, absent ]'
+      register: discovered_file_exists_tmp
