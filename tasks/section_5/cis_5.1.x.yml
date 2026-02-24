@@ -343,7 +343,7 @@
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
     regexp: (?i)^(#?)\s*MACs
-    line: "MACs {{ ubtu24cis_sshd_macs | join(',')}}"
+    line: "MACs {{ ubtu24cis_sshd_macs | join(',') }}"
     insertafter: '^# Ciphers and keying'
     validate: 'sshd -t -f %s'
   notify: Restart sshd

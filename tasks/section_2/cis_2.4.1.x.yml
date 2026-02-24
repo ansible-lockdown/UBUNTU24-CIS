@@ -1,4 +1,5 @@
 ---
+
 - name: "2.4.1.1 | PATCH | Ensure cron daemon is enabled and running"
   when: ubtu24cis_rule_2_4_1_1
   tags:
@@ -31,7 +32,7 @@
     path: /etc/crontab
     owner: root
     group: root
-    mode: "go-rwx"
+    mode: 'go-rwx'
 
 - name: "2.4.1.3 | PATCH | Ensure permissions on /etc/cron.hourly are configured"
   when: ubtu24cis_rule_2_4_1_3
@@ -145,13 +146,13 @@
         path: /etc/cron.allow
         owner: root
         group: root
-        mode: "u-x,g-wx,o-rwx"
+        mode: 'u-x,g-wx,o-rwx'
         state: touch
 
-    - name: "2.4.1.8 | PATCH | Ensure cron is restricted to authorized users |  Update cron.allow if exists"
+    - name: "2.4.1.8 | PATCH | Ensure cron is restricted to authorized users | Update cron.allow if exists"
       when: discovered_cron_allow_status.stat.exists
       ansible.builtin.file:
         path: /etc/cron.allow
         owner: root
         group: '{{ (discovered_cron_allow_status.stat.gr_name == "crontab") | ternary(omit, "root") }}'
-        mode: "u-x,g-wx,o-rwx"
+        mode: 'u-x,g-wx,o-rwx'

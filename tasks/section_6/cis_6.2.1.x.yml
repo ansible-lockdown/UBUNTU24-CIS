@@ -17,6 +17,7 @@
   ansible.builtin.package:
     name: ['auditd', 'audispd-plugins']
     state: present
+    lock_timeout: "{{ ubtu24cis_apt_lock_timeout }}"
 
 - name: "6.2.1.2 | PATCH | Ensure auditd service is enabled and active"
   when: ubtu24cis_rule_6_2_1_2
@@ -52,18 +53,18 @@
       changed_when: false
       failed_when: false
       check_mode: false
-      register: discovered_grub_cmdline_settings
+      register: discovered_grub_cmdline_settings_auditd
 
     - name: "6.2.1.3 | PATCH | Ensure auditing for processes that start prior to auditd is enabled | Add setting if doesn't exist"
-      when: "'audit=' not in discovered_grub_cmdline_settings.stdout"
+      when: "'audit=' not in discovered_grub_cmdline_settings_auditd.stdout"
       ansible.builtin.lineinfile:
         path: /etc/default/grub
         regexp: '^GRUB_CMDLINE_LINUX='
-        line: 'GRUB_CMDLINE_LINUX="{{ discovered_grub_cmdline_settings.stdout }} audit=1"'
+        line: 'GRUB_CMDLINE_LINUX="{{ discovered_grub_cmdline_settings_auditd.stdout }} audit=1"'
       notify: Grub update
 
     - name: "6.2.1.3 | PATCH | Ensure auditing for processes that start prior to auditd is enabled | Update setting if exists"
-      when: "'audit=' in discovered_grub_cmdline_settings.stdout"
+      when: "'audit=' in discovered_grub_cmdline_settings_auditd.stdout"
       ansible.builtin.replace:
         dest: /etc/default/grub
         regexp: 'audit=([0-9]+)'

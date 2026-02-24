@@ -15,6 +15,7 @@
     name: nis
     state: absent
     purge: "{{ ubtu24cis_purge_apt }}"
+    lock_timeout: "{{ ubtu24cis_apt_lock_timeout }}"
 
 - name: "2.2.2 | PATCH | Ensure rsh client is not installed"
   when:
@@ -31,6 +32,7 @@
     name: rsh-client
     state: absent
     purge: "{{ ubtu24cis_purge_apt }}"
+    lock_timeout: "{{ ubtu24cis_apt_lock_timeout }}"
 
 - name: "2.2.3 | PATCH | Ensure talk client is not installed"
   when:
@@ -47,6 +49,7 @@
     name: talk
     state: absent
     purge: "{{ ubtu24cis_purge_apt }}"
+    lock_timeout: "{{ ubtu24cis_apt_lock_timeout }}"
 
 - name: "2.2.4 | PATCH | Ensure telnet client is not installed"
   when:
@@ -66,6 +69,7 @@
       - inetutils-telnet
     state: absent
     purge: "{{ ubtu24cis_purge_apt }}"
+    lock_timeout: "{{ ubtu24cis_apt_lock_timeout }}"
 
 - name: "2.2.5 | PATCH | Ensure ldap client is not installed"
   when:
@@ -82,6 +86,7 @@
     name: ldap-utils
     state: absent
     purge: "{{ ubtu24cis_purge_apt }}"
+    lock_timeout: "{{ ubtu24cis_apt_lock_timeout }}"
 
 - name: "2.2.6 | PATCH | Ensure ftp is not installed"
   when:
@@ -101,3 +106,4 @@
       - tnftp
     state: absent
     purge: "{{ ubtu24cis_purge_apt }}"
+    lock_timeout: "{{ ubtu24cis_apt_lock_timeout }}"

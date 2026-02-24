@@ -19,6 +19,7 @@
       ansible.builtin.package:
         name: git
         state: present
+        lock_timeout: "{{ ubtu24cis_apt_lock_timeout }}"
 
     - name: Pre Audit Setup | Retrieve audit content files from git
       ansible.builtin.git:
@@ -85,11 +86,11 @@
     - name: Pre Audit | Capture audit data if json format
       ansible.builtin.shell: grep -E '\"summary-line.*Count:.*Failed' "{{ pre_audit_outfile }}" | cut -d'"' -f4
       changed_when: false
-      register: pre_audit_summary
+      register: pre_audit_summary_json
 
     - name: Pre Audit | Set Fact for audit summary
       ansible.builtin.set_fact:
-        pre_audit_results: "{{ pre_audit_summary.stdout }}"
+        pre_audit_results: "{{ pre_audit_summary_json.stdout }}"
 
 - name: Pre Audit | Capture audit data if documentation format
   when: audit_format == "documentation"
@@ -97,11 +98,11 @@
     - name: Pre Audit | Capture audit data if documentation format
       ansible.builtin.shell: tail -2 "{{ pre_audit_outfile }}"  | tac | tr '\n' ' '
       changed_when: false
-      register: pre_audit_summary
+      register: pre_audit_summary_documentation
 
     - name: Pre Audit | Set Fact for audit summary
       ansible.builtin.set_fact:
-        pre_audit_results: "{{ pre_audit_summary.stdout }}"
+        pre_audit_results: "{{ pre_audit_summary_documentation.stdout }}"
 
 - name: Audit_Only | Run Audit Only
   when: audit_only
