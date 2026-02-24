@@ -12,6 +12,11 @@ ignore*
 # VSCode
 .vscode
 vagrant
+qa_report.md
+prompt.md
+plan.md
+history.md
+*.pdf
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

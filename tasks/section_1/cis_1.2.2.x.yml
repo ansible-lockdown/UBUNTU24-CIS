@@ -14,6 +14,7 @@
       ansible.builtin.package:
         name: "*"
         state: latest
+        lock_timeout: "{{ ubtu24cis_apt_lock_timeout }}"
       register: discovered_pkg_updates
 
     # Resetting connection as ssh stops if patched reset connection kickstarts it

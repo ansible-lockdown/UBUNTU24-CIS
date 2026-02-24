@@ -17,12 +17,15 @@
       ansible.builtin.package:
         name: "{{ ubtu24cis_time_sync_tool }}"
         state: present
+        lock_timeout: "{{ ubtu24cis_apt_lock_timeout }}"
 
     - name: "2.3.1.1 | PATCH | Ensure a single time synchronization daemon is in use | other pkgs removed"
       when: item != ubtu24cis_time_sync_tool
       ansible.builtin.package:
         name: "{{ item }}"
         state: absent
+        purge: "{{ ubtu24cis_purge_apt }}"
+        lock_timeout: "{{ ubtu24cis_apt_lock_timeout }}"
       loop:
         - chrony
         - ntp
