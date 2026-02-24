@@ -149,18 +149,21 @@ Note: More tests are run during audit as we check config and running state.
 
 ```txt
 
-ok: [default] => {
+ok: [ubuntu2404] => {
     "msg": [
-        "msg": [
-        "The pre remediation audit results are: Count: 763, Failed: 234, Skipped: 4, Duration: 9.741s",
-        "The post remediation audit results are: Count: 763, Failed: 19, Skipped: 4, Duration: 12.725s",
+        "The pre remediation audit results are: Count: 778, Failed: 330, Skipped: 38, Duration: 9.955s",
+        "The post remediation audit results are: Count: 778, Failed: 26, Skipped: 5, Duration: 4.239s",
         "Full breakdown can be found in /opt",
         ""
     ]
 }
+TASK [UBUNTU24-CIS : If Warnings found Output count and control IDs affected] ***
+ok: [ubuntu2404] => {
+    "msg": "You have 8 Warning(s) that require investigating that are related to the following benchmark ID(s)  [1.1.1.10] [1.2.1.1] [1.2.1.2] [2.1.21] [2.1.22] [4.2.6] [5.4.1.1] [5.4.1.2]"
+}
 
-PLAY RECAP *******************************************************************************************************************************************
-default                    : ok=270  changed=23   unreachable=0    failed=0    skipped=140  rescued=0    ignored=0
+PLAY RECAP ***********************************************************************************
+ubuntu2404                 : ok=447  changed=225  unreachable=0    failed=0    skipped=278  rescued=0    ignored=0
 ```
 
 ## Documentation 📖
