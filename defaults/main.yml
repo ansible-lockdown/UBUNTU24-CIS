@@ -842,6 +842,9 @@ ubtu24cis_time_servers:
   - name: time-c-g.nist.gov
     options: iburst
 
+# List of users, allowed to use cron
+ubtu24cis_cron_allow_users: []
+
 ##
 ## Section 3 Control Variables
 ##
