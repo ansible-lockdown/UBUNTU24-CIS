@@ -141,17 +141,18 @@
 
     - name: "2.4.1.8 | PATCH | Ensure cron is restricted to authorized users | Create cron.allow if doesn't exist"
       when: not discovered_cron_allow_status.stat.exists
-      ansible.builtin.file:
-        path: /etc/cron.allow
+      ansible.builtin.copy:
+        dest: /etc/cron.allow
+        content: "{{ (ubtu24cis_cron_allow_users | default([])) | join('\n') ~ '\n' }}"
         owner: root
         group: root
         mode: "u-x,g-wx,o-rwx"
-        state: touch
 
     - name: "2.4.1.8 | PATCH | Ensure cron is restricted to authorized users |  Update cron.allow if exists"
       when: discovered_cron_allow_status.stat.exists
-      ansible.builtin.file:
-        path: /etc/cron.allow
+      ansible.builtin.copy:
+        dest: /etc/cron.allow
+        content: "{{ (ubtu24cis_cron_allow_users | default([])) | join('\n') ~ '\n' }}"
         owner: root
         group: '{{ (discovered_cron_allow_status.stat.gr_name == "crontab") | ternary(omit, "root") }}'
         mode: "u-x,g-wx,o-rwx"
