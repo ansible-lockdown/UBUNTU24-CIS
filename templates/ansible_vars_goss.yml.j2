@@ -470,7 +470,7 @@ ubtu24cis_desktop_required: {{ ubtu24cis_desktop_required }}
 ## Section 1
 
 # If system uses squashfs e.gf. snap package manager set true
-ubtu24cis_squashfs_skip:{% if prelim_squashfs_builtin.rc == 0 or prelim_snap_pkg_mgr.rc == 0 %} true{% else %} false{% endif %}
+ubtu24cis_squashfs_skip:{% if (prelim_squashfs_builtin.rc | default(1)) == 0  or (prelim_snap_pkg_mgr.rc | default(1)) == 0 %} true{% else %} false{% endif %}
 
 ## Controls 1.3.1.3 and 1.3.1.4 Ensure all AppArmor Profiles are in enforce (1.3.1.3/4) or complain (1.3.1.3) mode
 
@@ -488,7 +488,7 @@ ubtu24cis_bootloader_password_hash: {{ ubtu24cis_bootloader_password_hash }}  # 
 
 ## Controls 1.5.x
 
-## Controls 1.6.x  - Warning banners
+## Controls 1.6.x - Warning banners
 # The controls 1.6.x set various warning banners and protect the respective files
 # by tightening the access rights.
 
@@ -570,7 +570,7 @@ ubtu24cis_xwindow_server: {{ ubtu24cis_xwindow_server }}  # will remove mask not
 ubtu24cis_is_mail_server: {{ ubtu24cis_is_mail_server }}
 
 # Client Services
-ubtu24cis_nis_client_required: {{ ubtu24cis_nis_client_required }}  # Same package as NIS server
+ubtu24cis_nis_client_required: {{ ubtu24cis_nis_server }}  # Same package as NIS server
 ubtu24cis_rsh_client: {{ ubtu24cis_rsh_client }}
 ubtu24cis_talk_client: {{ ubtu24cis_talk_client }}
 ubtu24cis_telnet_required: {{ ubtu24cis_telnet_required }}
@@ -583,7 +583,7 @@ ubtu24cis_ftp_client: {{ ubtu24cis_ftp_client }}
 ubtu24cis_time_sync_tool: {{ ubtu24cis_time_sync_tool }}
 
 ## Controls 2.3.x - Configure time pools & servers for chrony and timesyncd
-# The following variable represents a list of of time server pools used
+# The following variable represents a list of time server pools used
 # for configuring chrony and timesyncd.
 # Each list item contains two settings, `name` (the domain name of the pool) and synchronization `options`.
 # The default setting for the `options` is `iburst maxsources 4` -- please refer to the documentation
@@ -594,7 +594,7 @@ ubtu24cis_time_pool:
   options: {{ pool.options }}
 {% endfor %}
 
-# The following variable represents a list of of time servers used
+# The following variable represents a list of time servers used
 # for configuring chrony and timesyncd
 # Each list item contains two settings, `name` (the domain name of the server) and synchronization `options`.
 # The default setting for the `options` is `iburst` -- please refer to the documentation
@@ -612,11 +612,11 @@ ubtu24cis_time_servers:
 ubtu24cis_ipv6_disable: {{ ubtu24cis_ipv6_disable }}
 
 ## Control 3.1.3 - Ensure bluetooth Services are not in use
-# This control managed how the bluetooth service is managaed
+# This control managed how the bluetooth service is managed
 # Options are
 # true to leave installed if exists not changes take place
 # false - this removes the package
-# mask - if a dependancy for product so cannot be removed
+# mask - if a dependency for product so cannot be removed
 ubtu24cis_bluetooth_service: {{ ubtu24cis_bluetooth_service }}
 ubtu24cis_bluetooth_mask: {{ ubtu24cis_bluetooth_mask }}
 

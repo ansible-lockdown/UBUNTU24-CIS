@@ -2,7 +2,50 @@
 
 ## Based on CIS v1.0.0
 
-## based on benchmark CIS 1.0.0
+## Based on CIS v1.0.0
+
+# 2026 issue fixes
+.gitignore update
+lint and variable naming
+
+Thanks to @bykdaadm
+- #141 - 2.1.2 damon name
+- #142 - ssh keys typo fix
+- #143 - remove extended permissions
+- #144 - tighten permissions on faillock
+- #145 - 5.3.3.1.3 aligned command with CIS benchmark
+- #146 - 5.3.3.3.x aligned
+- #147 - 5.3.2 and 5.3.3.3.x pwhistory generation tidy up
+- #149 - tidy up journald params
+- #150 - 6.2.4.9 remove group from task
+
+# 2026 Feb QA updates Benchmark 1.0.0
+- Repo Checker QA fixes
+- Grammar fixes: removed multiple consecutive spaces across defaults, tasks, and templates
+- Grammar fixes: corrected repeated words ('is is', 'the the', 'of of', 'can must')
+- Grammar fixes: fixed subject-verb disagreements in comments
+- Added missing variable ubtu24cis_priv_command_excluded_mounts
+- Added missing rule definition ubtu24cis_rule_4_4_1_4
+- Updated audit URL reference from RHEL8 to UBUNTU24
+- workflow updates
+- company name alignments
+- date updates
+- lint improvements
+- thanks to @bykvaadm
+  - #136
+  - #138
+  - #139
+- #137 thanks to @tmeckel
+
+### Jan26 updates
+pre-commit
+#92 readdressed thanks to @bizrad and @jbruno
+#127 addressed thanks to @rronneburger incl #84
+#129 addressed thanks to @stelucz
+#131 thanks to @Jurka007
+
+### Dec26_updates
+
 precommit update Public issues address
 
 4.2.5 ufw port variables and improvements to include ntp and protocol options

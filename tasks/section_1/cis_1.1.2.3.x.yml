@@ -1,4 +1,5 @@
 ---
+
 - name: "1.1.2.3.1 | PATCH | Ensure /home is a separate partition"
   when:
     - ubtu24cis_rule_1_1_2_3_1
@@ -21,12 +22,12 @@
       register: discovered_home_mount
 
     - name: "1.1.2.3.1 | AUDIT | Ensure /home is a separate partition | Absent"
-      when: discovered_dev_shm_mount is undefined
+      when: discovered_home_mount is undefined or discovered_home_mount.stdout_lines == []
       ansible.builtin.debug:
         msg: "Warning!! {{ required_mount }} is not mounted on a separate partition"
 
     - name: "1.1.2.3.1 | AUDIT | Ensure /home is a separate partition | Present"
-      when: discovered_dev_shm_mount is undefined
+      when: discovered_home_mount is undefined or discovered_home_mount.stdout_lines == []
       ansible.builtin.import_tasks:
         file: warning_facts.yml
 

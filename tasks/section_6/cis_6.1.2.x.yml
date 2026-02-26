@@ -16,6 +16,7 @@
   ansible.builtin.package:
     name: systemd-journal-remote
     state: present
+    lock_timeout: "{{ ubtu24cis_apt_lock_timeout }}"
 
 - name: "6.1.2.1.2 | PATCH | Ensure systemd-journal-upload authentication is configured"
   when:
