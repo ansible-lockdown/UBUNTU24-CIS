@@ -58,3 +58,19 @@
         name: chrony
         state: started
         enabled: true
+
+    - name: "2.3.3.3 | PATCH | Ensure chrony is enabled and running | disable other time sources | systemd-timesyncd"
+      when: "'chrony' in ansible_facts.packages"
+      ansible.builtin.systemd:
+        name: systemd-timesyncd
+        state: "{{ ('systemd-timesyncd' in ansible_facts.packages) | ternary('stopped', omit) }}"
+        enabled: "{{ ('systemd-timesyncd' in ansible_facts.packages) | ternary(false, omit) }}"
+        masked: true
+
+    - name: "2.3.3.3 | PATCH | Ensure chrony is enabled and running | disable other time sources | ntp"
+      when: "'ntp' in ansible_facts.packages"
+      ansible.builtin.systemd:
+        name: ntp
+        state: "{{ ('ntp' in ansible_facts.packages) | ternary('stopped', omit) }}"
+        enabled: "{{ ('ntp' in ansible_facts.packages) | ternary(false, omit) }}"
+        masked: true
