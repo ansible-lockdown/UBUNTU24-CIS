@@ -598,8 +598,18 @@ ubtu24cis_debug_mount_data: false
 ## Control 1.1.2.x
 # If set to `true`, rule will be implemented using the `tmp.mount` systemd-service,
 # otherwise fstab configuration will be used.
-# These /tmp settings will include nosuid,nodev,noexec to conform to CIS standards.
+# Default value is `false`, which means that the fstab configuration will be used for /tmp partition.
+# If set to `true`, mount options for /tmp can be set using the `tmp_partition_mount_options` variable below.
 ubtu24cis_tmp_svc: false
+
+## Control 1.1.2.x - tmp_partition_mount_options
+# When `ubtu24cis_tmp_svc` is set to `true`, the mount options for /tmp will be set in the `tmp.mount` systemd-service.
+# This variable only applies if `ubtu24cis_tmp_svc` is set to `true`.
+# Default value is `nosuid,nodev,noexec`, which is the recommended setting for /tmp according to CIS standards.
+tmp_partition_mount_options:
+  - nosuid
+  - nodev
+  - noexec
 
 ## Controls 1.3.1.x - apparmor
 # AppArmor security policies define what system resources applications can access and their privileges.
