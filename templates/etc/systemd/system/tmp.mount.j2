@@ -1,3 +1,4 @@
+{{ file_managed_by_ansible }}
 [Unit]
 Description=Temporary Directory /tmp
 ConditionPathIsSymbolicLink=!/tmp
@@ -11,7 +12,7 @@ What=tmpfs
 Where=/tmp
 Type=tmpfs
 
-Options: {{ tmp_partition_mount_options | unique | join(',') }}
+Options={{ ubtu24cis_tmp_partition_mount_options | unique | join(',') }}
 
 [Install]
 WantedBy=local-fs.target

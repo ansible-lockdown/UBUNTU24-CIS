@@ -47,6 +47,8 @@
   with_items:
     - { regexp: '^disk_full_action', line: "disk_full_action = {{ ubtu24cis_auditd_disk_full_action }}" }
     - { regexp: '^disk_error_action', line: "disk_error_action = {{ ubtu24cis_auditd_disk_error_action }}" }
+  loop_control:
+    label: "{{ item }}"
   notify: Restart auditd
 
 - name: "6.2.2.4 | PATCH | Ensure system warns when audit logs are low on space"
@@ -68,4 +70,6 @@
   loop:
     - { regexp: '^admin_space_left_action', line: 'admin_space_left_action = {{ ubtu24cis_auditd_admin_space_left_action }}' }
     - { regexp: '^space_left_action', line: 'space_left_action = {{ ubtu24cis_auditd_space_left_action }}' }
+  loop_control:
+    label: "{{ item }}"
   notify: Restart auditd

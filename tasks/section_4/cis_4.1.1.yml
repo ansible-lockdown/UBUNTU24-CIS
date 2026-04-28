@@ -12,9 +12,14 @@
     warn_control_id: '4.1.1'
   block:
     - name: "4.1.1 | AUDIT | Ensure a single firewall configuration utility is in use | Check packages"
-      ansible.builtin.shell: dpkg-query -l | grep -Ec "^ii\s*ufw|^ii\s*iptables|^ii\s*nftables"
+      ansible.builtin.shell: |
+        set -o pipefail
+        dpkg-query -l | grep -Ec "^ii\s*ufw|^ii\s*iptables|^ii\s*nftables"
+      args:
+        executable: /bin/bash
       changed_when: false
       failed_when: discovered_firewall_pkgs.rc not in [ 0, 1 ]
+      check_mode: false
       register: discovered_firewall_pkgs
 
     - name: "4.1.1 | AUDIT | Ensure a single firewall configuration utility is in use | Check enabled"
@@ -22,6 +27,7 @@
       ansible.builtin.shell: |
         for svc in ufw nftables iptables; do if [ "$(systemctl is-enabled $svc | grep enabled &> /dev/null)" ]; then fw_enabled=$(( fw_enabled +1 )); fi; done; echo $fw_enabled
       changed_when: false
+      check_mode: false
       register: discovered_enabled_firewalls
       environment:
         fw_enabled: '0'

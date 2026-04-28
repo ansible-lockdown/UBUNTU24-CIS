@@ -1,0 +1,49 @@
+---
+
+# This is a playbook to test the tasks.
+- name: Converge
+  hosts: all
+  gather_facts: true
+
+  vars:
+    role_name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+    ansible_user: root
+    system_is_container: true
+    ubtu24cis_skip_for_test: true
+    setup_audit: true
+    run_audit: true
+    # Bootloader/GRUB - not applicable in containers
+    ubtu24cis_set_boot_pass: false
+    ubtu24cis_bootloader_password_hash: "grub.pbkdf2.sha512.10000.DEADBEEF.DEADBEEF"  # pragma: allowlist secret
+    # Disable GRUB/bootloader rules (no bootloader in containers)
+    ubtu24cis_rule_1_3_1_1: false
+    ubtu24cis_rule_1_3_1_2: false
+    ubtu24cis_rule_1_3_1_3: false
+    ubtu24cis_rule_1_3_1_4: false
+    ubtu24cis_rule_1_4_1: false
+    ubtu24cis_rule_1_4_2: false
+    # Auditd - cannot run in containers (no kernel audit subsystem)
+    ubtu24cis_rule_6_2_1_2: false
+    ubtu24cis_rule_6_2_1_3: false
+    ubtu24cis_rule_6_2_1_4: false
+
+  pre_tasks:
+    - name: Set root password for GRUB user check
+      ansible.builtin.shell: echo 'root:MoleculeTest123!' | chpasswd
+      changed_when: true
+
+    - name: Create /etc/default/grub stub for container
+      ansible.builtin.copy:
+        dest: /etc/default/grub
+        content: |
+          # Stub grub config for molecule container testing
+          GRUB_DEFAULT=0
+          GRUB_TIMEOUT=5
+          GRUB_CMDLINE_LINUX_DEFAULT=""
+          GRUB_CMDLINE_LINUX=""
+        mode: '0644'
+
+  tasks:
+    - name: "Include tasks"
+      ansible.builtin.include_role:
+        name: "{{ role_name }}"

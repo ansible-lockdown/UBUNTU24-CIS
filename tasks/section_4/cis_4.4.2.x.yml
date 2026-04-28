@@ -48,6 +48,8 @@
         - INPUT
         - FORWARD
         - OUTPUT
+      loop_control:
+        label: "{{ item }}"
 
 - name: "4.4.2.2 | PATCH | Ensure iptables loopback traffic is configured"
   when:
@@ -115,6 +117,8 @@
     - { chain: INPUT, protocol: tcp, ctstate: 'ESTABLISHED' }
     - { chain: INPUT, protocol: udp, ctstate: 'ESTABLISHED' }
     - { chain: INPUT, protocol: icmp, ctstate: 'ESTABLISHED' }
+  loop_control:
+    label: "{{ item }}"
 
 - name: "4.4.2.4 | AUDIT | Ensure iptables firewall rules exist for all open ports"
   when:
@@ -135,14 +139,14 @@
     - name: "4.4.2.4 | AUDIT | Ensure iptables firewall rules exist for all open ports | Get list of open ports"
       ansible.builtin.command: ss -4tuln
       changed_when: false
-      failed_when: false
+      failed_when: discovered_open_ports.rc not in [0, 1]
       check_mode: false
       register: discovered_open_ports
 
     - name: "4.4.2.4 | AUDIT | Ensure iptables firewall rules exist for all open ports | Get list of rules"
       ansible.builtin.command: iptables -L INPUT -v -n
       changed_when: false
-      failed_when: false
+      failed_when: discovered_current_rules.rc not in [0, 1]
       check_mode: false
       register: discovered_current_rules
 

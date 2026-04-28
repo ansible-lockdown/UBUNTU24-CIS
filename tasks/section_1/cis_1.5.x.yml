@@ -1,6 +1,6 @@
 ---
 
-- name: "1.5.1 | PATCH | Ensure address space layout randomization (ASLR) is enabled | Set active kernel parameter"
+- name: "1.5.1 | PATCH | Ensure address space layout randomization is enabled | Set active kernel parameter"
   when: ubtu24cis_rule_1_5_1
   tags:
     - level1-server
@@ -88,6 +88,8 @@
       loop:
         - { regexp: '^Storage', line: 'Storage=none' }
         - { regexp: '^ProcessSizeMax', line: 'ProcessSizeMax=0' }
+      loop_control:
+        label: "{{ item }}"
 
 - name: "1.5.4 | PATCH | Ensure prelink is not installed"
   when:
@@ -136,8 +138,7 @@
         mode: 'go-r'
 
     - name: "1.5.5 | PATCH | Ensure Automatic Error Reporting is not enabled | remove package"
-      when:
-        - "'apport' in ansible_facts.packages"
+      when: "'apport' in ansible_facts.packages"
       ansible.builtin.package:
         name: apport
         state: absent

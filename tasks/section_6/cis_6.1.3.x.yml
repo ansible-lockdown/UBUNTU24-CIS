@@ -18,8 +18,9 @@
   ansible.builtin.package:
     name: rsyslog
     state: present
+    lock_timeout: "{{ ubtu24cis_apt_lock_timeout }}"
 
-- name: "6.1.3.2 | PATCH | Ensure rsyslog service is enabled"
+- name: "6.1.3.2 | PATCH | Ensure rsyslog service is enabled and active"
   when: ubtu24cis_rule_6_1_3_2
   tags:
     - level1-server
@@ -73,7 +74,7 @@
     line: '$FileCreateMode 0640'
   notify: Restart syslog service
 
-- name: "6.1.3.5 | PATCH | Ensure logging is configured"
+- name: "6.1.3.5 | PATCH | Ensure rsyslog logging is configured"
   when: ubtu24cis_rule_6_1_3_5
   tags:
     - level1-server
@@ -88,33 +89,37 @@
   vars:
     warn_control_id: '6.1.3.5'
   block:
-    - name: "6.1.3.5 | AUDIT | Ensure logging is configured | Find configuration file"
-      ansible.builtin.shell: grep -r "*.emerg" /etc/* | cut -f1 -d":"
+    - name: "6.1.3.5 | AUDIT | Ensure rsyslog logging is configured | Find configuration file"
+      ansible.builtin.shell: |
+        set -o pipefail
+        grep -r "*.emerg" /etc/* | cut -f1 -d":"
+      args:
+        executable: /bin/bash
       changed_when: false
-      failed_when: false
+      failed_when: discovered_rsyslog_config_path.rc not in [0, 1]
       check_mode: false
       register: discovered_rsyslog_config_path
 
-    - name: "6.1.3.5 | AUDIT | Ensure logging is configured | Gather rsyslog current config"
+    - name: "6.1.3.5 | AUDIT | Ensure rsyslog logging is configured | Gather rsyslog current config"
       ansible.builtin.command: "cat {{ discovered_rsyslog_config_path.stdout }}"
       changed_when: false
-      failed_when: false
+      failed_when: discovered_rsyslog_config.rc not in [0, 1]
       check_mode: false
       register: discovered_rsyslog_config
 
-    - name: "6.1.3.5 | AUDIT | Ensure logging is configured | Message out config"
+    - name: "6.1.3.5 | AUDIT | Ensure rsyslog logging is configured | Message out config"
       when: not ubtu24cis_rsyslog_ansible_managed
       ansible.builtin.debug:
         msg:
           - "Warning!! Below is the current logging configurations for rsyslog, please review"
           - "{{ discovered_rsyslog_config.stdout_lines }}"
 
-    - name: "6.1.3.5 | PATCH | Ensure logging is configured | Set warning count"
+    - name: "6.1.3.5 | PATCH | Ensure rsyslog logging is configured | Set warning count"
       when: not ubtu24cis_rsyslog_ansible_managed
       ansible.builtin.import_tasks:
         file: warning_facts.yml
 
-    - name: "6.1.3.5 | PATCH | Ensure logging is configured | Automated rsyslog configuration"
+    - name: "6.1.3.5 | PATCH | Ensure rsyslog logging is configured | Automated rsyslog configuration"
       when: ubtu24cis_rsyslog_ansible_managed
       ansible.builtin.lineinfile:
         path: "{{ discovered_rsyslog_config_path.stdout }}"
@@ -193,4 +198,6 @@
       with_items:
         - { regexp: '^\$ModLoad|^#\$ModLoad', line: '$ModLoad imtcp' }
         - { regexp: '^\$InputTCPServerRun|^#\$InputTCPServerRun', line: '$InputTCPServerRun 514' }
+      loop_control:
+        label: "{{ item }}"
       notify: Restart syslog service
