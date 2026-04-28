@@ -1,6 +1,5 @@
 ---
-
-- name: "2.4.1.1 | PATCH | Ensure cron daemon is enabled and running"
+- name: "2.4.1.1 | PATCH | Ensure cron daemon is enabled and active"
   when: ubtu24cis_rule_2_4_1_1
   tags:
     - level1-server
@@ -119,7 +118,7 @@
     mode: "u+x,go-rwx"
     state: directory
 
-- name: "2.4.1.8 | PATCH | Ensure cron is restricted to authorized users"
+- name: "2.4.1.8 | PATCH | Ensure crontab is restricted to authorized users"
   when: ubtu24cis_rule_2_4_1_8
   tags:
     - level1-server
@@ -130,17 +129,17 @@
     - NIST800-53R5_MP-2
     - cron
   block:
-    - name: "2.4.1.8 | PATCH | Ensure cron is restricted to authorized users | Remove cron.deny"
+    - name: "2.4.1.8 | PATCH | Ensure crontab is restricted to authorized users | Remove cron.deny"
       ansible.builtin.file:
         path: /etc/cron.deny
         state: absent
 
-    - name: "2.4.1.8 | PATCH | Ensure cron is restricted to authorized users | Check for cron.allow"
+    - name: "2.4.1.8 | PATCH | Ensure crontab is restricted to authorized users | Check for cron.allow"
       ansible.builtin.stat:
         path: /etc/cron.allow
       register: discovered_cron_allow_status
 
-    - name: "2.4.1.8 | PATCH | Ensure cron is restricted to authorized users | Create cron.allow if doesn't exist"
+    - name: "2.4.1.8 | PATCH | Ensure crontab is restricted to authorized users | Create cron.allow if doesn't exist"
       when: not discovered_cron_allow_status.stat.exists
       ansible.builtin.copy:
         dest: /etc/cron.allow
@@ -149,11 +148,10 @@
         group: root
         mode: "u-x,g-wx,o-rwx"
 
-    - name: "2.4.1.8 | PATCH | Ensure cron is restricted to authorized users | Update cron.allow if exists"
+    - name: "2.4.1.8 | PATCH | Ensure crontab is restricted to authorized users | Update cron.allow if exists"
       when: discovered_cron_allow_status.stat.exists
-      ansible.builtin.copy:
-        dest: /etc/cron.allow
-        content: "{{ (ubtu24cis_cron_allow_users | default([])) | join('\n') ~ '\n' }}"
+      ansible.builtin.file:
+        path: /etc/cron.allow
         owner: root
         group: '{{ (discovered_cron_allow_status.stat.gr_name == "crontab") | ternary(omit, "root") }}'
         mode: 'u-x,g-wx,o-rwx'

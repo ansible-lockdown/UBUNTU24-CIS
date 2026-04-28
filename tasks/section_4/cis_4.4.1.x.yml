@@ -15,8 +15,9 @@
   ansible.builtin.package:
     name: ['iptables', 'iptables-persistent']
     state: present
+    lock_timeout: "{{ ubtu24cis_apt_lock_timeout }}"
 
-- name: "4.4.1.2 | PATCH | Ensure nftables is not installed with iptables"
+- name: "4.4.1.2 | PATCH | Ensure nftables is not in use with iptables"
   when:
     - ubtu24cis_rule_4_4_1_2
     - ubtu24cis_firewall_package == "iptables"
@@ -34,7 +35,7 @@
     purge: "{{ ubtu24cis_purge_apt }}"
     lock_timeout: "{{ ubtu24cis_apt_lock_timeout }}"
 
-- name: "4.4.1.3 | PATCH | Ensure ufw is uninstalled or disabled with iptables"
+- name: "4.4.1.3 | PATCH | Ensure ufw is not in use with iptables"
   when:
     - ubtu24cis_rule_4_4_1_3
     - ubtu24cis_firewall_package == "iptables"
@@ -49,3 +50,5 @@
   ansible.builtin.package:
     name: ufw
     state: absent
+    purge: "{{ ubtu24cis_purge_apt }}"
+    lock_timeout: "{{ ubtu24cis_apt_lock_timeout }}"

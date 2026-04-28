@@ -34,6 +34,7 @@ ubtu24cis_rule_6_2_1_4: false
 ubtu24cis_rule_6_2_2_1: false
 ubtu24cis_rule_6_2_2_2: false
 ubtu24cis_rule_6_2_2_3: false
+ubtu24cis_rule_6_2_2_4: false
 # Auditd rules
 ubtu24cis_rule_6_2_3_1: false
 ubtu24cis_rule_6_2_3_2: false

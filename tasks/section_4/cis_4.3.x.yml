@@ -27,7 +27,7 @@
       ansible.builtin.import_tasks:
         file: warning_facts.yml
 
-- name: "4.3.2 | AUDIT | Ensure ufw is not in use with nftables"
+- name: "4.3.2 | AUDIT | Ensure ufw is uninstalled or disabled with nftables"
   when:
     - ubtu24cis_rule_4_3_2
     - ubtu24cis_firewall_package == "nftables"
@@ -41,14 +41,14 @@
   vars:
     warn_control_id: '4.3.2'
   block:
-    - name: "4.3.2 | AUDIT | Ensure ufw is not in use with nftables | Message out warning"
+    - name: "4.3.2 | AUDIT | Ensure ufw is uninstalled or disabled with nftables | Message out warning"
       ansible.builtin.debug:
         msg: "Warning!! NFTables is not supported in this role. Please use UFW, iptables, or manually manage nftables"
         # ansible.builtin.package:
         #     name: ufw
         #     state: absent
 
-    - name: "4.3.2 | AUDIT | Ensure ufw is not in use with nftables | Set warning count"
+    - name: "4.3.2 | AUDIT | Ensure ufw is uninstalled or disabled with nftables | Set warning count"
       ansible.builtin.import_tasks:
         file: warning_facts.yml
 
@@ -97,7 +97,7 @@
         msg: "Warning!! NFTables is not supported in this role. Please use UFW, iptables, or manually manage nftables | Message out warning"
         # ansible.builtin.shell: "nft create table {{ ubtu24cis_nftables_table_name }}"
         # changed_when: discovered_new_nftable.rc == 0
-        # failed_when: false
+        failed_when: #  discovered_new_nftable.rc not in [0, 1]
         # check_mode: false
         # register: discovered_new_nftable
 

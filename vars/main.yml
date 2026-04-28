@@ -1,6 +1,6 @@
 ---
 
-min_ansible_version: 2.12.1
+min_ansible_version: 2.16.1
 # Set default value for reboot value
 change_requires_reboot: false
 # The role discovers dynamically (in tasks/main.yml) whether it
@@ -25,7 +25,7 @@ audit_bins:
   - /sbin/auditd
   - /sbin/augenrules
 
-company_title: 'Mindpoint Group - A Tyto Athene Company'
+company_title: 'MindPoint Group - A Tyto Athene Company'
 file_managed_by_ansible: |-
   # File managed by ansible as part of {{ benchmark }} benchmark
   # As part of Ansible-lockdown

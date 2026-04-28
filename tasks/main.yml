@@ -21,11 +21,16 @@
     - ubtu24cis_rule_5_2_4
     - ansible_env.SUDO_USER is defined
   tags: always
+  no_log: true
   block:
     - name: "Capture current password state of connecting user"
-      ansible.builtin.shell: "grep -w {{ ansible_env.SUDO_USER }} /etc/shadow | awk -F: '{print $2}'"
+      ansible.builtin.shell: |
+        set -o pipefail
+        grep -w {{ ansible_env.SUDO_USER }} /etc/shadow | awk -F: '{print $2}'
+      args:
+        executable: /bin/bash
       changed_when: false
-      failed_when: false
+      failed_when: prelim_ansible_user_password_set.rc not in [0, 1]
       check_mode: false
       register: prelim_ansible_user_password_set
 
@@ -44,9 +49,14 @@
   tags: always
   block:
     - name: Ensure root password is set
-      ansible.builtin.shell: LC_ALL=C passwd -S root | grep -E "(Password set, SHA512 crypt|root P |root L |Password locked)"
+      ansible.builtin.shell: |
+        set -o pipefail
+        LC_ALL=C passwd -S root | grep -E "(Password set, SHA512 crypt|root P |root L |Password locked)"
+      args:
+        executable: /bin/bash
       changed_when: false
-      failed_when: false
+      failed_when: prelim_root_passwd_set.rc not in [0, 1]
+      check_mode: false
       register: prelim_root_passwd_set
 
     - name: Ensure root password is set
@@ -66,7 +76,7 @@
 
 - name: Setup rules if container
   when:
-    - ansible_connection == 'docker' or
+    - ansible_connection in ['docker', 'community.docker.docker'] or
       (ansible_facts.virtualization_type is defined and
        ansible_facts.virtualization_type in ["docker", "lxc", "openvz", "podman", "container"])
   tags: always
@@ -187,7 +197,7 @@
         state: directory
         owner: root
         group: root
-        mode: 'u=rwx,go=rx'
+        mode: 'go-w'
 
     - name: Create ansible facts file and levels applied if audit facts not present
       ansible.builtin.template:
@@ -195,7 +205,7 @@
         dest: "{{ ansible_facts_path }}/compliance_facts.fact"
         owner: root
         group: root
-        mode: 'u-x,go=r'
+        mode: 'u-x,go-wx'
 
 - name: Fetch audit files
   when:

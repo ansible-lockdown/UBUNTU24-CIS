@@ -39,6 +39,8 @@
         - INPUT
         - FORWARD
         - OUTPUT
+      loop_control:
+        label: "{{ item }}"
 
 - name: "4.4.3.2 | PATCH | Ensure ip6tables loopback traffic is configured"
   when:
@@ -108,6 +110,8 @@
     - { chain: INPUT, protocol: tcp, ctstate: 'ESTABLISHED' }
     - { chain: INPUT, protocol: udp, ctstate: 'ESTABLISHED' }
     - { chain: INPUT, protocol: icmp, ctstate: 'ESTABLISHED' }
+  loop_control:
+    label: "{{ item }}"
 
 - name: "4.4.3.4 | AUDIT | Ensure ip6tables firewall rules exist for all open ports"
   when:
@@ -127,14 +131,14 @@
     - name: "4.4.3.4 | AUDIT | Ensure ip6tables firewall rules exist for all open ports | Get list of open ports"
       ansible.builtin.command: ss -6tuln
       changed_when: false
-      failed_when: false
+      failed_when: discovered_open_ports_ipv6.rc not in [0, 1]
       check_mode: false
       register: discovered_open_ports_ipv6
 
     - name: "4.4.3.4 | AUDIT | Ensure ip6tables firewall rules exist for all open ports | Get list of rules"
       ansible.builtin.command: ip6tables -L INPUT -v -n
       changed_when: false
-      failed_when: false
+      failed_when: discovered_current_rules_ipv6.rc not in [0, 1]
       check_mode: false
       register: discovered_current_rules_ipv6
 
@@ -180,4 +184,4 @@
 #       - ubtu24cis_save_iptables_cis_rules
 #       - ubtu24cis_rule_4_4_1_1 or
 #         ubtu24cis_rule_4_4_1_2 or
-#         ubtu24cis_rule_4_4_1_3
+#         ubtu24cis_rule_4_4_1_3 or

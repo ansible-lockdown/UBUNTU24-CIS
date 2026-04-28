@@ -15,12 +15,14 @@
       ansible.builtin.template:
         src: "{{ item }}.j2"
         dest: "/{{ item }}"
-        mode: 'g=r,o-rwx'
+        mode: 'u-x,g-wx,o-rwx'
         owner: root
         group: "{% if ubtu24cis_rule_2_3_3_2 %}_chrony{% else %}root{% endif %}"
       loop:
         - etc/chrony/sources.d/pool.sources
         - etc/chrony/sources.d/server.sources
+      loop_control:
+        label: "{{ item }}"
       notify: Restart timeservice
 
     - name: "2.3.3.1 | PATCH | Ensure chrony is configured with authorized timeserver | load sources"

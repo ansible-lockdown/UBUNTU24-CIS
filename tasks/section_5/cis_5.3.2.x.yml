@@ -45,6 +45,8 @@
   loop:
     - "{{ ubtu24cis_pam_faillock_file }}"
     - "{{ ubtu24cis_pam_faillock_notify_file }}"
+  loop_control:
+    label: "{{ item }}"
   notify:
     - Pam_auth_update_pwfaillock
     - Pam_auth_update_pwfaillock_notify

@@ -49,9 +49,13 @@
     - auditd
   block:
     - name: "6.2.1.3 | AUDIT | Ensure auditing for processes that start prior to auditd is enabled | Get GRUB_CMDLINE_LINUX"
-      ansible.builtin.shell: grep "GRUB_CMDLINE_LINUX=" /etc/default/grub | cut -f2 -d'"'
+      ansible.builtin.shell: |
+        set -o pipefail
+        grep "GRUB_CMDLINE_LINUX=" /etc/default/grub | cut -f2 -d'"'
+      args:
+        executable: /bin/bash
       changed_when: false
-      failed_when: false
+      failed_when: discovered_grub_cmdline_settings_auditd.rc not in [0, 1]
       check_mode: false
       register: discovered_grub_cmdline_settings_auditd
 
@@ -86,9 +90,13 @@
     - auditd
   block:
     - name: "6.2.1.4 | PATCH | Ensure audit_backlog_limit is sufficient | Get current GRUB_CMDLINE_LINUX"
-      ansible.builtin.shell: grep "GRUB_CMDLINE_LINUX=" /etc/default/grub | cut -f2 -d'"'
+      ansible.builtin.shell: |
+        set -o pipefail
+        grep "GRUB_CMDLINE_LINUX=" /etc/default/grub | cut -f2 -d'"'
+      args:
+        executable: /bin/bash
       changed_when: false
-      failed_when: false
+      failed_when: discovered_audit_backlog_grub_cmdline_settings.rc not in [0, 1]
       check_mode: false
       register: discovered_audit_backlog_grub_cmdline_settings
 
