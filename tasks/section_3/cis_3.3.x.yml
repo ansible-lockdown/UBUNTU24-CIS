@@ -26,8 +26,7 @@
         state: present
         reload: true
         ignoreerrors: true
-      notify:
-        - Flush ipv4 route table
+      notify: Flush ipv4 route table
 
     - name: "3.3.1 | PATCH | Ensure IP forwarding is disabled | IPv6 settings"
       when: ubtu24cis_ipv6_required
@@ -39,8 +38,7 @@
         state: present
         reload: true
         ignoreerrors: true
-      notify:
-        - Flush ipv6 route table
+      notify: Flush ipv6 route table
 
 - name: "3.3.2 | PATCH | Ensure packet redirect sending is disabled"
   when:
@@ -69,6 +67,8 @@
   loop:
     - net.ipv4.conf.all.send_redirects
     - net.ipv4.conf.default.send_redirects
+  loop_control:
+    label: "{{ item }}"
   notify: Flush ipv4 route table
 
 - name: "3.3.3 | PATCH | Ensure bogus ICMP responses are ignored"
@@ -161,6 +161,8 @@
       loop:
         - net.ipv6.conf.all.accept_redirects
         - net.ipv6.conf.default.accept_redirects
+      loop_control:
+        label: "{{ item }}"
       notify: Flush ipv6 route table
 
 - name: "3.3.6 | PATCH | Ensure secure ICMP redirects are not accepted"
@@ -188,6 +190,8 @@
   loop:
     - net.ipv4.conf.all.secure_redirects
     - net.ipv4.conf.default.secure_redirects
+  loop_control:
+    label: "{{ item }}"
   notify: Flush ipv4 route table
 
 - name: "3.3.7 | PATCH | Ensure Reverse Path Filtering is enabled"
@@ -215,6 +219,8 @@
   loop:
     - net.ipv4.conf.all.rp_filter
     - net.ipv4.conf.default.rp_filter
+  loop_control:
+    label: "{{ item }}"
   notify: Flush ipv4 route table
 
 - name: "3.3.8 | PATCH | Ensure source routed packets are not accepted"
@@ -261,6 +267,8 @@
       loop:
         - net.ipv6.conf.all.accept_source_route
         - net.ipv6.conf.default.accept_source_route
+      loop_control:
+        label: "{{ item }}"
       notify: Flush ipv6 route table
 
 - name: "3.3.9 | PATCH | Ensure suspicious packets are logged"
@@ -288,6 +296,8 @@
   loop:
     - net.ipv4.conf.all.log_martians
     - net.ipv4.conf.default.log_martians
+  loop_control:
+    label: "{{ item }}"
   notify: Flush ipv4 route table
 
 - name: "3.3.10 | PATCH | Ensure tcp syn cookies is enabled"
@@ -342,4 +352,6 @@
   loop:
     - net.ipv6.conf.all.accept_ra
     - net.ipv6.conf.default.accept_ra
+  loop_control:
+    label: "{{ item }}"
   notify: Flush ipv6 route table

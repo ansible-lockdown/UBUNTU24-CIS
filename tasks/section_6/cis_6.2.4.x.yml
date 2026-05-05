@@ -135,6 +135,8 @@
     path: "{{ item }}"
     mode: 'u+x,g-w,o-rwx'
   loop: "{{ audit_bins }}"
+  loop_control:
+    label: "{{ item }}"
 
 - name: "6.2.4.9 | PATCH | Ensure audit tools owner is configured"
   when: ubtu24cis_rule_6_2_4_9
@@ -149,6 +151,8 @@
     path: "{{ item }}"
     owner: root
   loop: "{{ audit_bins }}"
+  loop_control:
+    label: "{{ item }}"
 
 - name: "6.2.4.10 | PATCH | Ensure audit tools group owner is configured"
   when: ubtu24cis_rule_6_2_4_10
@@ -163,3 +167,5 @@
     path: "{{ item }}"
     group: root
   loop: "{{ audit_bins }}"
+  loop_control:
+    label: "{{ item }}"

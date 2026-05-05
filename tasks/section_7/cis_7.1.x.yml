@@ -172,6 +172,8 @@
   loop:
     - /etc/security/opasswd
     - /etc/security/opasswd.old
+  loop_control:
+    label: "{{ item }}"
 
 - name: "7.1.11 | PATCH | Ensure world writable files and directories are secured"
   when: ubtu24cis_rule_7_1_11
@@ -186,9 +188,14 @@
     - NIST800-53R5_MP-2
   block:
     - name: "7.1.11 | AUDIT | Ensure world writable files and directories are secured | Get list of world-writable files"
-      ansible.builtin.shell: df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -type f -perm -0002
-      failed_when: false
+      ansible.builtin.shell: |
+        set -o pipefail
+        df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -type f -perm -0002
+      args:
+        executable: /bin/bash
+      failed_when: discovered_worldwriteable_files.rc not in [0, 1]
       changed_when: false
+      check_mode: false
       register: discovered_worldwriteable_files
 
     - name: "7.1.11 | PATCH | Ensure world writable files and directories are secured | Adjust world-writable files if they exist (Configurable)"
@@ -200,9 +207,15 @@
         mode: 'o-w'
         state: touch
       loop: "{{ discovered_worldwriteable_files.stdout_lines }}"
+      loop_control:
+        label: "{{ item }}"
 
     - name: "7.1.11 | PATCH | Ensure world writable files and directories are secured | sticky bit set on world-writable directories"
-      ansible.builtin.shell: df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -type d -perm -0002 2>/dev/null | xargs chmod a+t
+      ansible.builtin.shell: |
+        set -o pipefail
+        df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -type d -perm -0002 2>/dev/null | xargs chmod a+t
+      args:
+        executable: /bin/bash
       changed_when: false
       failed_when: false
 
@@ -222,7 +235,7 @@
     - name: "7.1.12 | AUDIT | Ensure no files or directories without an owner and a group exist | Get list files or directories"
       ansible.builtin.command: find {{ item.mount }} -xdev {{ ubtu24cis_exclude_unowned_search_path }} \( -nouser -o -nogroup \) {{ ubtu24cis_exclude_unowned_filesystem_types }}
       changed_when: false
-      failed_when: false
+      failed_when: discovered_unowned_files.rc not in [0, 1]
       check_mode: false
       register: discovered_unowned_files
       with_items:
@@ -283,7 +296,7 @@
     - name: "7.1.13 | AUDIT | Ensure SUID and SGID files are reviewed | Find SUID and SGID"
       ansible.builtin.command: find {{ item.mount }} -xdev -type f -perm \( -02000 or -04000 \) -not -fstype nfs
       changed_when: false
-      failed_when: false
+      failed_when: discovered_suid_sgid_files.rc not in [0, 1]
       check_mode: false
       register: discovered_suid_sgid_files
       with_items:
@@ -291,11 +304,11 @@
       loop_control:
         label: "{{ item.mount }}"
 
-    - name: "7.1.13 | AUDIT | Audit SUID executables | Flatten suid_executables results for easier use"
+    - name: "7.1.13 | AUDIT | Ensure SUID and SGID files are reviewed | Flatten suid_executables results for easier use"
       ansible.builtin.set_fact:
         discovered_suid_sgid_files_flatten: "{{ discovered_suid_sgid_files.results | map(attribute='stdout_lines') | flatten }}"
 
-    - name: "7.1.13 | AUDIT | Audit SUID executables | Alert SUID executables exist"
+    - name: "7.1.13 | AUDIT | Ensure SUID and SGID files are reviewed | Alert SUID executables exist"
       when:
         - discovered_suid_sgid_files_flatten | length > 0
         - not ubtu24cis_suid_sgid_adjust
@@ -305,7 +318,7 @@
           - "The files are listed below, please confirm the integrity of these binaries"
           - "{{ discovered_suid_sgid_files_flatten }}"
 
-    - name: "7.1.13 | PATCH | Audit SUID executables | Remove SUID bit"
+    - name: "7.1.13 | PATCH | Ensure SUID and SGID files are reviewed | Remove SUID bit"
       when:
         - ubtu24cis_suid_sgid_adjust
         - discovered_suid_sgid_files_flatten | length > 0
@@ -315,7 +328,7 @@
       with_items:
         - "{{ discovered_suid_sgid_files_flatten }}"
 
-    - name: "7.1.13 | AUDIT | Audit SUID executables | Warn Count"
+    - name: "7.1.13 | AUDIT | Ensure SUID and SGID files are reviewed | Warn Count"
       ansible.builtin.import_tasks:
         file: warning_facts.yml
       when:

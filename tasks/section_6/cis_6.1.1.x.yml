@@ -46,6 +46,7 @@
       ansible.builtin.shell: grep -E 'z /var/log/journal/%m/system.journal \d*' /usr/lib/tmpfiles.d/systemd.conf
       changed_when: false
       failed_when: discovered_journald_fileperms_override.rc not in [ 0, 1 ]
+      check_mode: false
       register: discovered_journald_fileperms_override
 
     - name: "6.1.1.2 | AUDIT | Ensure journald log file access is configured | Warning if override found"
@@ -96,6 +97,8 @@
         - '^(\s*RuntimeMaxUse\s*=)'
         - '^(\s*RuntimeKeepFree\s*=.*)'
         - '^(\s*MaxFileSec\s*=.*)'
+      loop_control:
+        label: "{{ item }}"
 
 - name: "6.1.1.4 | PATCH | Ensure only one logging system is in use"
   when: ubtu24cis_rule_6_1_1_4

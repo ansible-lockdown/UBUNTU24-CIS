@@ -12,7 +12,7 @@
 ![Stars](https://img.shields.io/github/stars/ansible-lockdown/UBUNTU24-CIS?label=Repo%20Stars&style=social)
 ![Forks](https://img.shields.io/github/forks/ansible-lockdown/UBUNTU24-CIS?style=social)
 ![Followers](https://img.shields.io/github/followers/ansible-lockdown?style=social)
-[![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/AnsibleLockdown.svg?style=social&label=Follow%20%40AnsibleLockdown)](https://twitter.com/AnsibleLockdown)
+[![X URL](https://img.shields.io/twitter/url/https/twitter.com/AnsibleLockdown.svg?style=social&label=Follow%20%40AnsibleLockdown)](https://x.com/AnsibleLockdown)
 ![Discord Badge](https://img.shields.io/discord/925818806838919229?logo=discord)
 
 ![License](https://img.shields.io/github/license/ansible-lockdown/UBUNTU24-CIS?label=License)
@@ -124,10 +124,9 @@ UBUNTU 24 - Other versions are not supported.
 
 - Access to download or add the goss binary and content to the system if using auditing
 (other options are available on how to get the content to the system.)
-- Python3.8
-- Ansible 2.12+
-- python-def
-- libselinux-python
+- Python3.12+
+- Ansible 2.16+
+- python3-apt
 
 ---
 
@@ -149,21 +148,18 @@ Note: More tests are run during audit as we check config and running state.
 
 ```txt
 
-ok: [ubuntu2404] => {
+ok: [default] => {
     "msg": [
-        "The pre remediation audit results are: Count: 778, Failed: 330, Skipped: 38, Duration: 9.955s",
-        "The post remediation audit results are: Count: 778, Failed: 26, Skipped: 5, Duration: 4.239s",
+        "msg": [
+        "The pre remediation audit results are: Count: 763, Failed: 234, Skipped: 4, Duration: 9.741s",
+        "The post remediation audit results are: Count: 763, Failed: 19, Skipped: 4, Duration: 12.725s",
         "Full breakdown can be found in /opt",
         ""
     ]
 }
-TASK [UBUNTU24-CIS : If Warnings found Output count and control IDs affected] ***
-ok: [ubuntu2404] => {
-    "msg": "You have 8 Warning(s) that require investigating that are related to the following benchmark ID(s)  [1.1.1.10] [1.2.1.1] [1.2.1.2] [2.1.21] [2.1.22] [4.2.6] [5.4.1.1] [5.4.1.2]"
-}
 
-PLAY RECAP ***********************************************************************************
-ubuntu2404                 : ok=447  changed=225  unreachable=0    failed=0    skipped=278  rescued=0    ignored=0
+PLAY RECAP *******************************************************************************************************************************************
+default                    : ok=270  changed=23   unreachable=0    failed=0    skipped=140  rescued=0    ignored=0
 ```
 
 ## Documentation 📖

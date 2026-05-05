@@ -18,6 +18,7 @@
         state: present
         update_cache: true
         install_recommends: false
+        lock_timeout: "{{ ubtu24cis_apt_lock_timeout }}"
       register: discovered_aide_pkgs_added
 
     - name: "6.3.1 | PATCH | Ensure AIDE is installed | Recapture packages"
@@ -65,6 +66,7 @@
           ansible.builtin.find:
             paths: /var/log/aide
             patterns: "*.log"
+          check_mode: false
           register: discovered_aide_logfiles
 
         - name: "6.3.1 | PATCH | Ensure AIDE is installed | Ensure AIDE logfiles have the appropriate permissions | Apply the permissions"
@@ -72,6 +74,8 @@
             path: "{{ item.path }}"
             mode: 'u-x,g-wx,o-rwx'
           loop: "{{ discovered_aide_logfiles.files }}"
+          loop_control:
+            label: "{{ item }}"
           failed_when: discovered_aide_file_exists.state not in '[ file, absent ]'
           register: discovered_aide_file_exists
 
@@ -119,7 +123,7 @@
         dest: "/{{ item }}"
         owner: root
         group: root
-        mode: 'u=rw,go-wx'
+        mode: 'u-x,g-wx,o-rwx'
       loop:
         - etc/systemd/system/dailyaidecheck.service
         - etc/systemd/system/dailyaidecheck.timer
@@ -134,6 +138,8 @@
       loop:
         - dailyaidecheck.service
         - dailyaidecheck.timer
+      loop_control:
+        label: "{{ item }}"
 
 - name: "6.3.3 | PATCH | Ensure cryptographic mechanisms are used to protect the integrity of audit tools"
   when:
