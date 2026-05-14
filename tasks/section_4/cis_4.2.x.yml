@@ -16,7 +16,6 @@
     name: ufw
     state: present
     lock_timeout: "{{ ubtu24cis_apt_lock_timeout }}"
-    purge: "{{ ubtu24cis_purge_apt }}"
 
 - name: "4.2.2 | PATCH | Ensure iptables-persistent is not installed with ufw"
   when:
@@ -77,7 +76,7 @@
         interface: lo
       notify: Reload ufw
 
-    - name: "4.2.4 | PATCH | Ensure loopback traffic is configured | Set allow out ufw rules"
+    - name: "4.2.4 | PATCH | Ensure ufw loopback traffic is configured | Set allow out ufw rules"
       community.general.ufw:
         rule: allow
         direction: out
@@ -116,7 +115,7 @@
         direction: out
         proto: "{{ item.proto }}"
         to_port: '{{ item.port }}'
-      loop: "{{ ubtu24cis_ufw_allow_out_ports if 'all' not in ubtu24cis_ufw_allow_out_ports else [] }}"
+      loop: "{{ ubtu24cis_ufw_allow_out_ports if ubtu24cis_ufw_allow_out_ports != 'all' else [] }}"
       loop_control:
         label: "{{ item.port }}"
       notify: Reload ufw
@@ -143,14 +142,14 @@
     - name: "4.2.6 | AUDIT | Ensure ufw firewall rules exist for all open ports | Get list of open ports"
       ansible.builtin.command: ss -4tuln
       changed_when: false
-      failed_when: false
+      failed_when: discovered_ufw_open_listen_ports.rc not in [0, 1]
       check_mode: false
       register: discovered_ufw_open_listen_ports
 
     - name: "4.2.6 | AUDIT | Ensure ufw firewall rules exist for all open ports | Get list of firewall rules"
       ansible.builtin.command: ufw status
       changed_when: false
-      failed_when: false
+      failed_when: discovered_ufw_firewall_rules.rc not in [0, 1]
       check_mode: false
       register: discovered_ufw_firewall_rules
 
@@ -184,4 +183,6 @@
     - incoming
     - outgoing
     - routed
+  loop_control:
+    label: "{{ item }}"
   notify: Reload ufw

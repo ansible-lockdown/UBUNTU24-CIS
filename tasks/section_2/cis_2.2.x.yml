@@ -88,7 +88,7 @@
     purge: "{{ ubtu24cis_purge_apt }}"
     lock_timeout: "{{ ubtu24cis_apt_lock_timeout }}"
 
-- name: "2.2.6 | PATCH | Ensure ftp is not installed"
+- name: "2.2.6 | PATCH | Ensure ftp client is not installed"
   when:
     - ubtu24cis_rule_2_2_6
     - not ubtu24cis_ftp_client
