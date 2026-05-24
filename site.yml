@@ -6,6 +6,7 @@
 
   pre_tasks:
     - name: Validate runner environment
+      become: false
       local_action:
         module: shell
         _raw_params: |
@@ -20,6 +21,7 @@
       ignore_errors: true
 
     - name: Show runner context
+      become: false
       debug:
         msg: "{{ sts_identity.stdout }}"
       when: sts_identity.stdout is defined
