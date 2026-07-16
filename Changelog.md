@@ -1,6 +1,6 @@
 # Ubuntu24CIS
 
-## Based on CIS v1.0.0 - July 2026 QA Pass
+## Based on CIS v1.0.0 - July 2026
 
 ### Fixed
 
@@ -30,6 +30,8 @@
   - #167 pam improvements
 - thanks to @hackery
   - #175 overlay mod change 1.1.1.6
+- thanks to @defnotyujine
+  - tmp mount handler changed to import_tasks
 - 100 task files: Converted `ansible_facts` dot notation to bracket notation throughout `tasks/` and `vars/`
 - Added `set -o pipefail` and `args: executable: /bin/bash` to tasks with pipes
 - templates/ansible_vars_goss.yml.j2: Renamed to `templates/lockdown_audit.yml.j2`  updated reference in `tasks/pre_remediation_audit.yml`
