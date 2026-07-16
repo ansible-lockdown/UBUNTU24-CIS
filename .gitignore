@@ -12,11 +12,6 @@ ignore*
 # VSCode
 .vscode
 vagrant
-qa_report.md
-prompt.md
-plan.md
-history.md
-*.pdf
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -41,13 +36,29 @@ tramp
 rh-creds.env
 travis.env
 
+# Secret/key files
+*.vault
+*.key
+*.pem
+*.p12
+*.pfx
+*.keystore
+*.jks
+*.credentials
+*vault_pass*
+.vault_pass
+
 # Lockdown-specific
 benchparse/
 *xccdf.xml
 *.retry
+*.pdf
+*history.md
+*plan.md
+*qa_report*
 
 # GitHub Action/Workflow files
 .github/
 
-# ansible-lint cache
+# ansible-lint
 .ansible/
