@@ -30,3 +30,5 @@
         - chrony
         - ntp
         - systemd-timesyncd
+      loop_control:
+        label: "{{ item }}"

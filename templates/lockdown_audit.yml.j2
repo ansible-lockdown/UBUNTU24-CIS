@@ -469,6 +469,10 @@ ubtu24cis_desktop_required: {{ ubtu24cis_desktop_required }}
 
 ## Section 1
 
+# A location that can be used as a temporary location to execute scripts
+# note the drive with need exec permissions used by 1.1.1.10
+ubtu24cis_temp_exec_location: {{ ubtu24cis_temp_exec_location }}
+
 # If system uses squashfs e.gf. snap package manager set true
 ubtu24cis_squashfs_skip:{% if (prelim_squashfs_builtin.rc | default(1)) == 0  or (prelim_snap_pkg_mgr.rc | default(1)) == 0 %} true{% else %} false{% endif %}
 
@@ -570,7 +574,7 @@ ubtu24cis_xwindow_server: {{ ubtu24cis_xwindow_server }}  # will remove mask not
 ubtu24cis_is_mail_server: {{ ubtu24cis_is_mail_server }}
 
 # Client Services
-ubtu24cis_nis_client_required: {{ ubtu24cis_nis_server }}  # Same package as NIS server
+# ubtu24cis_nis_client_required: {{ ubtu24cis_nis_server }}  # Same package as NIS server
 ubtu24cis_rsh_client: {{ ubtu24cis_rsh_client }}
 ubtu24cis_talk_client: {{ ubtu24cis_talk_client }}
 ubtu24cis_telnet_required: {{ ubtu24cis_telnet_required }}
@@ -579,7 +583,7 @@ ubtu24cis_ftp_client: {{ ubtu24cis_ftp_client }}
 
 ## Control 2.3.1.1
 # This variable choses the tool used for time synchronization
-# The two options are `chrony`and `systemd-timesyncd`.
+# The two options are `chrony` and `systemd-timesyncd`.
 ubtu24cis_time_sync_tool: {{ ubtu24cis_time_sync_tool }}
 
 ## Controls 2.3.x - Configure time pools & servers for chrony and timesyncd
@@ -637,93 +641,36 @@ ubtu24cis_sysctl_network_conf: {{ ubtu24cis_sysctl_network_conf }}
 ubtu24cis_firewall_package: {{ ubtu24cis_firewall_package }}
 
 ## auditd settings
-ubtu24cis_auditd:
-  space_left_action: {{ ubtu24cis_auditd_space_left_action }}
-  admin_space_left_action: {{ ubtu24cis_auditd_admin_space_left_action }}
-  max_log_file_action: {{ ubtu24cis_auditd_max_log_file_action }}
-  auditd_backlog_limit: {{ ubtu24cis_audit_back_log_limit }}
+ubtu24cis_auditd_space_left_action: {{ ubtu24cis_auditd_space_left_action }}
+ubtu24cis_auditd_admin_space_left_action: {{ ubtu24cis_auditd_admin_space_left_action }}
+ubtu24cis_auditd_max_log_file_action: {{ ubtu24cis_auditd_max_log_file_action }}
+ubtu24cis_auditd_back_log_limit: {{ ubtu24cis_auditd_back_log_limit }}
 
 ## syslog
 # Set which syslog service
 # journald or rsyslog
 ubtu24cis_syslog_service: {{ ubtu24cis_syslog_service }}
-ubtu24cis_is_syslog_server: {{ ubtu24cis_system_is_log_server }}
+ubtu24cis_system_is_log_server: {{ ubtu24cis_system_is_log_server }}
 
 ### Section 5
 
 # Note the following to understand precedence and layout
-ubtu24cis_sshd_access:
-  - AllowUser {{ ubtu24cis_sshd_allow_users }}
-  - AllowGroup {{ ubtu24cis_sshd_allow_groups }}
-  - DenyUser {{ ubtu24cis_sshd_deny_users }}
-  - DenyGroup {{ ubtu24cis_sshd_deny_groups }}
 
-ubtu24cis_ssh_strong_ciphers:
-  - aes256-gcm@openssh.com
-  - aes128-gcm@openssh.com
-  - aes256-ctr
-  - aes192-ctr
-  - aes128-ctr
-ubtu24cis_ssh_weak_ciphers:
-  - 3des-cbc
-  - aes128-cbc
-  - aes192-cbc
-  - aes256-cbc
-  - arcfour
-  - chacha20-poly1305@openssh.com
-  - arcfour128
-  - arcfour256
-  - blowfish-cbc
-  - cast128-cbc
-  - rijndael-cbc@lysator.liu.se
+ubtu24cis_sshd_allow_users: AllowUsers {% if ubtu24cis_sshd_allow_users | length > 0 %}{{ ubtu24cis_sshd_allow_users }}{% endif %}
 
-ubtu24cis_ssh_strong_macs:
-  - HMAC-SHA1
-  - hmac-sha2-256
-  - hmac-sha2-512
-ubtu24cis_ssh_weak_macs:
-  - hmac-md5
-  - hmac-md5-96
-  - hmac-ripemd160
-  - hmac-sha1-96
-  - umac-64@openssh.com
-  - umac-128@openssh.com
-  - hmac-md5-etm@openssh.com
-  - hmac-md5-96-etm@openssh.com
-  - hmac-ripemd160-etm@openssh.com
-  - hmac-sha1-etm@openssh.com
-  - hmac-sha1-96-etm@openssh.com
-  - umac-64-etm@openssh.com
-  - umac-128-etm@openssh.com
-  - hmac-sha2-512-etm@openssh.com
-  - hmac-sha2-256-etm@openssh.com
+ubtu24cis_sshd_allow_groups: AllowGroups {% if ubtu24cis_sshd_allow_groups | length > 0 %}{{ ubtu24cis_sshd_allow_groups }}{% endif %}
 
-ubtu24cis_ssh_strong_kex:
-  - ecdh-sha2-nistp256
-  - ecdh-sha2-nistp521
-  - diffie-hellman-group-exchange-sha256
-  - diffie-hellman-group14-sha256
-  - diffie-hellman-group16-sha512
-  - diffie-hellman-group18-sha512
-ubtu24cis_ssh_weak_kex:
-  - diffie-hellman-group1-sha1
-  - diffie-hellman-group14-sha1
-  - diffie-hellman-group-exchange-sha1
+ubtu24cis_sshd_deny_users:  DenyUsers {% if ubtu24cis_sshd_deny_users | length > 0 %}{{ ubtu24cis_sshd_deny_users }}{% endif %}
 
-ubtu24cis_ssh_aliveinterval: 300
-ubtu24cis_ssh_countmax: 3
-## PAM
-ubtu24cis_pam_password:
-  minlen: "14"
-  minclass: "4"
+ubtu24cis_sshd_deny_groups: DenyGroups {% if ubtu24cis_sshd_deny_groups | length > 0 %}{{ ubtu24cis_sshd_deny_groups }}{% endif %}
 
-ubtu24cis_pam_passwd_retry: "3"
+ubtu24cis_sshd_client_alive_interval: {{ ubtu24cis_sshd_client_alive_interval }}
+ubtu24cis_sshd_client_alive_count_max: {{ ubtu24cis_sshd_client_alive_count_max }}
 
 # logins.def password settings
-ubtu24cis_pass:
-  max_days: {{ ubtu24cis_pass_max_days }}
-  min_days: {{ ubtu24cis_pass_min_days }}
-  warn_age: {{ ubtu24cis_pass_warn_age }}
+ubtu24cis_pass_max_days: {{ ubtu24cis_pass_max_days }}
+ubtu24cis_pass_min_days: {{ ubtu24cis_pass_min_days }}
+ubtu24cis_pass_warn_age: {{ ubtu24cis_pass_warn_age }}
 
 # set sugroup if differs from wheel
 ubtu24cis_sugroup: nosugroup
@@ -743,3 +690,8 @@ ubtu24cis_config_aide: {{ ubtu24cis_config_aide }}
 
 # aide setup via - cron, timer
 ubtu24cis_aide_scan: {{ ubtu24cis_aide_scan }}
+
+# 6.1.3.6 rsyslog remote offload server
+# ubtu24cis_remote_log_server: taken from above
+ubtu24cis_remote_log_port: {{ ubtu24cis_remote_log_port }}
+ubtu24cis_remote_log_protocol: {{ ubtu24cis_remote_log_protocol }}

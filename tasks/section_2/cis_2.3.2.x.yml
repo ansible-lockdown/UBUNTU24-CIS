@@ -28,6 +28,8 @@
         group: root
       loop:
         - "etc/systemd/timesyncd.conf.d/50-timesyncd.conf"
+      loop_control:
+        label: "{{ item }}"
       notify: Restart timeservice
 
 - name: "2.3.2.2 | PATCH | Ensure systemd-timesyncd is enabled and running"
@@ -47,7 +49,7 @@
         enabled: true
 
     - name: "2.3.2.2 | PATCH | Ensure systemd-timesyncd is enabled and running | disable other time sources | chrony"
-      when: "'chrony' in ansible_facts.packages"
+      when: "'chrony' in ansible_facts['packages']"
       ansible.builtin.systemd:
         name: chrony
         state: stopped
@@ -55,7 +57,7 @@
         masked: true
 
     - name: "2.3.2.2 | PATCH | Ensure systemd-timesyncd is enabled and running | disable other time sources | ntp"
-      when: "'ntp' in ansible_facts.packages"
+      when: "'ntp' in ansible_facts['packages']"
       ansible.builtin.systemd:
         name: ntp
         state: stopped

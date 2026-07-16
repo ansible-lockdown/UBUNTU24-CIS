@@ -22,9 +22,13 @@
       notify: Grub update
 
     - name: "3.1.1 | PATCH | Ensure IPv6 status is identified | Check grub cmdline linux"
-      ansible.builtin.shell: grep "GRUB_CMDLINE_LINUX=" /etc/default/grub | cut -f2 -d'"'
+      ansible.builtin.shell: |
+        set -o pipefail
+        grep "GRUB_CMDLINE_LINUX=" /etc/default/grub | cut -f2 -d'"'
+      args:
+        executable: "{{ ubtu24cis_shell_executable }}"
       changed_when: false
-      failed_when: false
+      failed_when: discovered_ipv6_grub_cmdline_settings.rc not in [0, 1]
       check_mode: false
       register: discovered_ipv6_grub_cmdline_settings
 
@@ -51,37 +55,63 @@
       notify: Flush ipv6 route table
       loop:
         - etc/sysctl.d/60-disable_ipv6.conf
+      loop_control:
+        label: "{{ item }}"
 
 - name: "3.1.2 | PATCH | Ensure wireless interfaces are disabled"
   when:
-    - prelim_wireless_modules.stdout is defined
     - ubtu24cis_rule_3_1_2
+    - not system_is_container
   tags:
     - level1-server
     - patch
     - rule_3.1.2
     - NIST800-53R5_CM-7
     - wireless
-  vars:
-    warn_control_id: '3.1.2'
   block:
-    - name: "3.1.2 | PATCH | Ensure wireless interfaces are disabled | Create modprobe.d file"
-      ansible.builtin.lineinfile:
-        path: /etc/modprobe.d/{{ item }}.conf
-        regexp: '^(#)?install true(\\s|$)'
-        line: install {{ item }} true
-        create: true
-        mode: 'go-wx'
-      loop: "{{ prelim_wireless_modules.stdout_lines }}"
+    - name: "3.1.2 | AUDIT | Ensure wireless interfaces are disabled | Discover is wireless adapter on system"
+      ansible.builtin.command: find /sys/class/net/*/ -type d -name wireless
+      changed_when: false
+      failed_when: prelim_wireless_adapters.rc not in [ 0, 1 ]
+      check_mode: false
+      register: prelim_wireless_adapters
 
-    - name: "3.1.2 | PATCH | Ensure wireless interfaces are disabled | blacklist"
-      ansible.builtin.lineinfile:
-        path: /etc/modprobe.d/blacklist.conf
-        regexp: "^(#)?blacklist {{ item }}(\\s|$)"
-        line: "blacklist {{ item }}"
-        create: true
-        mode: 'go-rwx'
-      loop: "{{ prelim_wireless_modules.stdout_lines }}"
+    - name: "3.1.2 | AUDIT | Ensure wireless interfaces are disabled | If wireless adapter present capture module"
+      when: prelim_wireless_adapters.rc == 0
+      ansible.builtin.shell: |
+        set -o pipefail
+        for driverdir in $(find /sys/class/net/*/ -type d -name wireless | xargs -0 dirname);
+          do basename "$(readlink -f "$driverdir"/device/driver/module)";
+        done | sort -u
+      args:
+        executable: "{{ ubtu24cis_shell_executable }}"
+      changed_when: false
+      failed_when: discovered_wireless_modules.rc not in [ 0, 1 ]
+      check_mode: false
+      register: discovered_wireless_modules
+
+    - name: "3.1.2 | PATCH | Ensure wireless interfaces are disabled | if wireless adapter exist"
+      when: discovered_wireless_modules.stdout is defined
+      block:
+        - name: "3.1.2 | PATCH | Ensure wireless interfaces are disabled | Create modprobe.d file"
+          ansible.builtin.lineinfile:
+            path: /etc/modprobe.d/{{ item }}.conf
+            regexp: '^(#)?install true(\\s|$)'
+            line: install {{ item }} true
+            create: true
+            mode: 'go-wx'
+          loop: "{{ discovered_wireless_modules.stdout_lines }}"
+
+        - name: "3.1.2 | PATCH | Ensure wireless interfaces are disabled | blacklist"
+          ansible.builtin.lineinfile:
+            path: /etc/modprobe.d/blacklist.conf
+            regexp: "^(#)?blacklist {{ item }}(\\s|$)"
+            line: "blacklist {{ item }}"
+            create: true
+            mode: 'go-rwx'
+          loop: "{{ discovered_wireless_modules.stdout_lines }}"
+          loop_control:
+            label: "{{ item }}"
 
 - name: "3.1.3 | PATCH | Ensure bluetooth services are not in use"
   when: ubtu24cis_rule_3_1_3
@@ -110,6 +140,6 @@
       notify: Systemd_daemon_reload
       ansible.builtin.systemd:
         name: bluetooth.service
-        enabled: false
-        state: stopped
+        enabled: "{{ ('bluez' in ansible_facts['packages']) | ternary(false, omit) }}"
+        state: "{{ ('bluez' in ansible_facts['packages']) | ternary('stopped', omit) }}"
         masked: true

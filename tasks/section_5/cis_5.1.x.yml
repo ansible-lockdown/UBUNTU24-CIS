@@ -33,6 +33,8 @@
         group: root
         mode: 'u-x,go-rwx'
       loop: "{{ discovered_sshd_confs.files }}"
+      loop_control:
+        label: "{{ item }}"
 
 - name: "5.1.2 | PATCH | Ensure permissions on SSH private host key files are configured"
   when: ubtu24cis_rule_5_1_2
@@ -101,6 +103,15 @@
     - NIST800-53R5_MP-2
     - sshd
   block:
+
+    - name: "5.1.4 | PATCH | Ensure sshd access is configured |Ensure /run/sshd exists for sshd -t validation"
+      ansible.builtin.file:
+        path: /run/sshd
+        state: directory
+        owner: root
+        group: root
+        mode: 'u=rwx,g=rx'
+
     - name: "5.1.4 | PATCH | Ensure sshd access is configured | Add allowed users"
       when: "ubtu24cis_sshd_allow_users| default('') | length > 0 "
       ansible.builtin.lineinfile:
@@ -196,6 +207,8 @@
   with_items:
     - { regexp: '^ClientAliveInterval', line: 'ClientAliveInterval {{ ubtu24cis_sshd_client_alive_interval }}' }
     - { regexp: '^ClientAliveCountMax', line: 'ClientAliveCountMax {{ ubtu24cis_sshd_client_alive_count_max }}' }
+  loop_control:
+    label: "{{ item }}"
   notify: Restart sshd
 
 - name: "5.1.8 | PATCH | Ensure sshd DisableForwarding is enabled"
@@ -234,7 +247,7 @@
     validate: 'sshd -t -f %s'
   notify: Restart sshd
 
-- name: "5.1.10 | PATCH | Ensure SSH HostbasedAuthentication is disabled"
+- name: "5.1.10 | PATCH | Ensure sshd HostbasedAuthentication is disabled"
   when: ubtu24cis_rule_5_1_10
   tags:
     - level1-server
@@ -254,7 +267,7 @@
     validate: 'sshd -t -f %s'
   notify: Restart sshd
 
-- name: "5.1.11 | PATCH | Ensure SSH IgnoreRhosts is enabled"
+- name: "5.1.11 | PATCH | Ensure sshd IgnoreRhosts is enabled"
   when: ubtu24cis_rule_5_1_11
   tags:
     - level1-server
@@ -274,7 +287,7 @@
     validate: 'sshd -t -f %s'
   notify: Restart sshd
 
-- name: "5.1.12 | PATCH | Ensure only strong Key Exchange algorithms are used"
+- name: "5.1.12 | PATCH | Ensure sshd KexAlgorithms is configured"
   when: ubtu24cis_rule_5_1_12
   tags:
     - level1-server
@@ -291,7 +304,7 @@
     validate: 'sshd -t -f %s'
   notify: Restart sshd
 
-- name: "5.1.13 | PATCH | Ensure SSH LoginGraceTime is configured"
+- name: "5.1.13 | PATCH | Ensure sshd LoginGraceTime is configured"
   when: ubtu24cis_rule_5_1_13
   tags:
     - level1-server
@@ -308,7 +321,7 @@
     validate: 'sshd -t -f %s'
   notify: Restart sshd
 
-- name: "5.1.14 | PATCH | Ensure SSH LogLevel is configured"
+- name: "5.1.14 | PATCH | Ensure sshd LogLevel is configured"
   when: ubtu24cis_rule_5_1_14
   tags:
     - level1-server
@@ -327,7 +340,7 @@
     validate: 'sshd -t -f %s'
   notify: Restart sshd
 
-- name: "5.1.15 | PATCH | Ensure only strong MAC algorithms are used"
+- name: "5.1.15 | PATCH | Ensure sshd MACs are configured"
   when: ubtu24cis_rule_5_1_15
   tags:
     - level1-server
@@ -348,7 +361,7 @@
     validate: 'sshd -t -f %s'
   notify: Restart sshd
 
-- name: "5.1.16 | PATCH | Ensure SSH MaxAuthTries is set to 4 or less"
+- name: "5.1.16 | PATCH | Ensure sshd MaxAuthTries is configured"
   when: ubtu24cis_rule_5_1_16
   tags:
     - level1-server
@@ -386,7 +399,7 @@
     validate: 'sshd -t -f %s'
   notify: Restart sshd
 
-- name: "5.1.18 | PATCH | Ensure SSH MaxStartups is configured"
+- name: "5.1.18 | PATCH | Ensure sshd MaxStartups is configured"
   when: ubtu24cis_rule_5_1_18
   tags:
     - level1-server
@@ -403,10 +416,12 @@
     path: /etc/ssh/sshd_config
     regexp: (?i)^(#?)\s*MaxStartups
     line: 'MaxStartups 10:30:60'
+    insertbefore: '^Match'
+    firstmatch: true
     validate: 'sshd -t -f %s'
   notify: Restart sshd
 
-- name: "5.1.19 | PATCH | Ensure SSH PermitEmptyPasswords is disabled"
+- name: "5.1.19 | PATCH | Ensure sshd PermitEmptyPasswords is disabled"
   when: ubtu24cis_rule_5_1_19
   tags:
     - level1-server
@@ -443,7 +458,7 @@
     validate: 'sshd -t -f %s'
   notify: Restart sshd
 
-- name: "5.1.21 | PATCH | Ensure SSH PermitUserEnvironment is disabled"
+- name: "5.1.21 | PATCH | Ensure sshd PermitUserEnvironment is disabled"
   when: ubtu24cis_rule_5_1_21
   tags:
     - level1-server

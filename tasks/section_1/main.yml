@@ -69,7 +69,7 @@
 
 - name: "SECTION | 1.7 | Configure DNOME Display Manager"
   when:
-    - "'gdm3' in ansible_facts.packages"
+    - "'gdm3' in ansible_facts['packages']"
     - not system_is_container
   ansible.builtin.import_tasks:
     file: cis_1.7.x.yml
