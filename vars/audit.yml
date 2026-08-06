@@ -1,5 +1,4 @@
 ---
-
 #### Audit Configuration Settings ####
 
 # Timeout for those cmds that take longer to run where timeout set
@@ -37,7 +36,7 @@ audit_conf_source: "some path or url to copy from"
 audit_conf_dest: "/opt"
 
 # Where the audit logs are stored
-audit_log_dir: '/opt'
+audit_log_dir: "/opt"
 
 ### options below this line don't often need changing but can be if your environment requires it
 # - e.g. timeout for long running cmds, location of goss binary if using copy method, url for goss binary if using download method etc. ###
@@ -49,7 +48,7 @@ audit_bin_url: "https://github.com/krameff/goss/releases/download/{{ audit_bin_v
 ## managed by the control audit_content
 # git
 audit_file_git: "https://github.com/ansible-lockdown/{{ benchmark }}-Audit.git"
-audit_git_version: "benchmark_{{ benchmark_version }}"
+audit_git_version: "{{ audit_git_version_override | default('benchmark_' ~ benchmark_version) }}"
 
 ## Goss configuration information
 # Where the goss audit configuration will be stored - NOTE benchmark-audit is expected
@@ -64,8 +63,8 @@ post_audit_outfile: "{{ audit_log_dir }}/{{ ansible_facts['hostname'] }}-{{ benc
 ### Audit binary settings ###
 audit_bin_version:
   release: v0.5.0
-  AMD64_checksum: 'sha256:1371df12806586e4c6b122a22e1dbc2b9008160099eaf2816d139cc825ffc40a'
-  ARM64_checksum: 'sha256:d34fae1b2e33bbe2f461418891c88dd636f212a0a2d4bb0601111a8dfa09efa2'
+  AMD64_checksum: "sha256:1371df12806586e4c6b122a22e1dbc2b9008160099eaf2816d139cc825ffc40a"
+  ARM64_checksum: "sha256:d34fae1b2e33bbe2f461418891c88dd636f212a0a2d4bb0601111a8dfa09efa2"
 audit_bin_path: /usr/local/bin/
 audit_bin: "{{ audit_bin_path }}goss"
 audit_format: json
