@@ -47,7 +47,7 @@ audit_bin_url: "https://github.com/krameff/goss/releases/download/{{ audit_bin_v
 ### Goss Audit Benchmark file ###
 ## managed by the control audit_content
 # git
-audit_file_git: "https://github.com/ansible-lockdown/{{ benchmark }}-Audit.git"
+audit_file_git: "{{ audit file_git_override | default('https://github.com/ansible-lockdown/' ~ benchmark ~ '-Audit.git') }}"
 audit_git_version: "{{ audit_git_version_override | default('benchmark_' ~ benchmark_version) }}"
 
 ## Goss configuration information
