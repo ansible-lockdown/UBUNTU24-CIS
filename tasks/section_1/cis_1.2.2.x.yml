@@ -5,7 +5,7 @@
   tags:
     - level1-server
     - level1-workstation
-    - patch
+    - audit
     - rule_1.2.2.1
     - NIST800-53R5_SI-2
     - patch

@@ -263,7 +263,7 @@
     - level2-server
     - level2-workstation
     - scored
-    - patch
+    - audit
     - rule_6.2.3.21
     - NIST800-53R5_AU-3
     - auditd

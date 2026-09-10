@@ -3,7 +3,7 @@
 - name: "2.1.1 | PATCH | Ensure autofs services are not in use"
   when:
     - ubtu24cis_rule_2_1_1
-    - "'autofs' in ansible_facts.packages"
+    - "'autofs' in ansible_facts['packages']"
   tags:
     - level1-server
     - level2-workstation
@@ -29,8 +29,8 @@
       notify: Systemd_daemon_reload
       ansible.builtin.systemd:
         name: autofs
-        enabled: "{{ ('autofs' in ansible_facts.packages) | ternary(false, omit) }}"
-        state: "{{ ('autofs' in ansible_facts.packages) | ternary('stopped', omit) }}"
+        enabled: "{{ ('autofs' in ansible_facts['packages']) | ternary(false, omit) }}"
+        state: "{{ ('autofs' in ansible_facts['packages']) | ternary('stopped', omit) }}"
         masked: true
 
 - name: "2.1.2 | PATCH | Ensure avahi daemon services are not in use"
@@ -47,7 +47,7 @@
       when:
         - not ubtu24cis_avahi_server
         - not ubtu24cis_avahi_mask
-        - "'avahi-daemon' in ansible_facts.packages or 'avahi-autoipd' in ansible_facts.packages"
+        - "'avahi-daemon' in ansible_facts['packages'] or 'avahi-autoipd' in ansible_facts['packages']"
       ansible.builtin.package:
         name:
           - avahi-autoipd
@@ -63,8 +63,8 @@
       notify: Systemd_daemon_reload
       ansible.builtin.systemd:
         name: "{{ item }}"
-        enabled: "{{ ('avahi-daemon' in ansible_facts.packages) | ternary(false, omit) }}"
-        state: "{{ ('avahi-daemon' in ansible_facts.packages) | ternary('stopped', omit) }}"
+        enabled: "{{ ('avahi-daemon' in ansible_facts['packages']) | ternary(false, omit) }}"
+        state: "{{ ('avahi-daemon' in ansible_facts['packages']) | ternary('stopped', omit) }}"
         masked: true
       loop:
         - avahi-daemon.socket
@@ -86,7 +86,7 @@
       when:
         - not ubtu24cis_dhcp_server
         - not ubtu24cis_dhcp_mask
-        - "'isc-dhcp-server' in ansible_facts.packages"
+        - "'isc-dhcp-server' in ansible_facts['packages']"
       ansible.builtin.package:
         name: isc-dhcp-server
         state: absent
@@ -100,8 +100,8 @@
       notify: Systemd_daemon_reload
       ansible.builtin.systemd:
         name: "{{ item }}"
-        enabled: "{{ ('isc-dhcp-server' in ansible_facts.packages) | ternary(false, omit) }}"
-        state: "{{ ('isc-dhcp-server' in ansible_facts.packages) | ternary('stopped', omit) }}"
+        enabled: "{{ ('isc-dhcp-server' in ansible_facts['packages']) | ternary(false, omit) }}"
+        state: "{{ ('isc-dhcp-server' in ansible_facts['packages']) | ternary('stopped', omit) }}"
         masked: true
       loop:
         - isc-dhcp-server.service
@@ -121,7 +121,7 @@
   block:
     - name: "2.1.4 | PATCH | Ensure dns server services are not in use | Remove package"
       when:
-        - "'bind9' in ansible_facts.packages"
+        - "'bind9' in ansible_facts['packages']"
         - not ubtu24cis_dns_server
         - not ubtu24cis_dns_mask
       ansible.builtin.package:
@@ -137,8 +137,8 @@
       notify: Systemd_daemon_reload
       ansible.builtin.systemd:
         name: named.service
-        enabled: "{{ ('bind9' in ansible_facts.packages) | ternary(false, omit) }}"
-        state: "{{ ('bind9' in ansible_facts.packages) | ternary('stopped', omit) }}"
+        enabled: "{{ ('bind9' in ansible_facts['packages']) | ternary(false, omit) }}"
+        state: "{{ ('bind9' in ansible_facts['packages']) | ternary('stopped', omit) }}"
         masked: true
 
 - name: "2.1.5 | PATCH | Ensure dnsmasq services are not in use"
@@ -153,7 +153,7 @@
   block:
     - name: "2.1.5 | PATCH | Ensure dnsmasq services are not in use | Remove package"
       when:
-        - "'dnsmasq' in ansible_facts.packages"
+        - "'dnsmasq' in ansible_facts['packages']"
         - not ubtu24cis_dnsmasq_server
         - not ubtu24cis_dnsmasq_mask
       ansible.builtin.package:
@@ -169,8 +169,8 @@
       notify: Systemd_daemon_reload
       ansible.builtin.systemd:
         name: dnsmasq.service
-        enabled: "{{ ('dnsmasq' in ansible_facts.packages) | ternary(false, omit) }}"
-        state: "{{ ('dnsmasq' in ansible_facts.packages) | ternary('stopped', omit) }}"
+        enabled: "{{ ('dnsmasq' in ansible_facts['packages']) | ternary(false, omit) }}"
+        state: "{{ ('dnsmasq' in ansible_facts['packages']) | ternary('stopped', omit) }}"
         masked: true
 
 - name: "2.1.6 | PATCH | Ensure ftp server services are not in use"
@@ -186,7 +186,7 @@
   block:
     - name: "2.1.6 | PATCH | Ensure ftp server services are not in use | Remove package"
       when:
-        - "'vsftp' in ansible_facts.packages"
+        - "'vsftp' in ansible_facts['packages']"
         - not ubtu24cis_ftp_server
         - not ubtu24cis_ftp_mask
       ansible.builtin.package:
@@ -202,8 +202,8 @@
       notify: Systemd_daemon_reload
       ansible.builtin.systemd:
         name: vsftpd.service
-        enabled: "{{ ('vsftpd' in ansible_facts.packages) | ternary(false, omit) }}"
-        state: "{{ ('vsftpd' in ansible_facts.packages) | ternary('stopped', omit) }}"
+        enabled: "{{ ('vsftpd' in ansible_facts['packages']) | ternary(false, omit) }}"
+        state: "{{ ('vsftpd' in ansible_facts['packages']) | ternary('stopped', omit) }}"
         masked: true
 
 - name: "2.1.7 | PATCH | Ensure ldap server services are not in use"
@@ -218,7 +218,7 @@
   block:
     - name: "2.1.7 | PATCH | Ensure ldap server services are not in use | Remove package"
       when:
-        - "'slapd' in ansible_facts.packages"
+        - "'slapd' in ansible_facts['packages']"
         - not ubtu24cis_ldap_server
         - not ubtu24cis_ldap_mask
       ansible.builtin.package:
@@ -234,8 +234,8 @@
       notify: Systemd_daemon_reload
       ansible.builtin.systemd:
         name: slapd.service
-        enabled: "{{ ('slapd' in ansible_facts.packages) | ternary(false, omit) }}"
-        state: "{{ ('slapd' in ansible_facts.packages) | ternary('stopped', omit) }}"
+        enabled: "{{ ('slapd' in ansible_facts['packages']) | ternary(false, omit) }}"
+        state: "{{ ('slapd' in ansible_facts['packages']) | ternary('stopped', omit) }}"
         masked: true
 
 - name: "2.1.8 | PATCH | Ensure message access server services are not in use"
@@ -252,7 +252,7 @@
   block:
     - name: "2.1.8 | PATCH | Ensure message access server services are not in use | Remove package"
       when:
-        - "'dovecot-pop3d' in ansible_facts.packages or 'dovecot-imapd' in ansible_facts.packages"
+        - "'dovecot-pop3d' in ansible_facts['packages'] or 'dovecot-imapd' in ansible_facts['packages']"
         - not ubtu24cis_message_server
         - not ubtu24cis_message_mask
       ansible.builtin.package:
@@ -270,8 +270,8 @@
       notify: Systemd_daemon_reload
       ansible.builtin.systemd:
         name: "{{ item }}"
-        enabled: "{{ ('dovecot-imapd' in ansible_facts.packages) | ternary(false, omit) }}"
-        state: "{{ ('dovecot-imapd' in ansible_facts.packages) | ternary('stopped', omit) }}"
+        enabled: "{{ ('dovecot-imapd' in ansible_facts['packages']) | ternary(false, omit) }}"
+        state: "{{ ('dovecot-imapd' in ansible_facts['packages']) | ternary('stopped', omit) }}"
         masked: true
       loop:
         - "dovecot.socket"
@@ -293,7 +293,7 @@
   block:
     - name: "2.1.9 | PATCH | Ensure network file system services are not in use | Remove package"
       when:
-        - "'nfs-kernel-server' in ansible_facts.packages"
+        - "'nfs-kernel-server' in ansible_facts['packages']"
         - not ubtu24cis_nfs_server
         - not ubtu24cis_nfs_mask
       ansible.builtin.package:
@@ -309,8 +309,8 @@
       notify: Systemd_daemon_reload
       ansible.builtin.systemd:
         name: nfs-server.service
-        enabled: "{{ ('nfs-kernel-server' in ansible_facts.packages) | ternary(false, omit) }}"
-        state: "{{ ('nfs-kernel-server' in ansible_facts.packages) | ternary('stopped', omit) }}"
+        enabled: "{{ ('nfs-kernel-server' in ansible_facts['packages']) | ternary(false, omit) }}"
+        state: "{{ ('nfs-kernel-server' in ansible_facts['packages']) | ternary('stopped', omit) }}"
         masked: true
 
 - name: "2.1.10 | PATCH | Ensure nis server services are not in use"
@@ -326,7 +326,7 @@
   block:
     - name: "2.1.10 | PATCH | Ensure nis server services are not in use | Remove package"
       when:
-        - "'ypserv' in ansible_facts.packages"
+        - "'ypserv' in ansible_facts['packages']"
         - not ubtu24cis_nis_server
         - not ubtu24cis_nis_mask
       ansible.builtin.package:
@@ -341,14 +341,15 @@
         - ubtu24cis_nis_mask
       ansible.builtin.systemd:
         name: ypserv.service
-        enabled: "{{ ('ypserv' in ansible_facts.packages) | ternary(false, omit) }}"
-        state: "{{ ('ypserv' in ansible_facts.packages) | ternary('stopped', omit) }}"
+        enabled: "{{ ('ypserv' in ansible_facts['packages']) | ternary(false, omit) }}"
+        state: "{{ ('ypserv' in ansible_facts['packages']) | ternary('stopped', omit) }}"
         masked: true
 
 - name: "2.1.11 | PATCH | Ensure print server services are not in use"
   when: ubtu24cis_rule_2_1_11
   tags:
     - level1-server
+    - level2-workstation
     - patch
     - cups
     - rule_2.1.11
@@ -356,7 +357,7 @@
   block:
     - name: "2.1.11 | PATCH | Ensure print server services are not in use | Remove package"
       when:
-        - "'cups' in ansible_facts.packages"
+        - "'cups' in ansible_facts['packages']"
         - not ubtu24cis_print_server
         - not ubtu24cis_print_mask
       ansible.builtin.package:
@@ -372,8 +373,8 @@
       notify: Systemd_daemon_reload
       ansible.builtin.systemd:
         name: "{{ item }}"
-        enabled: "{{ ('cups' in ansible_facts.packages) | ternary(false, omit) }}"
-        state: "{{ ('cups' in ansible_facts.packages) | ternary('stopped', omit) }}"
+        enabled: "{{ ('cups' in ansible_facts['packages']) | ternary(false, omit) }}"
+        state: "{{ ('cups' in ansible_facts['packages']) | ternary('stopped', omit) }}"
         masked: true
       loop:
         - "cups.socket"
@@ -394,7 +395,7 @@
   block:
     - name: "2.1.12 | PATCH | Ensure rpcbind services are not in use | Remove package"
       when:
-        - "'rpcbind' in ansible_facts.packages"
+        - "'rpcbind' in ansible_facts['packages']"
         - not ubtu24cis_rpc_server
         - not ubtu24cis_rpc_mask
       ansible.builtin.package:
@@ -410,8 +411,8 @@
       notify: Systemd_daemon_reload
       ansible.builtin.systemd:
         name: "{{ item }}"
-        enabled: "{{ ('rpcbind' in ansible_facts.packages) | ternary(false, omit) }}"
-        state: "{{ ('rpcbind' in ansible_facts.packages) | ternary('stopped', omit) }}"
+        enabled: "{{ ('rpcbind' in ansible_facts['packages']) | ternary(false, omit) }}"
+        state: "{{ ('rpcbind' in ansible_facts['packages']) | ternary('stopped', omit) }}"
         masked: true
       loop:
         - rpcbind.service
@@ -431,7 +432,7 @@
   block:
     - name: "2.1.13 | PATCH | Ensure rsync services are not in use | Remove package"
       when:
-        - "'rsync' in ansible_facts.packages"
+        - "'rsync' in ansible_facts['packages']"
         - not ubtu24cis_rsync_server
         - not ubtu24cis_rsync_mask
       ansible.builtin.package:
@@ -447,8 +448,8 @@
       notify: Systemd_daemon_reload
       ansible.builtin.systemd:
         name: rsync.service
-        enabled: "{{ ('rsync' in ansible_facts.packages) | ternary(false, omit) }}"
-        state: "{{ ('rsync' in ansible_facts.packages) | ternary('stopped', omit) }}"
+        enabled: "{{ ('rsync' in ansible_facts['packages']) | ternary(false, omit) }}"
+        state: "{{ ('rsync' in ansible_facts['packages']) | ternary('stopped', omit) }}"
         masked: true
 
 - name: "2.1.14 | PATCH | Ensure samba file server services are not in use"
@@ -464,7 +465,7 @@
   block:
     - name: "2.1.14 | PATCH | Ensure samba file server services are not in use | Remove package"
       when:
-        - "'samba' in ansible_facts.packages"
+        - "'samba' in ansible_facts['packages']"
         - not ubtu24cis_samba_server
         - not ubtu24cis_samba_mask
       ansible.builtin.package:
@@ -480,8 +481,8 @@
       notify: Systemd_daemon_reload
       ansible.builtin.systemd:
         name: smbd.service
-        enabled: "{{ ('samba' in ansible_facts.packages) | ternary(false, omit) }}"
-        state: "{{ ('samba' in ansible_facts.packages) | ternary('stopped', omit) }}"
+        enabled: "{{ ('samba' in ansible_facts['packages']) | ternary(false, omit) }}"
+        state: "{{ ('samba' in ansible_facts['packages']) | ternary('stopped', omit) }}"
         masked: true
 
 - name: "2.1.15 | PATCH | Ensure snmp services are not in use"
@@ -497,7 +498,7 @@
   block:
     - name: "2.1.15 | PATCH | Ensure snmp services are not in use | Remove package"
       when:
-        - "'snmpd' in ansible_facts.packages"
+        - "'snmpd' in ansible_facts['packages']"
         - not ubtu24cis_snmp_server
         - not ubtu24cis_snmp_mask
       ansible.builtin.package:
@@ -513,8 +514,8 @@
       notify: Systemd_daemon_reload
       ansible.builtin.systemd:
         name: snmpd.service
-        enabled: "{{ ('snmpd' in ansible_facts.packages) | ternary(false, omit) }}"
-        state: "{{ ('snmpd' in ansible_facts.packages) | ternary('stopped', omit) }}"
+        enabled: "{{ ('snmpd' in ansible_facts['packages']) | ternary(false, omit) }}"
+        state: "{{ ('snmpd' in ansible_facts['packages']) | ternary('stopped', omit) }}"
         masked: true
 
 - name: "2.1.16 | PATCH | Ensure tftp server services are not in use"
@@ -529,7 +530,7 @@
   block:
     - name: "2.1.16 | PATCH | Ensure tftp server services are not in use | Remove package"
       when:
-        - "'tftpd-hpa' in ansible_facts.packages"
+        - "'tftpd-hpa' in ansible_facts['packages']"
         - not ubtu24cis_tftp_server
         - not ubtu24cis_tftp_mask
       ansible.builtin.package:
@@ -545,8 +546,8 @@
       notify: Systemd_daemon_reload
       ansible.builtin.systemd:
         name: tftpd-hpa.service
-        enabled: "{{ ('tftpd-hpa' in ansible_facts.packages) | ternary(false, omit) }}"
-        state: "{{ ('tftpd-hpa' in ansible_facts.packages) | ternary('stopped', omit) }}"
+        enabled: "{{ ('tftpd-hpa' in ansible_facts['packages']) | ternary(false, omit) }}"
+        state: "{{ ('tftpd-hpa' in ansible_facts['packages']) | ternary('stopped', omit) }}"
         masked: true
 
 - name: "2.1.17 | PATCH | Ensure web proxy server services are not in use"
@@ -561,7 +562,7 @@
   block:
     - name: "2.1.17 | PATCH | Ensure web proxy server services are not in use | Remove package"
       when:
-        - "'squid' in ansible_facts.packages"
+        - "'squid' in ansible_facts['packages']"
         - not ubtu24cis_squid_server
         - not ubtu24cis_squid_mask
       ansible.builtin.package:
@@ -577,8 +578,8 @@
       notify: Systemd_daemon_reload
       ansible.builtin.systemd:
         name: squid.service
-        enabled: "{{ ('squid' in ansible_facts.packages) | ternary(false, omit) }}"
-        state: "{{ ('squid' in ansible_facts.packages) | ternary('stopped', omit) }}"
+        enabled: "{{ ('squid' in ansible_facts['packages']) | ternary(false, omit) }}"
+        state: "{{ ('squid' in ansible_facts['packages']) | ternary('stopped', omit) }}"
         masked: true
 
 - name: "2.1.18 | PATCH | Ensure web server services are not in use"
@@ -597,7 +598,7 @@
       when:
         - not ubtu24cis_apache2_server
         - not ubtu24cis_apache2_mask
-        - "'apache2' in ansible_facts.packages"
+        - "'apache2' in ansible_facts['packages']"
       ansible.builtin.package:
         name: apache2
         state: absent
@@ -608,7 +609,7 @@
       when:
         - not ubtu24cis_nginx_server
         - not ubtu24cis_nginx_mask
-        - "'nginx' in ansible_facts.packages"
+        - "'nginx' in ansible_facts['packages']"
       ansible.builtin.package:
         name: nginx
         state: absent
@@ -619,12 +620,12 @@
       when:
         - not ubtu24cis_apache2_server
         - ubtu24cis_apache2_mask
-        - "'apache2' in ansible_facts.packages"
+        - "'apache2' in ansible_facts['packages']"
       notify: Systemd_daemon_reload
       ansible.builtin.systemd:
         name: "{{ item }}"
-        enabled: "{{ ('apache2' in ansible_facts.packages) | ternary(false, omit) }}"
-        state: "{{ ('apache2' in ansible_facts.packages) | ternary('stopped', omit) }}"
+        enabled: "{{ ('apache2' in ansible_facts['packages']) | ternary(false, omit) }}"
+        state: "{{ ('apache2' in ansible_facts['packages']) | ternary('stopped', omit) }}"
         masked: true
       loop:
         - apache2.service
@@ -636,12 +637,12 @@
       when:
         - not ubtu24cis_nginx_server
         - ubtu24cis_nginx_mask
-        - "'nginx' in ansible_facts.packages"
+        - "'nginx' in ansible_facts['packages']"
       notify: Systemd_daemon_reload
       ansible.builtin.systemd:
-        name: ngnix.service
-        enabled: "{{ ('nginx' in ansible_facts.packages) | ternary(false, omit) }}"
-        state: "{{ ('nginx' in ansible_facts.packages) | ternary('stopped', omit) }}"
+        name: nginx.service
+        enabled: "{{ ('nginx' in ansible_facts['packages']) | ternary(false, omit) }}"
+        state: "{{ ('nginx' in ansible_facts['packages']) | ternary('stopped', omit) }}"
         masked: true
 
 - name: "2.1.19 | PATCH | Ensure xinetd services are not in use"
@@ -656,7 +657,7 @@
   block:
     - name: "2.1.19 | PATCH | Ensure xinetd services are not in use | Remove package"
       when:
-        - "'xinetd' in ansible_facts.packages"
+        - "'xinetd' in ansible_facts['packages']"
         - not ubtu24cis_xinetd_server
         - not ubtu24cis_xinetd_mask
       ansible.builtin.package:
@@ -672,14 +673,14 @@
       notify: Systemd_daemon_reload
       ansible.builtin.systemd:
         name: xinetd.service
-        enabled: "{{ ('xinetd' in ansible_facts.packages) | ternary(false, omit) }}"
-        state: "{{ ('xinetd' in ansible_facts.packages) | ternary('stopped', omit) }}"
+        enabled: "{{ ('xinetd' in ansible_facts['packages']) | ternary(false, omit) }}"
+        state: "{{ ('xinetd' in ansible_facts['packages']) | ternary('stopped', omit) }}"
         masked: true
 
 - name: "2.1.20 | PATCH | Ensure X window server services are not in use"
   when:
     - not ubtu24cis_xwindow_server
-    - "'xserver-common' in ansible_facts.packages"
+    - "'xserver-common' in ansible_facts['packages']"
     - ubtu24cis_rule_2_1_20
   tags:
     - level2-server
@@ -708,7 +709,7 @@
     warn_control_id: '2.1.21'
   block:
     - name: "2.1.21 | PATCH | Ensure mail transfer agent is configured for local-only mode | Make changes if exim4 installed"
-      when: "'exim4' in ansible_facts.packages"
+      when: "'exim4' in ansible_facts['packages']"
       ansible.builtin.lineinfile:
         path: /etc/exim4/update-exim4.conf.conf
         regexp: "{{ item.regexp }}"
@@ -730,7 +731,7 @@
       notify: Restart exim4
 
     - name: "2.1.21 | PATCH | Ensure mail transfer agent is configured for local-only mode | Make changes if postfix is installed"
-      when: "'postfix' in ansible_facts.packages"
+      when: "'postfix' in ansible_facts['packages']"
       notify: Restart postfix
       ansible.builtin.lineinfile:
         path: /etc/postfix/main.cf
@@ -739,8 +740,8 @@
 
     - name: "2.1.21 | WARN | Ensure mail transfer agents are configured for local-only mode | Message out other main agents"
       when:
-        - "'exim4' not in ansible_facts.packages"
-        - "'postfix' not in ansible_facts.packages"
+        - "'exim4' not in ansible_facts['packages']"
+        - "'postfix' not in ansible_facts['packages']"
       ansible.builtin.debug:
         msg:
           - "Warning!! You are not using either exim4 or postfix, please ensure mail services set for local only mode"
@@ -748,8 +749,8 @@
 
     - name: "2.1.21 | WARN | Ensure mail transfer agents are configured for local-only mode | warn_count"
       when:
-        - "'exim4' not in ansible_facts.packages"
-        - "'postfix' not in ansible_facts.packages"
+        - "'exim4' not in ansible_facts['packages']"
+        - "'postfix' not in ansible_facts['packages']"
       ansible.builtin.import_tasks:
         file: warning_facts.yml
 

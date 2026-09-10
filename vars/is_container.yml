@@ -17,10 +17,10 @@ ubtu24cis_rule_6_3_1: false
 ubtu24cis_rule_6_3_2: false
 
 # AppArmor
-ubtu24cis_rule_1_3_1: false
-ubtu24cis_rule_1_3_2: false
-ubtu24cis_rule_1_3_3: false
-ubtu24cis_rule_1_3_4: false
+ubtu24cis_rule_1_3_1_1: false
+ubtu24cis_rule_1_3_1_2: false
+ubtu24cis_rule_1_3_1_3: false
+ubtu24cis_rule_1_3_1_4: false
 
 # time sync
 ubtu24cis_rule_2_3_2_1: false
@@ -68,7 +68,6 @@ ubtu24cis_rule_6_2_4_7: false
 ubtu24cis_rule_6_2_4_8: false
 ubtu24cis_rule_6_2_4_9: false
 ubtu24cis_rule_6_2_4_10: false
-ubtu24cis_rule_6_2_4_11: false
 
 # cron
 ubtu24cis_rule_2_4_1_1: false

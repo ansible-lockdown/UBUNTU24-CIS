@@ -3,11 +3,12 @@
 - name: "6.1.3.8 | PATCH | Ensure logrotate is configured"
   when:
     - ubtu24cis_rule_6_1_3_8
-    - "'logrotate' in ansible_facts.packages"
+    - "'logrotate' in ansible_facts['packages']"
   tags:
     - level1-server
     - level1-workstation
     - manual
+    - audit
     - patch
     - logrotate
     - rule_6.1.3.8

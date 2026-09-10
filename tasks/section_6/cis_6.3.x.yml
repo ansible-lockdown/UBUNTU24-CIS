@@ -12,7 +12,7 @@
     - aide
   block:
     - name: "6.3.1 | PATCH | Ensure AIDE is installed"
-      when: "'aide' not in ansible_facts.packages or 'aide-common' not in ansible_facts.packages"
+      when: "'aide' not in ansible_facts['packages'] or 'aide-common' not in ansible_facts['packages']"
       ansible.builtin.package:
         name: ['aide', 'aide-common']
         state: present
@@ -109,12 +109,13 @@
       when: ubtu24cis_aide_scan == 'cron'
       ansible.builtin.systemd:
         name: "{{ item }}"
-        state: stopped
-        enabled: false
-        daemon_reload: true
+        state: "{{ ('aide-common' in ansible_facts['packages']) | ternary('stopped', omit) }}"
+        masked: true
       loop:
         - dailyaidecheck.service
         - dailyaidecheck.timer
+      loop_control:
+        label: "{{ item }}"
 
     - name: "6.3.2 | PATCH | Ensure filesystem integrity is regularly checked | timer template"
       when: ubtu24cis_aide_scan == 'timer'
@@ -146,8 +147,8 @@
     - ubtu24cis_rule_6_3_3
     - ubtu24cis_config_aide
   tags:
-    - level1-server
-    - level1-workstation
+    - level2-server
+    - level2-workstation
     - aide
     - file_integrity
     - patch

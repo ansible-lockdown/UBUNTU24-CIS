@@ -3,7 +3,7 @@
 - name: "6.1.3.1 | PATCH | Ensure rsyslog is installed"
   when:
     - ubtu24cis_rule_6_1_3_1
-    - "'rsyslog' not in ansible_facts.packages"
+    - "'rsyslog' not in ansible_facts['packages']"
   tags:
     - level1-server
     - level1-workstation
@@ -80,7 +80,7 @@
     - level1-server
     - level1-workstation
     - manual
-    - patch
+    - audit
     - rule_6.1.3.5
     - NIST800-53R5_AU-2
     - NIST800-53R5_AU-7
@@ -94,7 +94,7 @@
         set -o pipefail
         grep -r "*.emerg" /etc/* | cut -f1 -d":"
       args:
-        executable: /bin/bash
+        executable: "{{ ubtu24cis_shell_executable }}"
       changed_when: false
       failed_when: discovered_rsyslog_config_path.rc not in [0, 1]
       check_mode: false
@@ -157,12 +157,13 @@
     - rule_6.1.3.6
     - NIST800-53R5_AU-6
     - rsyslog
-  ansible.builtin.blockinfile:
-    path: /etc/rsyslog.conf
-    block: |
-      ##Enable sending of logs over TCP add the following line:
-      *.* @@{{ ubtu24cis_remote_log_server }}
-    insertafter: EOF
+  notify: Restart syslog service
+  ansible.builtin.template:
+    src: etc/rsyslog.d/60-rsyslog.conf.j2
+    dest: /etc/rsyslog.d/60-rsyslog.conf
+    owner: root
+    group: root
+    mode: 'g-wx,o-rwx'
 
 - name: "6.1.3.7 | PATCH | Ensure rsyslog is not configured to receive logs from a remote client"
   when: ubtu24cis_rule_6_1_3_7

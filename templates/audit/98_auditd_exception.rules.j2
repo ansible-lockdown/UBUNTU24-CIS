@@ -1,7 +1,7 @@
 {{ file_managed_by_ansible }}
 
 # This file contains users whose actions are not logged by auditd
-{% if allow_auditd_uid_user_exclusions %}
+{% if ubtu24cis_allow_auditd_uid_user_exclusions %}
 {% for user in ubtu24cis_auditd_uid_exclude %}
 -a never,user -F uid!={{ user }} -F auid!={{ user }}
 {% endfor %}

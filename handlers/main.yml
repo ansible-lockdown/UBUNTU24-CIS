@@ -1,33 +1,8 @@
 ---
 
-- name: "Adding options for /tmp"
-  when: not ubtu24cis_tmp_svc
-  vars:
-    mount_point: '/tmp'
-  ansible.posix.mount:
-    path: "{{ mount_point }}"
-    src: "{{ prelim_mount_point_fs_and_options[mount_point]['src'] }}"
-    state: present
-    fstype: "{{ prelim_mount_point_fs_and_options[mount_point]['fs_type'] }}"
-    opts: "{{ prelim_mount_point_fs_and_options[mount_point]['options'] | unique | join(',') }}"
-  listen: "Remount /tmp"
-
-- name: "Remounting /tmp"
-  vars:
-    mount_point: '/tmp'
-  ansible.posix.mount:
-    path: "{{ mount_point }}"
-    state: remounted
-  listen: "Remount /tmp"
-
-- name: "Remounting /tmp systemd"
-  when: ubtu24cis_tmp_svc
-  vars:
-    mount_point: '/tmp'
-  ansible.builtin.systemd:
-    name: tmp.mount
-    state: restarted
-    daemon_reload: true
+- name: "Remount tmp filesystem"
+  ansible.builtin.import_tasks:
+    file: remount_tmp.yml
   listen: "Remount /tmp"
 
 - name: "Adding options for /dev/shm"
@@ -144,11 +119,6 @@
     state: remounted
   listen: "Remount /var/log/audit"
 
-- name: Update_Initramfs
-  ansible.builtin.command: update-initramfs -u
-  changed_when: true
-  notify: Set_reboot_required
-
 - name: Grub update
   ansible.builtin.command: update-grub
   changed_when: true
@@ -179,6 +149,12 @@
     name: "{{ ubtu24cis_syslog_service }}"
     state: restarted
 
+- name: Grub update
+  ansible.builtin.command: update-grub
+  changed_when: true
+  failed_when: false
+  notify: Set_reboot_required
+
 - name: Restart journald
   ansible.builtin.systemd:
     name: systemd-journald
@@ -190,7 +166,7 @@
     state: restarted
 
 - name: Flush ipv4 route table
-  when: ansible_facts.virtualization_type != "docker"
+  when: ansible_facts['virtualization_type'] != "docker"
   ansible.posix.sysctl:
     name: net.ipv4.route.flush
     value: '1'
@@ -198,7 +174,7 @@
 
 - name: Flush ipv6 route table
   when:
-    - ansible_facts.virtualization_type != "docker"
+    - ansible_facts['virtualization_type'] != "docker"
     - ubtu24cis_ipv6_required
   ansible.posix.sysctl:
     name: net.ipv6.route.flush
@@ -208,14 +184,6 @@
 - name: Reload ufw
   community.general.ufw:
     state: reloaded
-
-- name: Iptables persistent
-  ansible.builtin.command: bash -c "iptables-save > /etc/iptables/rules.v4"
-  changed_when: true
-
-- name: Ip6tables persistent
-  ansible.builtin.command: bash -c "ip6tables-save > /etc/iptables/rules.v6"
-  changed_when: true
 
 - name: Pam_auth_update_pwunix
   ansible.builtin.command: pam-auth-update --enable {{ ubtu24cis_pam_pwunix_file }}
@@ -237,31 +205,43 @@
   ansible.builtin.command: pam-auth-update --enable {{ ubtu24cis_pam_pwhistory_file }}
   changed_when: true
 
+- name: Iptables persistent
+  ansible.builtin.command: bash -c "iptables-save > /etc/iptables/rules.v4"
+  changed_when: true
+
+- name: Ip6tables persistent
+  ansible.builtin.command: bash -c "ip6tables-save > /etc/iptables/rules.v6"
+  changed_when: true
+
 - name: Auditd rules reload
-  when: discovered_augenrules_check.stdout is search('No change') or prelim_auditd_immutable_check.rc == 1
+  when: discovered_augenrules_check.stdout is search('No change') or discovered_auditd_immutable_check.rc == 1
   ansible.builtin.command: augenrules --load
   changed_when: true
   failed_when: discovered_augenrule_load.rc not in [ 0, 1 ]
   register: discovered_augenrule_load
+  listen: Update auditd
 
 - name: Audit_immutable_fact
   when:
     - discovered_audit_rules_updated.changed
-    - auditd_immutable_check is defined
+    - discovered_auditd_immutable_check is defined
   ansible.builtin.debug:
     msg: "Reboot required for auditd to apply new rules as immutable set"
   notify: Set_reboot_required
+  listen: Update auditd
 
 - name: Stop auditd process
+  when: discovered_auditd_immutable_check.rc == 1
   ansible.builtin.command: systemctl kill auditd
   changed_when: true
-  listen: Restart auditd
+  listen: Update auditd
 
 - name: Start auditd process
+  when: discovered_auditd_immutable_check.rc == 1
   ansible.builtin.systemd:
     name: auditd
     state: started
-  listen: Restart auditd
+  listen: Update auditd
 
 - name: Restart sshd
   ansible.builtin.systemd:

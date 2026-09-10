@@ -1,5 +1,51 @@
 ---
 
+- name: "5.3.3.2.1-6 | PATCH | Ensure conf.d directory exists"
+  when:
+    - ubtu24cis_rule_5_3_3_2_1 or
+      ubtu24cis_rule_5_3_3_2_2 or
+      ubtu24cis_rule_5_3_3_2_3 or
+      ubtu24cis_rule_5_3_3_2_4 or
+      ubtu24cis_rule_5_3_3_2_5 or
+      ubtu24cis_rule_5_3_3_2_6
+  tags:
+    - level1-server
+    - level1-workstation
+    - patch
+    - pam
+    - rule_5.3.3.2.1
+    - rule_5.3.3.2.2
+    - rule_5.3.3.2.3
+    - rule_5.3.3.2.4
+    - rule_5.3.3.2.5
+    - rule_5.3.3.2.6
+    - NIST800-53R5_IA-5
+  ansible.builtin.file:
+    path: '/etc/security/pwquality.conf.d'
+    state: directory
+    owner: root
+    group: root
+    mode: 'u+x,g-w,o-rwx'
+
+- name: "5.3.3.2.x | PATCH | Look for existing configs"
+  tags:
+    - level1-server
+    - level1-workstation
+    - patch
+    - pam
+    - rule_5.3.3.2.1
+    - rule_5.3.3.2.2
+    - rule_5.3.3.2.3
+    - rule_5.3.3.2.4
+    - rule_5.3.3.2.5
+    - rule_5.3.3.2.6
+    - NIST800-53R5_IA-5
+  ansible.builtin.find:
+    paths:
+      - /etc/security/pwquality.conf.d/
+    patterns: '*.conf'
+  register: discovered_pam_pwquality_confs
+
 - name: "5.3.3.2.1 | PATCH | Ensure password number of changed characters is configured"
   when: ubtu24cis_rule_5_3_3_2_1
   tags:
@@ -17,7 +63,7 @@
         regexp: 'difok\s*=\s*\d+\b'
         replace: ''
       with_items:
-        - "{{ prelim_pam_pwquality_confs.files }}"
+        - "{{ discovered_pam_pwquality_confs.files }}"
         - { path: '/etc/security/pwquality.conf'}
         - { path: '/etc/pam.d/common-password' }
       loop_control:
@@ -48,7 +94,7 @@
         regexp: 'minlen\s*=\s*\d+\b'
         replace: ''
       with_items:
-        - "{{ prelim_pam_pwquality_confs.files }}"
+        - "{{ discovered_pam_pwquality_confs.files }}"
         - { path: '/etc/security/pwquality.conf'}
         - { path: '/etc/pam.d/common-password' }
       loop_control:
@@ -79,7 +125,7 @@
         regexp: '(minclass|[dulo]credit)\s*=\s*(-\d|\d+)\b'
         replace: ''
       with_items:
-        - "{{ prelim_pam_pwquality_confs.files }}"
+        - "{{ discovered_pam_pwquality_confs.files }}"
         - { path: '/etc/security/pwquality.conf'}
         - { path: '/etc/pam.d/common-password' }
       loop_control:
@@ -110,7 +156,7 @@
         regexp: 'maxrepeat\s*=\s*\d+\b'
         replace: ''
       with_items:
-        - "{{ prelim_pam_pwquality_confs.files }}"
+        - "{{ discovered_pam_pwquality_confs.files }}"
         - { path: '/etc/security/pwquality.conf'}
         - { path: '/etc/pam.d/common-password' }
       loop_control:
@@ -141,7 +187,7 @@
         regexp: 'maxsequence\s*=\s*\d+\b'
         replace: ''
       with_items:
-        - "{{ prelim_pam_pwquality_confs.files }}"
+        - "{{ discovered_pam_pwquality_confs.files }}"
         - { path: '/etc/security/pwquality.conf'}
         - { path: '/etc/pam.d/common-password' }
       loop_control:
@@ -172,7 +218,7 @@
         regexp: 'dictcheck\s*=\s*\d+\b'
         replace: ''
       with_items:
-        - "{{ prelim_pam_pwquality_confs.files }}"
+        - "{{ discovered_pam_pwquality_confs.files }}"
         - { path: '/etc/security/pwquality.conf'}
         - { path: '/etc/pam.d/common-password' }
       loop_control:
@@ -203,7 +249,7 @@
         regexp: 'enforcing\s*=\s*\d+\b'
         replace: ''
       with_items:
-        - "{{ prelim_pam_pwquality_confs.files }}"
+        - "{{ discovered_pam_pwquality_confs.files }}"
         - { path: '/etc/security/pwquality.conf'}
         - { path: '/etc/pam.d/common-password' }
       loop_control:

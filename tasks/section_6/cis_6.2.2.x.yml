@@ -14,7 +14,7 @@
     regexp: "^max_log_file( |=)"
     line: "max_log_file = {{ ubtu24cis_max_log_file_size }}"
     state: present
-  notify: Restart auditd
+  notify: Update auditd
 
 - name: "6.2.2.2 | PATCH | Ensure audit logs are not automatically deleted"
   when: ubtu24cis_rule_6_2_2_2
@@ -29,7 +29,7 @@
     path: /etc/audit/auditd.conf
     regexp: '^max_log_file_action'
     line: "max_log_file_action = {{ ubtu24cis_auditd_max_log_file_action }}"
-  notify: Restart auditd
+  notify: Update auditd
 
 - name: "6.2.2.3 | PATCH | Ensure system is disabled when audit logs are full"
   when: ubtu24cis_rule_6_2_2_3
@@ -49,7 +49,7 @@
     - { regexp: '^disk_error_action', line: "disk_error_action = {{ ubtu24cis_auditd_disk_error_action }}" }
   loop_control:
     label: "{{ item }}"
-  notify: Restart auditd
+  notify: Update auditd
 
 - name: "6.2.2.4 | PATCH | Ensure system warns when audit logs are low on space"
   when: ubtu24cis_rule_6_2_2_4
@@ -72,4 +72,4 @@
     - { regexp: '^space_left_action', line: 'space_left_action = {{ ubtu24cis_auditd_space_left_action }}' }
   loop_control:
     label: "{{ item }}"
-  notify: Restart auditd
+  notify: Update auditd

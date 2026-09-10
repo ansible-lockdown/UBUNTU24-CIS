@@ -1,9 +1,32 @@
 ---
 
+- name: "5.4.2.7/8 | AUDIT | Interactive Users"
+  when:
+    - ubtu24cis_rule_5_4_2_7 or
+      ubtu24cis_rule_5_4_2_8
+  tags:
+    - level1-server
+    - level1-workstation
+    - patch
+    - shadow_suite
+    - rule_5.4.2.7
+    - rule_5.4.2.8
+    - NIST800-53R5_AC-2
+    - NIST800-53R5_AC-3
+    - NIST800-53R5_AC-11
+    - NIST800-53R5_MP-2
+  ansible.builtin.shell: |
+    set -o pipefail
+    grep -E -v '^(root|halt|sync|shutdown)' /etc/passwd | awk -F: '(!index($7, "sbin/nologin") && $7 != "/bin/nologin" && $7 != "/bin/false" && $7 != "/dev/null") { print $1 }'
+  args:
+    executable: "{{ ubtu24cis_shell_executable }}"
+  changed_when: false
+  check_mode: false
+  register: discovered_interactive_usernames
+
 - name: "5.4.2.1 | PATCH | Ensure root is the only UID 0 account"
   when:
     - ubtu24cis_rule_5_4_2_1
-    - prelim_uid_zero_accounts_except_root.rc
     - ubtu24cis_disruption_high
   tags:
     - level1-server
@@ -17,12 +40,25 @@
     - NIST800-53R5_CM-6
     - NIST800-53R5_CM-7
     - NIST800-53R5_IA-5
-  ansible.builtin.command: passwd -l {{ item }}
-  changed_when: false
-  failed_when: false
-  loop: "{{ prelim_uid_zero_accounts_except_root.stdout_lines }}"
-  loop_control:
-    label: "{{ item }}"
+  block:
+    - name: "5.4.2.1 | AUDIT | Ensure root is the only UID 0 account | discover"
+      ansible.builtin.shell: |
+        set -o pipefail
+        cat /etc/passwd | awk -F: '($3 == 0 && $1 != "root") {i++;print $1 } END {exit i}'
+      args:
+        executable: "{{ ubtu24cis_shell_executable }}"
+      changed_when: false
+      check_mode: false
+      register: discovered_uid_zero_accounts_except_root
+
+    - name: "5.4.2.1 | PATCH | Ensure root is the only UID 0 account | lock non root"
+      when: discovered_uid_zero_accounts_except_root.rc
+      ansible.builtin.command: passwd -l {{ item }}
+      changed_when: false
+      failed_when: false
+      loop: "{{ discovered_uid_zero_accounts_except_root.stdout_lines }}"
+      loop_control:
+        label: "{{ item }}"
 
 - name: "5.4.2.2 | PATCH | Ensure root is the only GID 0 account"
   when:
@@ -46,7 +82,7 @@
         set -o pipefail
         awk -F: '($1 !~ /^(sync|shutdown|halt|operator)/ && $4=="0") {print $1}' /etc/passwd | grep -wv 'root'
       args:
-        executable: /bin/bash
+        executable: "{{ ubtu24cis_shell_executable }}"
       changed_when: false
       failed_when: discovered_gid0_members.rc not in [ 0, 1 ]
       check_mode: false
@@ -85,7 +121,7 @@
         set -o pipefail
         awk -F: '$3=="0"{print $1}' /etc/group | grep -vw 'root'
       args:
-        executable: /bin/bash
+        executable: "{{ ubtu24cis_shell_executable }}"
       check_mode: false
       changed_when: false
       failed_when: discovered_gid0_groups.rc not in [ 0, 1 ]
@@ -140,7 +176,7 @@
         set -o pipefail
         sudo -Hiu root env | grep '^PATH' | cut -d= -f2
       args:
-        executable: /bin/bash
+        executable: "{{ ubtu24cis_shell_executable }}"
       changed_when: false
       check_mode: false
       register: discovered_root_paths
@@ -151,7 +187,7 @@
         set -o pipefail
         sudo -Hiu root env | grep '^PATH' | cut -d= -f2 | tr ":" "\n"
       args:
-        executable: /bin/bash
+        executable: "{{ ubtu24cis_shell_executable }}"
       changed_when: false
       check_mode: false
       register: discovered_root_paths_split
@@ -167,7 +203,7 @@
         set -o pipefail
         echo {{ root_paths }} | grep -q "::" && echo "roots path contains a empty directory (::)"
       args:
-        executable: /bin/bash
+        executable: "{{ ubtu24cis_shell_executable }}"
       changed_when: false
       failed_when: discovered_root_path_empty_dir.rc not in [ 0, 1 ]
       check_mode: false
@@ -179,7 +215,7 @@
         set -o pipefail
         echo {{ root_paths }} | cut -d= -f2 | grep -q ":$" && echo "roots path contains a trailing (:)"
       args:
-        executable: /bin/bash
+        executable: "{{ ubtu24cis_shell_executable }}"
       changed_when: false
       failed_when: discovered_root_path_trailing_colon.rc not in [ 0, 1 ]
       check_mode: false
@@ -232,7 +268,7 @@
 - name: "5.4.2.7 | PATCH | Ensure system accounts do not have a valid login shell"
   when:
     - ubtu24cis_rule_5_4_2_7
-    - "item.id not in prelim_interactive_usernames.stdout"
+    - "item.id not in discovered_interactive_usernames.stdout"
     - "'root' not in item.id"
     - ubtu24cis_disruption_high
   tags:
@@ -257,7 +293,7 @@
   when:
     - ubtu24cis_rule_5_4_2_8
     - ubtu24cis_disruption_high
-    - "item.id not in prelim_interactive_usernames.stdout"
+    - "item.id not in discovered_interactive_usernames.stdout"
     - "'root' not in item.id"
   tags:
     - level1-server
@@ -272,6 +308,7 @@
   ansible.builtin.user:
     name: "{{ item.id }}"
     password_lock: true
+    create_home: false
   loop: "{{ prelim_captured_passwd_data }}"
   loop_control:
     label: "{{ item.id }}"

@@ -10,6 +10,8 @@
     ansible_user: "{{ lookup('env', 'USER') }}"
     system_is_container: true
     role_name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+    setup_audit: true
+    run_audit: true
     ubtu24cis_rule_5_2_4: false
 
   pre_tasks:

@@ -12,7 +12,7 @@
     - NIST800-53R5_MP-2
   block:
     - name: "6.1.4.1 | AUDIT | Ensure access to all logfiles has been configured | find files"
-      ansible.builtin.shell: find /var/log/ -type f -exec ls {} \;
+      ansible.builtin.command: find /var/log/ -type f -exec ls {} \;
       changed_when: false
       failed_when: discovered_logfiles.rc not in [0, 1]
       check_mode: false
@@ -34,11 +34,8 @@
     - name: "6.1.4.1 | PATCH | Ensure access to all logfiles has been configured | change permissions"
       when:
         - discovered_system_logfiles.stdout_lines is defined
-        - item == "/var/log/btmp"
-        - item == "/var/log/utmp"
-        - item == "/var/log/wtmp"
-        - item == "/var/log/lastlog"
-        - "'sssd' in item or 'SSSD' in item"
+        - item in ["/var/log/btmp", "/var/log/utmp", "/var/log/wtmp", "/var/log/lastlog"] or
+          ('sssd' in item or 'SSSD' in item)
       ansible.builtin.file:
         path: "{{ item }}"
         mode: 'ug-x,o-wx'

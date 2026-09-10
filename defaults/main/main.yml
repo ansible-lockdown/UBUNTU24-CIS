@@ -17,6 +17,10 @@ ubtu24cis_section5: true
 ubtu24cis_section6: true
 ubtu24cis_section7: true
 
+# Run the OS validation check
+# Supported OSs will not need for this to be changed - see README
+os_check: true
+
 ## Reboot system before audit
 # System will reboot if false, can give better audit results
 skip_reboot: true
@@ -65,6 +69,14 @@ system_is_ec2: false
 # This allows the ability to skip tasks that may cause an issue
 ubtu24cis_uses_root: false
 
+# The shell can differ in OS or setups
+# Containers often may have a different shell also
+ubtu24cis_shell_executable: /bin/bash
+
+# A location that can be used as a temporary location to execute scripts
+# note the drive with need exec permissions used by 1.1.1.10
+ubtu24cis_temp_exec_location: /var
+
 # UID settings for interactive users
 # These are discovered via logins.def if set true
 discover_int_uid: false
@@ -84,63 +96,8 @@ max_int_uid: 65533
 
 ###########################################
 ### Goss is required on the remote host ###
-### vars/auditd.yml for other settings ###
 
-# Allow audit to setup the requirements including installing git (if option chosen and downloading and adding goss binary to system)
-setup_audit: false
-
-# enable audits to run - this runs the audit and get the latest content
-run_audit: false
-# Run heavy tests - some tests can have more impact on a system enabling these can have greater impact on a system
-audit_run_heavy_tests: true
-# Ability to limit the number of concurrent processes used by goss (default 50)
-audit_max_concurrent: 50
-
-## Only run Audit do not remediate
-audit_only: false
-
-#############################
-
-# How to retrieve audit binary
-# Options are copy or download - detailed settings at the bottom of this file
-# you will need access to either github or the file already downloaded
-get_audit_binary_method: download
-
-## if get_audit_binary_method - copy the following needs to be updated for your environment
-## it is expected that it will be copied from somewhere accessible to the control node
-## e.g copy from ansible control node to remote host
-audit_bin_copy_location: /some/accessible/path
-
-# how to get audit files onto host options
-# options are git/copy/archive/get_url other e.g. if you wish to run from already downloaded conf
-audit_content: git
-
-# If using either archive, copy, get_url:
-## Note will work with .tar files - zip will require extra configuration
-### If using get_url this is expecting github url in tar.gz format e.g.
-### https://github.com/ansible-lockdown/UBUNTU24-CIS-Audit/archive/refs/heads/benchmark-v1.0.0.tar.gz
-audit_conf_source: "some path or url to copy from"
-
-# Destination for the audit content to be placed on managed node
-# note may not need full path e.g. /opt with the directory being the {{ benchmark }}-Audit directory
-audit_conf_dest: "/opt"
-
-# Where the audit logs are stored
-audit_log_dir: '/opt'
-
-## Ability to collect and take audit files moving to a centralized location
-# This enables the collection of the files from the host
-fetch_audit_output: false
-
-# Method of getting,uploading the summary files
-## Ensure access and permissions are available for these to occur.
-## options are
-# fetch - fetches from server and moves to location on the ansible controller (could be a mount point available to controller)
-# copy - copies file to a location available to the managed node
-audit_output_collection_method: fetch
-
-# Location to put the audit files
-audit_output_destination: /opt/audit_summaries/
+#  moved to defaults/main/audit.yml
 
 ### Goss Settings ##
 ####### END ########
@@ -598,6 +555,11 @@ ubtu24cis_ignore_apt_update_changed_when: false
 # mount point for the controls in section1.
 ubtu24cis_debug_mount_data: false
 
+## 1.1.1.10 Ability to remove temporary script after control has run
+# may cause issues with later testing if required for investigation etc
+
+ubtu24cis_remove_kernel_discovery_script: false
+
 ## Control 1.1.2.x
 # If set to `true`, rule will be implemented using the `tmp.mount` systemd-service,
 # otherwise fstab configuration will be used.
@@ -946,7 +908,7 @@ ubtu24cis_sshd_login_grace_time: 60
 # This variable sets the time interval in seconds between sending "keep-alive"
 # messages from the server to the client. These types of messages are intended to
 # keep the connection alive and prevent it being terminated due to inactivity.
-ubtu24cis_sshd_client_alive_interval: 300
+ubtu24cis_sshd_client_alive_interval: 15
 # This variable sets the maximum number of unresponsive "keep-alive" messages
 # that can be sent from the server to the client before the connection is considered
 # inactive and thus, closed.
@@ -1017,6 +979,14 @@ ubtu24cis_sudo_package: "sudo"
 ubtu24cis_sudo_logfile: "/var/log/sudo.log"
 
 ## Control 5.2.4 sudoers NOPASSWD
+
+# Connecting user, due to the way many users work differently this is to try and assist the use of connecting user if required
+# This is useful when part of kickstart build or running as root and not defining the ansible_user option
+# used @ ubtu24 5.2.4
+ubtu24cis_default_user: root
+ubtu24cis_connecting_user: "{{ ansible_facts['env']['SUDO_USER'] | default(ubtu24cis_default_user) }}"
+ubtu24cis_playbook_user: "{{ ansible_user | default(ubtu24cis_connecting_user) }}"
+
 # The following variable specifies a list of users that should not be required to provide a password
 # for escalation. Feel free to edit it according to your needs.
 ubtu24cis_sudoers_exclude_nopasswd_list:
@@ -1308,8 +1278,8 @@ ubtu24cis_journald_runtimekeepfree: "#RuntimeKeepFree=50M"
 ubtu24cis_journald_maxfilesec: "#MaxFileSec=1month"
 
 ## Controls 6.1.2.x (`journald`) and 6.1.3.x (`rsyslog`)
-# This variable governs which logging system is used.
-# Available options for this variable are `rsyslog` or `journald`.
+# This variable governs which logging system are used.
+# Available options for this variable is `rsyslog` or `journald`.
 ubtu24cis_syslog_service: 'journald'
 
 ## Control 6.1.3.5 - Ensure rsyslog logging is configured
@@ -1337,6 +1307,11 @@ ubtu24cis_journal_servercertificatefile:
 # of certificate authorities (CAs) that the client trusts. These trusted certificates are used
 # to validate the authenticity of the remote server's certificate.
 ubtu24cis_journal_trustedcertificatefile:
+
+## Control 6.1.3.6 remote syslog server setup
+# uses ubtu24cis_remote_log_server a per journald 6.1.2.1.2
+ubtu24cis_remote_log_port: 514
+ubtu24cis_remote_log_protocol: tcp
 
 ## Control 6.1.3.8 - Ensure logrotate is configured
 # This variable enables the installation of logrotate, which is needed for the implementation of Control 6.1.3.8
@@ -1371,7 +1346,7 @@ ubtu24cis_priv_command_excluded_mounts: []
 # Buffering in memory is useful in situations, where the audit system is overwhelmed
 # with incoming audit events, and needs to temporarily store them until they can be processed.
 # This variable should be set to a sufficient value. The CIS baseline recommends at least `8192` as value.
-ubtu24cis_audit_back_log_limit: 8192
+ubtu24cis_auditd_back_log_limit: 8192
 
 ## Controls 6.2.2.x - What to do when log files fill up
 ## Control 6.2.2.1 - Ensure audit log storage size is configured
@@ -1383,7 +1358,7 @@ ubtu24cis_max_log_file_size: 10
 ## Control 6.2.2.2 - Ensure audit logs are not automatically deleted
 # This variable determines what action the audit system should take when the maximum
 # size of a log file is reached.
-# Available options for this variable are as follows:
+# Available options for this variable is as follows:
 # - `ignore`: the system does nothing when the size of a log file is full;
 # - `syslog`: a message is sent to the system log indicating the problem;
 # - `suspend`: the system suspends recording audit events until the log file is cleared or rotated;
@@ -1419,8 +1394,8 @@ ubtu24cis_auditd_disk_error_action: syslog
 
 ## Control 6.2.2.4 - Ensure system warns when audit logs are low on space
 # This variable tells the system what action to take when the system has detected
-# that it is starting to get low on disk space.
-# Available options for this variable are as follows:
+# that is starting to get low on disk space.
+# Available options for this variable is as follows:
 # "ignore" - the system does nothing when presented with the aforementioned issue;
 # "syslog" - a message is sent to the system log about disk space running low;
 # "email" - the system sends an email notification to the email address
@@ -1434,7 +1409,7 @@ ubtu24cis_auditd_disk_error_action: syslog
 ubtu24cis_auditd_space_left_action: email
 # This variable tells the system what action to take when the system has detected
 # that it is low on disk space.
-# Available options for this variable are as follows:
+# Available options for this variable is as follows:
 # "ignore" - the system does nothing when presented with the aforementioned issue;
 # "syslog" - a message is sent to the system log about disk space running low;
 # "email" - the system sends an email notification to the email address
@@ -1583,7 +1558,10 @@ ubtu24cis_ownership_adjust: true
 ubtu24cis_suid_sgid_adjust: false
 
 ## Control 7.2.10 - Ensure local interactive user dot files access is configured
-# This variable is a toggle foe enabling/disabling the automated modification of
+# This variable is a toggle for enabling/disabling the automated modification of
 # permissions on dot files.
 # Possible values are `true` and `false`.
 ubtu24cis_dotperm_ansiblemanaged: true
+
+# This variable allows to exclude only necessary files (i.e. ['.xinitrc'])
+ubtu24cis_dotfile_exclusions: []

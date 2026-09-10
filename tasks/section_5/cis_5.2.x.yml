@@ -1,5 +1,25 @@
 ---
 
+- name: "5.2.5/6 | AUDIT | Find all sudoers files."
+  when: ubtu24cis_rule_5_2_4 or ubtu24cis_rule_5_2_5
+  tags:
+    - level1-server
+    - level1-workstation
+    - patch
+    - sudo
+    - rule_5.2.5
+    - rule_5.2.6
+    - NIST800-53R5_AC-6
+  ansible.builtin.shell: |
+    set -o pipefail
+    find /etc/sudoers /etc/sudoers.d/ -type f ! -name '*~' ! -name '*.*'
+  args:
+    executable: "{{ ubtu24cis_shell_executable }}"
+  changed_when: false
+  failed_when: discovered_sudoers_files.rc not in [0, 1]
+  check_mode: false
+  register: discovered_sudoers_files
+
 - name: "5.2.1 | PATCH | Ensure sudo is installed"
   when: ubtu24cis_rule_5_2_1
   tags:
@@ -60,7 +80,7 @@
         set -o pipefail
         grep -Ei '(nopasswd)' /etc/sudoers /etc/sudoers.d/* | cut -d':' -f1
       args:
-        executable: /bin/bash
+        executable: "{{ ubtu24cis_shell_executable }}"
       become: true
       changed_when: false
       failed_when: discovered_sudoers_nopasswd.rc not in [0, 1]
@@ -92,7 +112,7 @@
     regexp: '^([^#].*)!authenticate(.*)'
     replace: '\1authenticate\2'
     validate: '/usr/sbin/visudo -cf %s'
-  loop: "{{ prelim_sudoers_files.stdout_lines }}"
+  loop: "{{ discovered_sudoers_files.stdout_lines }}"
   loop_control:
     label: "{{ item }}"
 
@@ -111,7 +131,7 @@
         set -o pipefail
         grep -is 'timestamp_timeout' /etc/sudoers /etc/sudoers.d/* | cut -d":" -f1 | uniq | sort
       args:
-        executable: /bin/bash
+        executable: "{{ ubtu24cis_shell_executable }}"
       changed_when: false
       failed_when: discovered_ubtu24cis_ssh_timeout_files.rc not in [0, 1]
       check_mode: false

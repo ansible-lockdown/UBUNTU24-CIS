@@ -15,9 +15,9 @@
     - name: "5.3.3.4.1 | PATCH | Ensure pam_unix does not include nullok | capture state"
       ansible.builtin.shell: |
         set -o pipefail
-        grep -E "pam_unix.so.*nullok" /etc/pam.d/common-* /usr/share/pam-configs/* | cut -d ':' -f1 | uniq
+        grep -E "pam_unix.so.*nullok" /etc/pam.d/common-{password,auth,account,session,session-noninteractive} /usr/share/pam-configs/* | cut -d ':' -f1 | uniq
       args:
-        executable: /bin/bash
+        executable: "{{ ubtu24cis_shell_executable }}"
       changed_when: false
       failed_when: discovered_pam_nullok.rc not in [ 0, 1 ]
       check_mode: false
@@ -47,9 +47,9 @@
     - name: "5.3.3.4.2 | AUDIT | Ensure pam_unix does not include remember | capture state"
       ansible.builtin.shell: |
         set -o pipefail
-        grep -PH -- '^\h*^\h*[^#\n\r]+\h+pam_unix\.so\b' /etc/pam.d/common-* | grep -P -- "remember=\d+" | cut -d':' -f1
+        grep -PH -- '^\h*^\h*[^#\n\r]+\h+pam_unix\.so\b' /etc/pam.d/common-{password,auth,account,session,session-noninteractive} | grep -P -- "remember=\d+" | cut -d':' -f1
       args:
-        executable: /bin/bash
+        executable: "{{ ubtu24cis_shell_executable }}"
       changed_when: false
       failed_when: discovered_pam_remember.rc not in [ 0, 1 ]
       check_mode: false
@@ -77,7 +77,11 @@
     - NIST800-53R5_IA-5
   block:
     - name: "5.3.3.4.3 | AUDIT | Ensure pam_unix includes a strong password hashing algorithm | capture state"
-      ansible.builtin.shell: grep -PH -- '^\h*password\h+([^#\n\r]+)\h+pam_unix\.so\h+([^#\n\r]+\h+)?!("{{ ubtu24cis_passwd_hash_algo }}")\b' /etc/pam.d/common-password
+      ansible.builtin.shell: |
+        set -o pipefail
+        grep -PH -- '^\h*password\h+([^#\n\r]+)\h+pam_unix\.so\h+([^#\n\r]+\h+)?!("{{ ubtu24cis_passwd_hash_algo }}")\b' /etc/pam.d/common-password
+      args:
+        executable: "{{ ubtu24cis_shell_executable }}"
       changed_when: false
       failed_when: discovered_pam_pwhash.rc not in [ 0, 1 ]
       check_mode: false
@@ -102,7 +106,11 @@
     - NIST800-53R5_IA-5
   block:
     - name: "5.3.3.4.4 | PATCH | Ensure pam_unix includes use_authtok | capture state"
-      ansible.builtin.shell: grep -PH -- '^\h*password\h+([^#\n\r]+)\h+pam_unix\.so\h+([^#\n\r]+\h+)?use_authtok\b' /etc/pam.d/common-password
+      ansible.builtin.shell: |
+        set -o pipefail
+        grep -PH -- '^\h*password\h+([^#\n\r]+)\h+pam_unix\.so\h+([^#\n\r]+\h+)?use_authtok\b' /etc/pam.d/common-password
+      args:
+        executable: "{{ ubtu24cis_shell_executable }}"
       changed_when: false
       failed_when: discovered_pam_authtok.rc not in [ 0, 1 ]
       check_mode: false

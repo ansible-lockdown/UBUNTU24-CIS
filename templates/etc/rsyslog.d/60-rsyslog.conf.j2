@@ -1,0 +1,8 @@
+{{ file_managed_by_ansible }}
+
+
+*.* action(type="omfwd" target="{{ ubtu24cis_remote_log_server }}"
+port="{{ ubtu24cis_remote_log_port }}" protocol="{{ ubtu24cis_remote_log_protocol }}"
+ action.resumeRetryCount="100"
+
+queue.type="LinkedList" queue.size="1000")

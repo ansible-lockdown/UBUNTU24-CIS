@@ -1,9 +1,7 @@
 ---
 
 - name: "4.2.1 | PATCH | Ensure ufw is installed"
-  when:
-    - ubtu24cis_rule_4_2_1
-    - "'ufw' not in ansible_facts.packages"
+  when: ubtu24cis_rule_4_2_1
   tags:
     - level1-server
     - level1-workstation
@@ -20,7 +18,7 @@
 - name: "4.2.2 | PATCH | Ensure iptables-persistent is not installed with ufw"
   when:
     - ubtu24cis_rule_4_2_2
-    - "'iptables-persistent' in ansible_facts.packages"
+    - "'iptables-persistent' in ansible_facts['packages']"
   tags:
     - level1-server
     - level1-workstation
@@ -103,6 +101,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - audit
     - patch
     - rule_4.2.5
     - NIST800-53R5_SC-7
@@ -185,4 +184,20 @@
     - routed
   loop_control:
     label: "{{ item }}"
+  notify: Reload ufw
+
+- name: "OPTIONAL | PATCH | UFW firewall force to use /etc/sysctl.conf settings"
+  when:
+    - ubtu24cis_firewall_package == "ufw"
+    - ubtu24cis_ufw_use_sysctl
+  tags:
+    - level1-server
+    - level1-workstation
+    - patch
+    - ufw
+  ansible.builtin.lineinfile:
+    path: /etc/default/ufw
+    regexp: ^IPT_SYSCTL=.*
+    line: IPT_SYSCTL=/etc/sysctl.conf
+    mode: 'u-x,go-wx'
   notify: Reload ufw

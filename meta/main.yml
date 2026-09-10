@@ -11,7 +11,7 @@ galaxy_info:
   platforms:
     - name: Ubuntu
       versions:
-        - jammy
+        - noble
   galaxy_tags:
     - system
     - security

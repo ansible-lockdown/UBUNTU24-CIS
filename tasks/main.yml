@@ -2,45 +2,64 @@
 
 - name: Check OS version and family
   when:
-    - ansible_facts.distribution == 'Ubuntu'
-    - ansible_facts.distribution_major_version is version_compare('24', '!=')
+    - os_check
+    - ansible_facts['distribution'] == 'Ubuntu'
+    - ansible_facts['distribution_major_version'] is version('24', '!=')
   tags: always
   ansible.builtin.fail:
-    msg: "This role can only be run against Ubuntu 24. {{ ansible_facts.distribution }} {{ ansible_facts.distribution_major_version }} is not supported."
+    msg: "This role can only be run against Ubuntu 24. {{ ansible_facts['distribution'] }} {{ ansible_facts['distribution_major_version'] }} is not supported."
 
 - name: Check ansible version
   tags: always
   ansible.builtin.assert:
-    that: ansible_version.full is version_compare(min_ansible_version, '>=')
+    that: ansible_version.full is version(min_ansible_version, '>=')
     fail_msg: "You must use Ansible {{ min_ansible_version }} or greater"
     success_msg: "This role is running a supported version of ansible {{ ansible_version.full }} >= {{ min_ansible_version }}"
 
 #  This control should always run as this can pass on unintended issues.
-- name: "Check password set for connecting user"
+- name: "Check password set for {{ ubtu24cis_playbook_user }} | password state"  # noqa name[template]
   when:
+    - ubtu24cis_playbook_user != 'root'
     - ubtu24cis_rule_5_2_4
-    - ansible_env.SUDO_USER is defined
+    - ansible_facts['env']['SUDO_USER'] is defined
+    - not system_is_ec2
   tags: always
   no_log: true
+  vars:
+    sudo_password_rule: ubtu24cis_rule_5_2_4  # pragma: allowlist secret
   block:
-    - name: "Capture current password state of connecting user"
+    - name: "Check password set for {{ ubtu24cis_playbook_user }} | password state"  # noqa name[template]
       ansible.builtin.shell: |
-        set -o pipefail
-        grep -w {{ ansible_env.SUDO_USER }} /etc/shadow | awk -F: '{print $2}'
-      args:
-        executable: /bin/bash
+          set -o pipefail
+          (grep {{ ubtu24cis_playbook_user }} /etc/shadow || echo 'not found:not found') | awk -F: '{print $2}'
       changed_when: false
-      failed_when: prelim_ansible_user_password_set.rc not in [0, 1]
+      failed_when: false
       check_mode: false
+      args:
+        executable: "{{ ubtu24cis_shell_executable }}"
       register: prelim_ansible_user_password_set
 
-    - name: "Assert that password set for {{ ansible_env.SUDO_USER }} and account not locked"  # noqa name[template]
-      ansible.builtin.assert:
-        that: prelim_ansible_user_password_set.stdout != "!!" and prelim_ansible_user_password_set.stdout | length > 10
-        fail_msg: "You have {{ sudo_password_rule }} enabled but the user = {{ ansible_env.SUDO_USER }} has no password set - It can break access"
-        success_msg: "You have a password set for sudo user {{ ansible_env.SUDO_USER }}"
-      vars:
-        sudo_password_rule: ubtu24cis_rule_5_2_4  # pragma: allowlist secret
+    - name: "Check for local account {{ ubtu24cis_playbook_user }} | Check for local account"  # noqa name[template]
+      when: prelim_ansible_user_password_set.stdout == "not found"
+      ansible.builtin.debug:
+        msg: "No local account found for {{ ubtu24cis_playbook_user }} user. Skipping local account checks."
+
+    - name: "Check local account"
+      block:
+        - name: "Check password set for {{ ubtu24cis_playbook_user }} | Assert local password set"  # noqa name[template]
+          ansible.builtin.assert:
+            that:
+              - prelim_ansible_user_password_set.stdout | length != 0
+              - prelim_ansible_user_password_set.stdout != "!!"
+            fail_msg: "You have {{ sudo_password_rule }} enabled but the user = {{ ubtu24cis_playbook_user }} has no password set - It can break access"
+            success_msg: "You have a password set for the {{ ubtu24cis_playbook_user }} user"
+
+        - name: "Check account is not locked for {{ ubtu24cis_playbook_user }} | Assert local account not locked"  # noqa name[template]
+          when: prelim_ansible_user_password_set.stdout != "not found"
+          ansible.builtin.assert:
+            that: not prelim_ansible_user_password_set.stdout.startswith("!")
+            fail_msg: "You have {{ sudo_password_rule }} enabled but the user = {{ ubtu24cis_playbook_user }} is locked - It can break access"
+            success_msg: "The local account is not locked for {{ ubtu24cis_playbook_user }} user"
 
 - name: Ensure root password is set
   when:
@@ -53,7 +72,7 @@
         set -o pipefail
         LC_ALL=C passwd -S root | grep -E "(Password set, SHA512 crypt|root P |root L |Password locked)"
       args:
-        executable: /bin/bash
+        executable: "{{ ubtu24cis_shell_executable }}"
       changed_when: false
       failed_when: prelim_root_passwd_set.rc not in [0, 1]
       check_mode: false
@@ -77,8 +96,8 @@
 - name: Setup rules if container
   when:
     - ansible_connection in ['docker', 'community.docker.docker'] or
-      (ansible_facts.virtualization_type is defined and
-       ansible_facts.virtualization_type in ["docker", "lxc", "openvz", "podman", "container"])
+      (ansible_facts['virtualization_type'] is defined and
+       ansible_facts['virtualization_type'] in ["docker", "lxc", "openvz", "podman", "container"])
   tags: always
   block:
     - name: Discover and set container variable if required

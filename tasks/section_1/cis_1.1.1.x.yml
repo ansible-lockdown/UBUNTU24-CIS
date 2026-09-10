@@ -179,30 +179,28 @@
     - name: "1.1.1.6 | PATCH | Ensure overlayfs kernel module is not available | Edit modprobe config"
       ansible.builtin.lineinfile:
         path: /etc/modprobe.d/CIS.conf
-        regexp: "^(#)?install overlayfs(\\s|$)"
-        line: "install overlayfs /bin/true"
+        regexp: "^(#)?install overlay(\\s|$)"
+        line: "install overlay /bin/true"
         create: true
         mode: 'go-rwx'
 
     - name: "1.1.1.6 | PATCH | Ensure overlayfs kernel module is not available | blacklist"
       ansible.builtin.lineinfile:
         path: /etc/modprobe.d/blacklist.conf
-        regexp: "^(#)?blacklist overlayfs(\\s|$)"
-        line: "blacklist overlayfs"
+        regexp: "^(#)?blacklist overlay(\\s|$)"
+        line: "blacklist overlay"
         create: true
         mode: 'go-rwx'
 
     - name: "1.1.1.6 | PATCH | Ensure overlayfs kernel module is not available | Disable overlayfs"
       when: not system_is_container
       community.general.modprobe:
-        name: overlayfs
+        name: overlay
         state: absent
 
 - name: "1.1.1.7 | PATCH | Ensure squashfs kernel module is not available"
   when:
     - ubtu24cis_rule_1_1_1_7
-    - prelim_squashfs_builtin.rc != 0
-    - prelim_snap_pkg_mgr.rc == 1
   tags:
     - level2-server
     - level2-workstation
@@ -212,27 +210,54 @@
     - squashfs
     - NIST800-53R5_CM-7
   block:
-    - name: "1.1.1.7 | PATCH | Ensure squashfs kernel module is not available | Edit modprobe config"
-      ansible.builtin.lineinfile:
-        path: /etc/modprobe.d/CIS.conf
-        regexp: "^(#)?install squashfs(\\s|$)"
-        line: "install squashfs /bin/true"
-        create: true
-        mode: 'go-rwx'
+    - name: "1.1.1.7 | PATCH | Ensure squashfs kernel module is not available | Register if snap being used"
+      ansible.builtin.shell: |
+        set -o pipefail
+        lsblk | grep -wc "/snap"
+      args:
+        executable: "{{ ubtu24cis_shell_executable }}"
+      changed_when: false
+      failed_when: discovered_snap_pkg_mgr.rc not in [ 0, 1 ]
+      check_mode: false
+      register: discovered_snap_pkg_mgr
 
-    - name: "1.1.1.7 | PATCH | Ensure squashfs kernel module is not available | blacklist"
-      ansible.builtin.lineinfile:
-        path: /etc/modprobe.d/blacklist.conf
-        regexp: "^(#)?blacklist squashfs(\\s|$)"
-        line: "blacklist squashfs"
-        create: true
-        mode: 'go-rwx'
+    - name: "1.1.1.7 | PATCH | Ensure squashfs kernel module is not available | Register if squashfs is built into the kernel"
+      ansible.builtin.shell: |
+        set -o pipefail
+        cat /lib/modules/$(uname -r)/modules.builtin | grep "squashfs"
+      args:
+        executable: "{{ ubtu24cis_shell_executable }}"
+      changed_when: false
+      failed_when: discovered_squashfs_builtin.rc not in [ 0, 1 ]
+      check_mode: false
+      register: discovered_squashfs_builtin
 
-    - name: "1.1.1.7 | PATCH | Ensure squashfs kernel module is not available | Disable squashfs"
-      when: not system_is_container
-      community.general.modprobe:
-        name: squashfs
-        state: absent
+    - name: "1.1.1.7 | PATCH | Ensure squashfs kernel module is not available | If not using snap"
+      when:
+        - discovered_squashfs_builtin.rc != 0
+        - discovered_snap_pkg_mgr.rc == 1
+      block:
+        - name: "1.1.1.7 | PATCH | Ensure squashfs kernel module is not available | Edit modprobe config"
+          ansible.builtin.lineinfile:
+            path: /etc/modprobe.d/CIS.conf
+            regexp: "^(#)?install squashfs(\\s|$)"
+            line: "install squashfs /bin/true"
+            create: true
+            mode: 'go-rwx'
+
+        - name: "1.1.1.7 | PATCH | Ensure squashfs kernel module is not available | blacklist"
+          ansible.builtin.lineinfile:
+            path: /etc/modprobe.d/blacklist.conf
+            regexp: "^(#)?blacklist squashfs(\\s|$)"
+            line: "blacklist squashfs"
+            create: true
+            mode: 'go-rwx'
+
+        - name: "1.1.1.7 | PATCH | Ensure squashfs kernel module is not available | Disable squashfs"
+          when: not system_is_container
+          community.general.modprobe:
+            name: squashfs
+            state: absent
 
 - name: "1.1.1.8 | PATCH | Ensure udf kernel module is not available"
   when: ubtu24cis_rule_1_1_1_8
@@ -305,7 +330,7 @@
   tags:
     - level1-server
     - level1-workstation
-    - patch
+    - audit
     - rule_1.1.1.10
     - filesystems
   vars:
@@ -314,13 +339,13 @@
     - name: "1.1.1.10 | PATCH | Ensure unused filesystems kernel modules are not available | Add discovery script"
       ansible.builtin.template:
         src: fs_with_cves.sh.j2
-        dest: /var/fs_with_cves.sh
+        dest: "{{ ubtu24cis_temp_exec_location }}/fs_with_cves.sh"
         owner: root
         group: root
         mode: 'u+x,go-wx'
 
     - name: "1.1.1.10 | AUDIT | Ensure unused filesystems kernel modules are not available | Run discovery script"
-      ansible.builtin.command: /var/fs_with_cves.sh
+      ansible.builtin.command: "{{ ubtu24cis_temp_exec_location }}/fs_with_cves.sh"
       changed_when: false
       failed_when: discovered_fs_modules_loaded.rc not in [ 0, 99 ]
       check_mode: false
@@ -333,7 +358,13 @@
           "Warning!! Discovered loaded Filesystem modules that need attention. This is a manual task
           {{ discovered_fs_modules_loaded.stdout_lines }}"
 
-    - name: "1.1.1.9 | AUDIT | Ensure usb-storage kernel module is not available | Capture Warning"
+    - name: "1.1.1.10 | AUDIT | Ensure unused filesystems kernel modules are not available | Capture Warning"
       when: discovered_fs_modules_loaded.stdout | length > 0
       ansible.builtin.import_tasks:
         file: warning_facts.yml
+
+    - name: "1.1.1.10 | AUDIT | Ensure unused filesystems kernel modules are not available | Remove discovery script"
+      when: ubtu24cis_remove_kernel_discovery_script
+      ansible.builtin.file:
+        path: "{{ ubtu24cis_temp_exec_location }}/fs_with_cves.sh"
+        state: absent

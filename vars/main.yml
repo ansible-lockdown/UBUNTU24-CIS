@@ -9,6 +9,9 @@ change_requires_reboot: false
 # 'false' is left unchanged.
 system_is_container: false
 
+# Set default facts
+ubtu24cis_apparmor_enforce_only: false
+
 # Used to control warning summary
 warn_control_list: ""
 warn_count: 0

@@ -1,9 +1,7 @@
 ---
 
-- name: "1.1.2.1.1 | PATCH | Ensure /tmp is a separate partition"
-  when:
-    - required_mount not in prelim_mount_names
-    - ubtu24cis_rule_1_1_2_1_1
+- name: "1.1.2.1.1 | AUDIT | Ensure /tmp is a separate partition"
+  when: ubtu24cis_rule_1_1_2_1_1
   tags:
     - level1-server
     - level1-workstation

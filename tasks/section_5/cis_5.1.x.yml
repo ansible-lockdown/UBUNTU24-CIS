@@ -103,8 +103,16 @@
     - NIST800-53R5_MP-2
     - sshd
   block:
+    - name: "5.1.4 | PATCH | Ensure sshd access is configured | Ensure /run/sshd exists for sshd -t validation"
+      ansible.builtin.file:
+        path: /run/sshd
+        state: directory
+        owner: root
+        group: root
+        mode: 'go-w'
+
     - name: "5.1.4 | PATCH | Ensure sshd access is configured | Add allowed users"
-      when: "ubtu24cis_sshd_allow_users| default('') | length > 0 "
+      when: "ubtu24cis_sshd_allow_users | default('') | length > 0"
       ansible.builtin.lineinfile:
         path: /etc/ssh/sshd_config
         regexp: '(?i)^(#?)\s*AllowUsers'
@@ -407,6 +415,8 @@
     path: /etc/ssh/sshd_config
     regexp: (?i)^(#?)\s*MaxStartups
     line: 'MaxStartups 10:30:60'
+    insertbefore: '^Match'
+    firstmatch: true
     validate: 'sshd -t -f %s'
   notify: Restart sshd
 

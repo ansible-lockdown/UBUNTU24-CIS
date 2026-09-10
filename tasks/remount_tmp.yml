@@ -1,0 +1,57 @@
+---
+
+- name: "Add filesystem options for /tmp"
+  when: not ubtu24cis_tmp_svc
+  listen: "Remount /tmp"
+  vars:
+    mount_point: '/tmp'
+  ansible.posix.mount:
+    path: "{{ mount_point }}"
+    src: "{{ prelim_mount_point_fs_and_options[mount_point]['src'] }}"
+    state: present
+    fstype: "{{ prelim_mount_point_fs_and_options[mount_point]['fs_type'] }}"
+    opts: "{{ prelim_mount_point_fs_and_options[mount_point]['options'] | unique | join(',') }}"
+
+- name: "Remounting /tmp"
+  when: not ubtu24cis_tmp_svc
+  listen: "Remount /tmp"
+  vars:
+    mount_point: '/tmp'
+  failed_when: false
+  register: discovered_remount_tmp
+  ansible.posix.mount:
+    path: "{{ mount_point }}"
+    state: remounted
+
+- name: "Reloading /tmp systemd service"
+  when: ubtu24cis_tmp_svc
+  listen: "Remount /tmp"
+  failed_when: false
+  register: discovered_remount_tmp_systemd
+  ansible.builtin.systemd:
+    name: tmp.mount
+    state: reloaded
+    daemon_reload: true
+
+- name: "/tmp mount busy, set reboot required fact"
+  when: (discovered_remount_tmp is defined and discovered_remount_tmp.failed | default(false)) or
+        (discovered_remount_tmp_systemd is defined and discovered_remount_tmp_systemd.failed | default(false))
+  listen: "Remount /tmp"
+  ansible.builtin.set_fact:
+    change_requires_reboot: true
+
+- name: "/tmp mount busy, reboot required to apply changes | Warning"
+  when: (discovered_remount_tmp is defined and discovered_remount_tmp.failed | default(false)) or
+        (discovered_remount_tmp_systemd is defined and discovered_remount_tmp_systemd.failed | default(false))
+  listen: "Remount /tmp"
+  ansible.builtin.debug:
+    msg: "Warning: /tmp mount busy, reboot required to apply changes"
+
+- name: "/tmp mount busy, reboot required to apply changes"
+  when: (discovered_remount_tmp is defined and discovered_remount_tmp.failed | default(false)) or
+        (discovered_remount_tmp_systemd is defined and discovered_remount_tmp_systemd.failed | default(false))
+  listen: "Remount /tmp"
+  vars:
+    warn_control_id: "/tmp mount busy, reboot required"
+  ansible.builtin.import_tasks:
+    file: warning_facts.yml

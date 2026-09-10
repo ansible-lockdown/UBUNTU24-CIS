@@ -25,6 +25,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - audit
     - patch
     - journald
     - rule_6.1.2.1.2
@@ -75,8 +76,8 @@
     - NIST800-53R5_AU-12
   ansible.builtin.systemd:
     name: "{{ item }}"
-    state: stopped
-    enabled: false
+    enabled: "{{ ('systemd-journal-remote' in ansible_facts['packages']) | ternary(false, omit) }}"
+    state: "{{ ('systemd-journal-remote' in ansible_facts['packages']) | ternary('stopped', omit) }}"
     masked: true
   loop:
     - systemd-journal-remote.socket
@@ -88,7 +89,7 @@
   when: ubtu24cis_rule_6_1_2_2
   tags:
     - level1-server
-    - level2-workstation
+    - level1-workstation
     - patch
     - journald
     - rule_6.1.2.2
