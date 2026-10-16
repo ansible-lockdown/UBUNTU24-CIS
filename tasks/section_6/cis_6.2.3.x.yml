@@ -5,6 +5,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - rule_6.2.3.1
     - NIST800-53R5_AU-3
@@ -17,6 +18,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - rule_6.2.3.2
     - NIST800-53R5_AU-3
@@ -29,6 +31,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - rule_6.2.3.3
     - NIST800-53R5_AU-3
@@ -41,6 +44,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - rule_6.2.3.4
     - NIST800-53R5_AU-3
@@ -54,6 +58,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - rule_6.2.3.5
     - NIST800-53R5_AU-3
@@ -67,6 +72,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - rule_6.2.3.6
     - NIST800-53R5_AU-3
@@ -79,6 +85,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - rule_6.2.3.7
     - NIST800-53R5_AU-3
@@ -91,6 +98,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - rule_6.2.3.8
     - NIST800-53R5_AU-3
@@ -103,6 +111,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - rule_6.2.3.9
     - NIST800-53R5_AU-3
@@ -116,6 +125,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - rule_6.2.3.10
     - NIST800-53R5_CM-6
@@ -128,6 +138,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - rule_6.2.3.11
     - NIST800-53R5_AU-3
@@ -140,6 +151,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - rule_6.2.3.12
     - NIST800-53R5_AU-3
@@ -152,6 +164,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - rule_6.2.3.13
     - NIST800-53R5_AU-12
@@ -165,6 +178,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - rule_6.2.3.14
     - NIST800-53R5_AU-3
@@ -178,6 +192,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - rule_6.2.3.15
     - NIST800-53R5_AU-2
@@ -192,6 +207,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - rule_6.2.3.16
     - NIST800-53R5_AU-2
@@ -206,6 +222,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - rule_6.2.3.17
     - NIST800-53R5_AU-2
@@ -220,6 +237,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - rule_6.2.3.18
     - NIST800-53R5_AU-2
@@ -234,6 +252,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - rule_6.2.3.19
     - NIST800-53R5_AU-3
@@ -247,6 +266,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - rule_6.2.3.20
     - NIST800-53R5_AC-3
@@ -257,11 +277,12 @@
   ansible.builtin.set_fact:
     update_audit_template: true
 
-- name: "6.2.3.21 | PATCH | Ensure the running and on disk configuration is the same"
+- name: "6.2.3.21 | AUDIT | Ensure the running and on disk configuration is the same"
   when: ubtu24cis_rule_6_2_3_21
   tags:
     - level2-server
     - level2-workstation
+    - manual
     - scored
     - audit
     - rule_6.2.3.21

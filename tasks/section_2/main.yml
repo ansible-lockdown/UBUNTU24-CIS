@@ -8,7 +8,7 @@
   ansible.builtin.import_tasks:
     file: cis_2.2.x.yml
 
-- name: "SECTION | 2.3.1.x | Time service "
+- name: "SECTION | 2.3.1.x | Time service"
   ansible.builtin.import_tasks:
     file: cis_2.3.1.x.yml
 

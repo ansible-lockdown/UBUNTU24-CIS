@@ -149,16 +149,19 @@
     name: "{{ ubtu24cis_syslog_service }}"
     state: restarted
 
-- name: Grub update
-  ansible.builtin.command: update-grub
-  changed_when: true
-  failed_when: false
-  notify: Set_reboot_required
-
 - name: Restart journald
   ansible.builtin.systemd:
     name: systemd-journald
     state: restarted
+
+- name: Restart systemd_journal_upload
+  ansible.builtin.systemd:
+    name: systemd-journal-upload
+    state: restarted
+
+- name: Update exim4 config
+  ansible.builtin.command: update-exim4.conf
+  changed_when: true
 
 - name: Restart exim4
   ansible.builtin.systemd:
@@ -167,19 +170,15 @@
 
 - name: Flush ipv4 route table
   when: ansible_facts['virtualization_type'] != "docker"
-  ansible.posix.sysctl:
-    name: net.ipv4.route.flush
-    value: '1'
-    sysctl_set: true
+  ansible.builtin.command: sysctl -w net.ipv4.route.flush=1
+  changed_when: true
 
 - name: Flush ipv6 route table
   when:
     - ansible_facts['virtualization_type'] != "docker"
     - ubtu24cis_ipv6_required
-  ansible.posix.sysctl:
-    name: net.ipv6.route.flush
-    value: '1'
-    sysctl_set: true
+  ansible.builtin.command: sysctl -w net.ipv6.route.flush=1
+  changed_when: true
 
 - name: Reload ufw
   community.general.ufw:
@@ -214,7 +213,7 @@
   changed_when: true
 
 - name: Auditd rules reload
-  when: discovered_augenrules_check.stdout is search('No change') or discovered_auditd_immutable_check.rc == 1
+  when: discovered_augenrules_check.stdout | default('') is search('No change') or discovered_auditd_immutable_check.rc | default(0) == 1
   ansible.builtin.command: augenrules --load
   changed_when: true
   failed_when: discovered_augenrule_load.rc not in [ 0, 1 ]
@@ -231,13 +230,13 @@
   listen: Update auditd
 
 - name: Stop auditd process
-  when: discovered_auditd_immutable_check.rc == 1
+  when: discovered_auditd_immutable_check.rc | default(0) == 1
   ansible.builtin.command: systemctl kill auditd
   changed_when: true
   listen: Update auditd
 
 - name: Start auditd process
-  when: discovered_auditd_immutable_check.rc == 1
+  when: discovered_auditd_immutable_check.rc | default(0) == 1
   ansible.builtin.systemd:
     name: auditd
     state: started

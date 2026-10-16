@@ -5,6 +5,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - rule_3.2.1
     - NIST800-53R5_CM-7
@@ -37,6 +38,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - rule_3.2.2
     - NIST800-53R5_CM-7
@@ -69,6 +71,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - rule_3.2.3
     - NIST800-53R5_CM-7
@@ -101,6 +104,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - rule_3.2.4
     - NIST800-53R5_CM-7

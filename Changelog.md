@@ -1,5 +1,64 @@
 # Ubuntu24CIS
 
+## CIS Benchmark 1.0.0
+
+## October 2026 - QA fixes
+
+- 5.3.3.1.1 to 5.3.3.1.3 faillock regexps fixed
+- 5.4.1.6 current date computed in a shell
+- 7.2.2 and 5.4.2.2 accounts looped individually
+- 7.2.8 checks group names
+- 2.1.6 vsftpd package name corrected
+- 5.2.2 sudoers edit validated with visudo
+- 5.2.6 timestamp_timeout regexp fixed
+- 6.1.3.7 imtcp regexps escape the parentheses
+- 6.1.1.2 checks the /etc/tmpfiles.d override, vendor file left alone
+- 6.1.2.1.2 and 6.1.3.6 forward logs only when ubtu24cis_remote_log_server is set, default empty
+- ubtu24_ptrace_value renamed ubtu24cis_ptrace_value and passed to the audit
+- README notes the AppArmor mode change made by 1.3.1.3 and 1.3.1.4
+- molecule converge auditd overrides removed, is_container.yml covers them
+- bridge template rule section end marker added
+- route flush handlers use sysctl -w and no longer write /etc/sysctl.conf
+- auditd user exclusions exclude the listed users, not everyone else
+- 2.1.22 exim4 changes run update-exim4.conf
+- 2.3.3.3 unmasks chrony before starting it
+- 6.1.3.4 finds the rsyslog config in /etc/rsyslog.conf and rsyslog.d only
+- 7.1.11 sticky bit step skips when no directories are found
+- bridge emits ubtu24cis_varlog_location, matching the audit
+- auditd rule file written 0640 so 6.2.4.5 does not change it on the next run
+- 6.1.1.3 journald rotation defaults set to the benchmark example values
+- 6.1.2.1.3 enables journal upload only when ubtu24cis_remote_log_server is set
+- 1.3.1.3 and 1.3.1.4 apparmor profile glob now expands (addresses https://github.com/ansible-lockdown/UBUNTU24-CIS/issues/195) - Thank you @lnagelschmidt
+- 1.3.1.3 and 1.3.1.4 fail on aa-complain and aa-enforce errors
+- 6.2.1.1 package facts refreshed after the auditd install (addresses https://github.com/ansible-lockdown/UBUNTU24-CIS/issues/196) - Thank you @lan94
+- auditd handlers tolerate a skipped immutable check or augenrules check
+- 5.1.12 post-quantum KEX example uses the @openssh.com name, indented (addresses https://github.com/ansible-lockdown/UBUNTU24-CIS/issues/198) - Thank you @CyberNativeAI
+- 1.4.1 00_user readable and executable by all (addresses https://github.com/ansible-lockdown/UBUNTU24-CIS/issues/178) - Thank you @alexmroke
+- 1.1.2.1.1 to 1.1.2.7.1 missing partition warnings now fire
+- 2.1.1 autofs mask runs when autofs is not installed
+- 5.2.5 sudoers discovery gated on 5.2.5 only, rule_5.2.6 tag removed
+- 5.3.2.1 to 5.3.2.4 pam discovery tasks run in check mode
+- 6.1.4.1 login records and sssd logs task loops the discovered log files
+- 7.2.7 and 7.2.8 duplicate name warnings use the registered variable
+- 1.7.2, 1.7.3, 2.1.10, 6.1.1.3 and 6.1.2.2 to 6.1.2.4 notify moved off the block
+- /tmp systemd handler enables and unmasks tmp.mount
+- /tmp mount busy warning now fires
+- duplicate Grub update handler removed
+- 3.1.2 wireless discovery register renamed to discovered_wireless_adapters
+- automated and manual tags added from the benchmark for 315 tasks
+- ansible_local replaced with ansible_facts
+- molecule verify play sets audit_log_dir and audit_format
+- Company name updated to MindPoint Group - A Quantum Sky Company
+- unused ubtu24cis_skip_for_test removed
+- molecule scenarios run the role via roles:, read-only role_name var removed
+- 6.1.2.2 ForwardToSyslog drop-in written as syslog.conf so the systemd vendor default no longer overrides it
+- 1.1.2.1.x tmp.mount task name lists the right controls
+- task name spacing fixed in 1.1.2.2.1, 1.1.2.7.1 and 5.1.5
+- 6.2.3.21 named AUDIT
+- defaults comments aligned to v1.0.0 control IDs
+- 6.1.2.1.2 journal-upload.conf changes restart systemd-journal-upload
+- ubtu24cis_disruption_high passed to the audit
+
 ## Based on CIS v1.0.0 - September 2026
 
 ### Fixed

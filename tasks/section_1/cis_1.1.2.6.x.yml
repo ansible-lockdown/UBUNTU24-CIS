@@ -5,6 +5,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - audit
     - mounts
     - rule_1.1.2.6.1
@@ -21,12 +22,12 @@
       register: discovered_var_log_mount
 
     - name: "1.1.2.6.1 | AUDIT | Ensure separate partition exists for /var/log | Absent"
-      when: discovered_var_log_mount is undefined
+      when: discovered_var_log_mount.rc != 0
       ansible.builtin.debug:
         msg: "Warning!! {{ required_mount }} is not mounted on a separate partition"
 
     - name: "1.1.2.6.1 | AUDIT | Ensure separate partition exists for /var/log | Present"
-      when: discovered_var_log_mount is undefined
+      when: discovered_var_log_mount.rc != 0
       ansible.builtin.import_tasks:
         file: warning_facts.yml
 
@@ -37,6 +38,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - mounts
     - rule_1.1.2.6.2
@@ -60,6 +62,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - mounts
     - rule_1.1.2.6.3
@@ -80,6 +83,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - mounts
     - rule_1.1.2.6.4

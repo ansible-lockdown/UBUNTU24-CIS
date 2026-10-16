@@ -247,6 +247,8 @@ uses:
   implements the benchmark as written; set `ubtu24cis_rule_1_3_1_4: false`, or `ubtu24cis_apparmor_disable: true`
   for both controls, where that conflicts with your workload. Reported in
   [#158](https://github.com/ansible-lockdown/UBUNTU24-CIS/issues/158) by @seven-beep.
+  The role changes profile modes on the host: with the default `ubtu24cis_apparmor_mode: complain`, 1.3.1.3
+  puts every profile in `/etc/apparmor.d` into complain mode, and 1.3.1.4 puts them into enforce mode.
 
 ## Local Testing
 
