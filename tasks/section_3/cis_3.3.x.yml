@@ -7,6 +7,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_3.3.1
     - NIST800-53R5_CM-1
@@ -47,6 +48,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_3.3.2
     - NIST800-53R5_CM-1
@@ -76,6 +78,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_3.3.3
     - NIST800-53R5_CM-1
@@ -100,6 +103,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_3.3.4
     - NIST800-53R5_CM-1
@@ -124,6 +128,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_3.3.5
     - NIST800-53R5_CM-1
@@ -170,6 +175,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_3.3.6
     - NIST800-53R5_CM-1
@@ -199,6 +205,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_3.3.7
     - NIST800-53R5_CM-1
@@ -230,6 +237,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_3.3.8
     - NIST800-53R5_CM-1
@@ -276,6 +284,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_3.3.9
     - NIST800-53R5_CM-1
@@ -305,6 +314,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_3.3.10
     - NIST800-53R5_CM-1
@@ -331,6 +341,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_3.3.11
     - NIST800-53R5_CM-1

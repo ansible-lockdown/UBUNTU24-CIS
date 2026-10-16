@@ -12,6 +12,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - audit
     - rule_4.3.1
     - NIST800-53R5_CA-9
@@ -34,6 +35,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - audit
     - rule_4.3.2
     - NIST800-53R5_SC-7
@@ -59,6 +61,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - manual
     - audit
     - rule_4.3.3
     - NIST800-53R5_CA-9
@@ -84,6 +87,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_4.3.4
     - NIST800-53R5_CA-9
@@ -112,6 +116,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - audit
     - rule_4.3.5
     - NIST800-53R5_NA
@@ -134,6 +139,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - audit
     - rule_4.3.6
     - NIST800-53R5_CA-9
@@ -157,6 +163,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - manual
     - audit
     - rule_4.3.7
     - NIST800-53R5_CA-9
@@ -180,6 +187,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - audit
     - rule_4.3.8
     - NIST800-53R5_CA-9
@@ -203,6 +211,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - audit
     - rule_4.3.9
     - NIST800-53R5_CA-9
@@ -230,6 +239,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - audit
     - rule_4.3.10
     - NIST800-53R5_CA-9

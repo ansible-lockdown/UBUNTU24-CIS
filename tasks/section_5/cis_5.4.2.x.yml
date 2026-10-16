@@ -7,6 +7,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - shadow_suite
     - rule_5.4.2.7
@@ -31,6 +32,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - accounts
     - users
@@ -67,6 +69,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_5.4.2.2
     - NIST800-53R5_CM-1
@@ -96,8 +99,7 @@
         name: "{{ item }}"
         group: 0
         state: absent
-      loop:
-        - discovered_gid0_members.stdout_lines
+      loop: "{{ discovered_gid0_members.stdout_lines }}"
       loop_control:
         label: "{{ item }}"
 
@@ -106,6 +108,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_5.4.2.3
     - NIST800-53R5_CM-1
@@ -150,6 +153,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - shadow_suite
     - rule_5.4.2.4
@@ -162,6 +166,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - paths
     - rule_5.4.2.5
@@ -253,6 +258,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - shadow_suite
     - rule_5.4.2.6
@@ -274,6 +280,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - shadow_suite
     - rule_5.4.2.7
@@ -298,6 +305,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - shadow_suite
     - rule_5.4.2.8

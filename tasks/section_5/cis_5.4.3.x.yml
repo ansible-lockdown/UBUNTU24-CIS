@@ -5,6 +5,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - shells
     - rule_5.4.3.1
@@ -23,6 +24,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - shell
     - rule_5.4.3.2
@@ -62,6 +64,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - umask
     - rule_5.4.3.3

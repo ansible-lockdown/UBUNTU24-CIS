@@ -1,14 +1,14 @@
 ---
 
-- name: "5.2.5/6 | AUDIT | Find all sudoers files."
-  when: ubtu24cis_rule_5_2_4 or ubtu24cis_rule_5_2_5
+- name: "5.2.5 | AUDIT | Ensure re-authentication for privilege escalation is not disabled globally | Find all sudoers files"
+  when: ubtu24cis_rule_5_2_5
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - sudo
     - rule_5.2.5
-    - rule_5.2.6
     - NIST800-53R5_AC-6
   ansible.builtin.shell: |
     set -o pipefail
@@ -25,6 +25,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_5.2.1
     - NIST800-53R5_AC-6
@@ -39,6 +40,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_5.2.2
     - NIST800-53R5_AC-6
@@ -48,12 +50,14 @@
     regexp: '^Defaults\s+use_'
     line: 'Defaults        use_pty'
     insertafter: '^\s*Defaults'
+    validate: '/usr/sbin/visudo -cf %s'
 
 - name: "5.2.3 | PATCH | Ensure sudo log file exists"
   when: ubtu24cis_rule_5_2_3
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_5.2.3
     - NIST800-53R5_AU-3
@@ -70,6 +74,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - sudo
     - rule_5.2.4
@@ -103,6 +108,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - sudo
     - rule_5.2.5
@@ -121,6 +127,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - sudo
     - rule_5.2.6
@@ -141,7 +148,7 @@
       when: discovered_ubtu24cis_ssh_timeout_files.stdout | length == 0
       ansible.builtin.lineinfile:
         path: /etc/sudoers
-        regexp: '^\s*Defaults/s+timestamp_timeout='
+        regexp: '^\s*Defaults\s+timestamp_timeout='
         line: "Defaults        timestamp_timeout={{ ubtu24cis_sudo_timestamp_timeout }}"
         insertafter: '^\s*Defaults'
         validate: '/usr/sbin/visudo -cf %s'
@@ -162,6 +169,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - sudo
     - rule_5.2.7

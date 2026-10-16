@@ -51,6 +51,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_5.3.3.2.1
     - NIST800-53R5_IA-5
@@ -82,6 +83,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_5.3.3.2.2
     - NIST800-53R5_IA-5
@@ -113,6 +115,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - manual
     - patch
     - rule_5.3.3.2.3
     - NIST800-53R5_IA-5
@@ -144,6 +147,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_5.3.3.2.4
     - NIST800-53R5_IA-5
@@ -175,6 +179,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_5.3.3.2.5
     - NIST800-53R5_IA-5
@@ -206,6 +211,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_5.3.3.2.6
     - NIST800-53R5_IA-5
@@ -237,6 +243,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_5.3.3.2.7
     - NIST800-53R5_IA-5
@@ -268,6 +275,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_5.3.3.2.8
     - NIST800-53R5_IA-5

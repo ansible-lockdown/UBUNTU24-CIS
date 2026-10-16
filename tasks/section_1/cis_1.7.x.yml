@@ -8,6 +8,7 @@
     - "'gdm3' in ansible_facts['packages']"
   tags:
     - level2-server
+    - automated
     - patch
     - rule_1.7.1
     - NIST800-53R5_CM-11
@@ -25,6 +26,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_1.7.2
     - NIST800-53R5_CM-1
@@ -33,7 +35,6 @@
     - NIST800-53R5_CM-7
     - NIST800-53R5_IA-5
     - gnome
-  notify: Update dconf
   block:
     - name: "1.7.2 | PATCH | Ensure GDM login banner is configured | make directory"
       ansible.builtin.file:
@@ -42,6 +43,7 @@
         group: root
         mode: 'u+x,go-w'
         state: directory
+      notify: Update dconf
 
     - name: "1.7.2 | PATCH | Ensure GDM login banner is configured | banner settings"
       ansible.builtin.lineinfile:
@@ -59,6 +61,7 @@
         - { regexp: 'banner-message-text', line: "banner-message-text='{{ ubtu24cis_warning_banner | regex_replace('\n', ' ') | trim }}'", insertafter: 'banner-message-enable' }
       loop_control:
         label: "{{ item }}"
+      notify: Update dconf
 
 - name: "1.7.3 | PATCH | Ensure GDM disable-user-list option is enabled"
   when:
@@ -67,6 +70,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_1.7.3
     - NIST800-53R5_CM-1
@@ -75,7 +79,6 @@
     - NIST800-53R5_CM-7
     - NIST800-53R5_IA-5
     - gnome
-  notify: Update dconf
   block:
     - name: "1.7.3 | PATCH | Ensure GDM disable-user-list option is enabled | make directories"
       ansible.builtin.file:
@@ -87,6 +90,7 @@
       loop:
         - /etc/dconf/db/{{ ubtu24cis_dconf_db_name }}.d
         - /etc/dconf/profile
+      notify: Update dconf
 
     - name: "1.7.3 | PATCH | Ensure GDM disable-user-list option is enabled | disable-user-list setting login-screen"
       ansible.builtin.lineinfile:
@@ -101,6 +105,7 @@
       loop:
         - { regexp: '\[org\/gnome\/login-screen\]', line: '[org/gnome/login-screen]', insertafter: EOF }
         - { regexp: 'disable-user-list', line: 'disable-user-list=true', insertafter: '\[org\/gnome\/login-screen\]'}
+      notify: Update dconf
 
     - name: "1.7.3 | PATCH | Ensure GDM disable-user-list option is enabled | disable-user-list setting profile"
       ansible.builtin.lineinfile:
@@ -118,6 +123,7 @@
         - { regexp: '^file-db:/usr/share/gdm/greeter-dconf-defaults', line: 'file-db:/usr/share/gdm/greeter-dconf-defaults', insertafter: 'system-db:{{ ubtu24cis_dconf_db_name }}'}
       loop_control:
         label: "{{ item }}"
+      notify: Update dconf
 
 - name: "1.7.4 | PATCH | Ensure GDM screen locks when the user is idle"
   when:
@@ -126,6 +132,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_1.7.4
     - NIST800-53R5_NA
@@ -170,6 +177,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_1.7.5
     - NIST800-53R5_CM-11
@@ -200,6 +208,7 @@
   tags:
     - level1-server
     - level2-workstation
+    - automated
     - patch
     - rule_1.7.6
     - NIST800-53R5_CM-1
@@ -234,6 +243,7 @@
   tags:
     - level1-server
     - level2-workstation
+    - automated
     - patch
     - rule_1.7.7
     - NIST800-53R5_CM-1
@@ -268,6 +278,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_1.7.8
     - NIST800-53R5_CM-1
@@ -302,6 +313,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_1.7.9
     - NIST800-53R5_CM-1
@@ -334,6 +346,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_1.7.10
     - NIST800-53R5_SI-4

@@ -6,10 +6,8 @@
   gather_facts: true
 
   vars:
-    role_name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
     ansible_user: root
     system_is_container: true
-    ubtu24cis_skip_for_test: true
     setup_audit: true
     run_audit: true
     # Bootloader/GRUB - not applicable in containers
@@ -22,15 +20,11 @@
     ubtu24cis_rule_1_3_1_4: false
     ubtu24cis_rule_1_4_1: false
     ubtu24cis_rule_1_4_2: false
-    # Auditd - cannot run in containers (no kernel audit subsystem)
-    ubtu24cis_rule_6_2_1_2: false
-    ubtu24cis_rule_6_2_1_3: false
-    ubtu24cis_rule_6_2_1_4: false
 
   pre_tasks:
     - name: Set root password for GRUB user check
-      ansible.builtin.shell: echo 'root:MoleculeTest123!' | chpasswd
-      changed_when: true
+      ansible.builtin.shell: echo 'root:MoleculeTest123!' | chpasswd  # pragma: allowlist secret
+      changed_when: false
 
     - name: Create /etc/default/grub stub for container
       ansible.builtin.copy:
@@ -43,7 +37,5 @@
           GRUB_CMDLINE_LINUX=""
         mode: '0644'
 
-  tasks:
-    - name: "Include tasks"
-      ansible.builtin.include_role:
-        name: "{{ role_name }}"
+  roles:
+    - role: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}"
