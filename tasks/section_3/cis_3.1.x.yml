@@ -7,6 +7,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - manual
     - patch
     - rule_3.1.1
     - NIST800-53R5_CM-7
@@ -64,6 +65,7 @@
     - not system_is_container
   tags:
     - level1-server
+    - automated
     - patch
     - rule_3.1.2
     - NIST800-53R5_CM-7
@@ -72,12 +74,12 @@
     - name: "3.1.2 | AUDIT | Ensure wireless interfaces are disabled | Discover is wireless adapter on system"
       ansible.builtin.shell: find /sys/class/net/*/ -type d -name wireless
       changed_when: false
-      failed_when: prelim_wireless_adapters.rc not in [ 0, 1 ]
+      failed_when: discovered_wireless_adapters.rc not in [ 0, 1 ]
       check_mode: false
-      register: prelim_wireless_adapters
+      register: discovered_wireless_adapters
 
     - name: "3.1.2 | AUDIT | Ensure wireless interfaces are disabled | If wireless adapter present capture module"
-      when: prelim_wireless_adapters.stdout | length > 0
+      when: discovered_wireless_adapters.stdout | length > 0
       ansible.builtin.shell: |
         set -o pipefail
         for driverdir in $(find /sys/class/net/*/ -type d -name wireless | xargs dirname);
@@ -120,6 +122,7 @@
   tags:
     - level1-server
     - level2-workstation
+    - automated
     - patch
     - bluetooth
     - rule_3.1.3

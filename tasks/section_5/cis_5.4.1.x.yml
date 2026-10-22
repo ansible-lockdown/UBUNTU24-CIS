@@ -5,6 +5,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_5.4.1.1
     - NIST800-53R5_CM-1
@@ -66,6 +67,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - manual
     - audit
     - rule_5.4.1.2
     - NIST800-53R5_NA
@@ -118,6 +120,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_5.4.1.3
     - NIST800-53R5_NA
@@ -154,6 +157,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_5.4.1.4
     - NIST800-53R5_IA-5
@@ -168,6 +172,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_5.4.1.5
     - NIST800-53R5_NA
@@ -217,6 +222,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_5.4.1.6
     - NIST800-53R5_NA
@@ -227,7 +233,9 @@
     warn_control_id: '5.4.1.6'
   block:
     - name: "5.4.1.6 | AUDIT | Ensure all users last password change date is in the past | Get current date in Unix Time"
-      ansible.builtin.command: echo $(($(date --utc --date "$1" +%s)/86400))
+      ansible.builtin.shell: echo $(($(date --utc +%s)/86400))
+      args:
+        executable: "{{ ubtu24cis_shell_executable }}"
       changed_when: false
       failed_when: discovered_current_time.rc not in [0, 1]
       check_mode: false

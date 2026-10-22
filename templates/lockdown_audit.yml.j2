@@ -440,8 +440,11 @@ ubtu24cis_rule_7_2_8: {{ ubtu24cis_rule_7_2_8 }}
 ubtu24cis_rule_7_2_9: {{ ubtu24cis_rule_7_2_9 }}
 ubtu24cis_rule_7_2_10: {{ ubtu24cis_rule_7_2_10 }}
 
+############
+
 
 ## System functionality configuration variables
+ubtu24cis_ptrace_value: {{ ubtu24cis_ptrace_value }}
 ##
 ## There are certain functionalities of a system
 ## that may require either to skip certain CIS rules
@@ -675,11 +678,14 @@ ubtu24cis_pass_max_days: {{ ubtu24cis_pass_max_days }}
 ubtu24cis_pass_min_days: {{ ubtu24cis_pass_min_days }}
 ubtu24cis_pass_warn_age: {{ ubtu24cis_pass_warn_age }}
 
+# existing users only changed when disruption_high is true
+ubtu24cis_disruption_high: {{ ubtu24cis_disruption_high }}
+
 # set sugroup if differs from wheel
 ubtu24cis_sugroup: nosugroup
 
 # var log location variable
-ubtu24_varlog_location: {{ ubtu24cis_sudo_logfile }}
+ubtu24cis_varlog_location: {{ ubtu24cis_sudo_logfile }}
 
 # Section 6
 

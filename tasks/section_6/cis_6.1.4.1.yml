@@ -5,6 +5,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - logfiles
     - rule_6.1.4.1
@@ -31,16 +32,11 @@
       failed_when: discovered_file_exists_nottmp.state not in '[ file, absent ]'
       register: discovered_file_exists_nottmp
 
-    - name: "6.1.4.1 | PATCH | Ensure access to all logfiles has been configured | change permissions"
-      when:
-        - discovered_system_logfiles.stdout_lines is defined
-        - item in ["/var/log/btmp", "/var/log/utmp", "/var/log/wtmp", "/var/log/lastlog"] or
-          ('sssd' in item or 'SSSD' in item)
+    - name: "6.1.4.1 | PATCH | Ensure access to all logfiles has been configured | change permissions on login records and sssd logs"
+      when: item in ["/var/log/btmp", "/var/log/utmp", "/var/log/wtmp", "/var/log/lastlog"] or ('sssd' in item or 'SSSD' in item)
       ansible.builtin.file:
         path: "{{ item }}"
         mode: 'ug-x,o-wx'
-      loop: "{{ discovered_system_logfiles.stdout_lines }}"
-      loop_control:
-        label: "{{ item }}"
+      loop: "{{ discovered_logfiles.stdout_lines }}"
       failed_when: discovered_file_exists_tmp.state not in '[ file, absent ]'
       register: discovered_file_exists_tmp

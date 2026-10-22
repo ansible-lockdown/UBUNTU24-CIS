@@ -7,6 +7,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - journald
     - rule_6.1.2.1.1
@@ -22,16 +23,18 @@
   when:
     - ubtu24cis_rule_6_1_2_1_2
     - not ubtu24cis_system_is_log_server
+    - ubtu24cis_remote_log_server | length > 0
   tags:
     - level1-server
     - level1-workstation
+    - manual
     - audit
     - patch
     - journald
     - rule_6.1.2.1.2
     - NIST800-53R5_AU-2
     - NIST800-53R5_AU-12
-  notify: Restart journald
+  notify: Restart systemd_journal_upload
   ansible.builtin.lineinfile:
     path: /etc/systemd/journal-upload.conf
     regexp: "{{ item.regexp }}"
@@ -48,9 +51,11 @@
   when:
     - not ubtu24cis_system_is_log_server
     - ubtu24cis_rule_6_1_2_1_3
+    - ubtu24cis_remote_log_server | length > 0
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - journald
     - rule_6.1.2.1.3
@@ -68,6 +73,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - journald
     - rule_6.1.2.1.4
@@ -90,34 +96,36 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - journald
     - rule_6.1.2.2
-  notify: Restart journald
   block:
     - name: "6.1.2.2 | PATCH | Ensure journald ForwardToSyslog is disabled | Add file"
       ansible.builtin.template:
         src: etc/systemd/journald.conf.d/forwardtosyslog.conf.j2
-        dest: /etc/systemd/journald.conf.d/forwardtosyslog.conf
+        dest: /etc/systemd/journald.conf.d/syslog.conf
         owner: root
         group: root
         mode: 'g-wx,o-rwx'
+      notify: Restart journald
 
     - name: "6.1.2.2 | PATCH | Ensure journald ForwardToSyslog is disabled | comment out current entries"
       ansible.builtin.replace:
         path: /etc/systemd/journald.conf
         regexp: ^(\s*ForwardToSyslog)
         replace: '#\1'
+      notify: Restart journald
 
 - name: "6.1.2.3 | PATCH | Ensure journald Compress is configured"
   when: ubtu24cis_rule_6_1_2_3
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - journald
     - rule_6.1.2.3
-  notify: Restart journald
   block:
     - name: "6.1.2.3 | PATCH | Ensure journald Compress is configured | Add file"
       ansible.builtin.template:
@@ -126,22 +134,24 @@
         owner: root
         group: root
         mode: 'g-wx,o-rwx'
+      notify: Restart journald
 
     - name: "6.1.2.3 | PATCH | Ensure journald Compress is configured | comment out current entries"
       ansible.builtin.replace:
         path: /etc/systemd/journald.conf
         regexp: (?i)^(\s*compress=)
         replace: '#\1'
+      notify: Restart journald
 
 - name: "6.1.2.4 | PATCH | Ensure journald Storage is configured"
   when: ubtu24cis_rule_6_1_2_4
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - journald
     - rule_6.1.2.4
-  notify: Restart journald
   block:
     - name: "6.1.2.4 | PATCH | Ensure journald Storage is configured | Add file"
       ansible.builtin.template:
@@ -150,9 +160,11 @@
         owner: root
         group: root
         mode: 'g-wx,o-rwx'
+      notify: Restart journald
 
     - name: "6.1.2.4 | PATCH | Ensure journald Storage is configured | comment out current entries"
       ansible.builtin.replace:
         path: /etc/systemd/journald.conf
         regexp: (?i)^(\s*storage=)
         replace: '#\1'
+      notify: Restart journald

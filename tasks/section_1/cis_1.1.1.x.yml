@@ -5,6 +5,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_1.1.1.1
     - filesystems
@@ -38,6 +39,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_1.1.1.2
     - filesystems
@@ -71,6 +73,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_1.1.1.3
     - filesystems
@@ -104,6 +107,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_1.1.1.4
     - filesystems
@@ -137,6 +141,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_1.1.1.5
     - filesystems
@@ -170,6 +175,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - rule_1.1.1.6
     - filesystems
@@ -204,6 +210,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - rule_1.1.1.7
     - filesystems
@@ -264,6 +271,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - rule_1.1.1.8
     - filesystems
@@ -297,6 +305,7 @@
   tags:
     - level1-server
     - level2-workstation
+    - automated
     - patch
     - rule_1.1.1.9
     - filesystems
@@ -330,6 +339,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - manual
     - audit
     - rule_1.1.1.10
     - filesystems

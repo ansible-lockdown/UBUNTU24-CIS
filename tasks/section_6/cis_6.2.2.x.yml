@@ -5,6 +5,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - rule_6.2.2.1
     - NIST800-53R5_AU-8
@@ -21,6 +22,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - rule_6.2.2.2
     - NIST800-53R5_AU-8
@@ -36,6 +38,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - rule_6.2.2.3
     - NIST800-53R5_AU-8
@@ -56,6 +59,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - auditd
     - rule_6.2.2.4

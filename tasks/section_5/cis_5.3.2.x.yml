@@ -9,6 +9,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_5.3.2.1
     - NIST800-53R5_IA-5
@@ -23,6 +24,7 @@
         executable: "{{ ubtu24cis_shell_executable }}"
       changed_when: false
       failed_when: discovered_pam_unix_account.rc not in [0, 1]
+      check_mode: false
       register: discovered_pam_unix_account
 
     - name: "5.3.2.1 | AUDIT | Ensure pam_unix module is enabled | Check common-session for pam_unix.so"
@@ -33,6 +35,7 @@
         executable: "{{ ubtu24cis_shell_executable }}"
       changed_when: false
       failed_when: discovered_pam_unix_session.rc not in [0, 1]
+      check_mode: false
       register: discovered_pam_unix_session
 
     - name: "5.3.2.1 | AUDIT | Ensure pam_unix module is enabled | Check common-auth for pam_unix.so"
@@ -43,6 +46,7 @@
         executable: "{{ ubtu24cis_shell_executable }}"
       changed_when: false
       failed_when: discovered_pam_unix_auth.rc not in [0, 1]
+      check_mode: false
       register: discovered_pam_unix_auth
 
     - name: "5.3.2.1 | AUDIT | Ensure pam_unix module is enabled | Check common-password for pam_unix.so"
@@ -53,6 +57,7 @@
         executable: "{{ ubtu24cis_shell_executable }}"
       changed_when: false
       failed_when: discovered_pam_unix_password.rc not in [0, 1]
+      check_mode: false
       register: discovered_pam_unix_password
 
     - name: "5.3.2.1 | PATCH | Ensure pam_unix module is enabled | Ensure template"
@@ -83,6 +88,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_5.3.2.2
     - NIST800-53R5_NA
@@ -97,6 +103,7 @@
         executable: "{{ ubtu24cis_shell_executable }}"
       changed_when: false
       failed_when: discovered_pam_faillock_auth.rc not in [0, 1]
+      check_mode: false
       register: discovered_pam_faillock_auth
 
     - name: "5.3.2.2 | AUDIT | Ensure pam_faillock module is enabled | Check common-account for pam_faillock.so"
@@ -107,6 +114,7 @@
         executable: "{{ ubtu24cis_shell_executable }}"
       changed_when: false
       failed_when: discovered_pam_faillock_account.rc not in [0, 1]
+      check_mode: false
       register: discovered_pam_faillock_account
 
     - name: "5.3.2.2 | PATCH | Ensure pam_faillock module is enabled | Ensure templates"
@@ -143,6 +151,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_5.3.2.3
     - NIST800-53R5_NA
@@ -157,6 +166,7 @@
         executable: "{{ ubtu24cis_shell_executable }}"
       changed_when: false
       failed_when: discovered_pam_pwquality_password.rc not in [0, 1]
+      check_mode: false
       register: discovered_pam_pwquality_password
 
     - name: "5.3.2.3 | PATCH | Ensure pam_pwquality module is enabled | Ensure template"
@@ -183,6 +193,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_5.3.2.4
     - NIST800-53R5_NA
@@ -197,6 +208,7 @@
         executable: "{{ ubtu24cis_shell_executable }}"
       changed_when: false
       failed_when: discovered_pam_pwhistory_password.rc not in [0, 1]
+      check_mode: false
       register: discovered_pam_pwhistory_password
 
     - name: "5.3.2.4 | PATCH | Ensure pam_pwhistory module is enabled | Ensure template"

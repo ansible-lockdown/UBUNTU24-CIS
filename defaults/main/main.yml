@@ -56,9 +56,6 @@ ubtu24cis_disruption_high: true
 # boot *without* querying for the bootloader password.
 ubtu24cis_ask_passwd_to_boot: false  # pragma: allowlist secret
 
-# skip tests that fail in CI/test environments
-ubtu24cis_skip_for_test: false
-
 # skip events for ec2 instance testing pipeline
 # set true to skip EC2-incompatible tasks (e.g., GRUB, reboot)
 system_is_ec2: false
@@ -234,7 +231,7 @@ ubtu24cis_rule_2_2_3: true
 ubtu24cis_rule_2_2_4: true
 ubtu24cis_rule_2_2_5: true
 ubtu24cis_rule_2_2_6: true
-# 2.3.1 Ensure time synchronization is in use
+# 2.3.1.1 Ensure a single time synchronization daemon is in use
 ubtu24cis_rule_2_3_1_1: true
 # 2.3.2 Configure systemd-timesyncd
 ubtu24cis_rule_2_3_2_1: true
@@ -367,7 +364,7 @@ ubtu24cis_rule_5_3_2_4: true
 ubtu24cis_rule_5_3_3_1_1: true
 ubtu24cis_rule_5_3_3_1_2: true
 ubtu24cis_rule_5_3_3_1_3: true
-# 5.3.3.2 Configure pam_quality module
+# 5.3.3.2 Configure pam_pwquality module
 ubtu24cis_rule_5_3_3_2_1: true
 ubtu24cis_rule_5_3_3_2_2: true
 ubtu24cis_rule_5_3_3_2_3: true
@@ -376,7 +373,7 @@ ubtu24cis_rule_5_3_3_2_5: true
 ubtu24cis_rule_5_3_3_2_6: true
 ubtu24cis_rule_5_3_3_2_7: true
 ubtu24cis_rule_5_3_3_2_8: true
-# 5.3.3.3 Configure pam_history module
+# 5.3.3.3 Configure pam_pwhistory module
 # These are added as part of 5.3.2.4 using jinja2 template
 ubtu24cis_rule_5_3_3_3_1: true
 ubtu24cis_rule_5_3_3_3_2: true
@@ -640,7 +637,7 @@ ubtu24cis_sysctl_kernel_conf: /etc/sysctl.d/98_cis_kernel.conf
 #        with PTRACE_ATTACH, or through children calling PTRACE_TRACEME.
 # - 3 -> no attach: no processes may use ptrace with PTRACE_ATTACH nor
 #        via PTRACE_TRACEME. Once set, this sysctl value cannot be changed.
-ubtu24_ptrace_value: 1
+ubtu24cis_ptrace_value: 1
 
 ## Controls 1.6.x - Warning banners
 # The controls 1.6.x set various warning banners and protect the respective files
@@ -815,7 +812,7 @@ ubtu24cis_time_servers:
   - name: time-c-g.nist.gov
     options: iburst
 
-# 2.4.1.5 List of users, allowed to use cron
+# 2.4.1.8 List of users, allowed to use cron
 ubtu24cis_cron_allow_users: []
 
 ##
@@ -940,7 +937,7 @@ ubtu24cis_sshd_kex_algorithms:
   - diffie-hellman-group16-sha512
   - diffie-hellman-group18-sha512
   - diffie-hellman-group14-sha256
-# - sntrup761x25519-sha512  # Post-quantum KEX (enable if your OpenSSH version supports it; check with: ssh -Q kex)
+  # - sntrup761x25519-sha512@openssh.com  # Post-quantum KEX (enable if your OpenSSH version supports it; check with: ssh -Q kex)
 
 # This variable, if specified, configures a list of USER name patterns, separated by spaces, to allow SSH
 # access for users whose user name matches one of the patterns. This is done
@@ -1255,27 +1252,22 @@ ubtu24cis_bash_umask: '027'
 # This variable determines the maximum disk space used by `journald`.
 # It defaults to 10% of the available file system.
 # Specify values in bytes or use K, M, G, T, P, E as units for the specified size.
-# ATTENTION: Uncomment the keyword `SystemMaxUse` when values are set!
-ubtu24cis_journald_systemmaxuse: "#SystemMaxUse=1G"
+ubtu24cis_journald_systemmaxuse: "SystemMaxUse=1G"
 # This variable determines disk to be kept free by `journald`.
 # Specify values in bytes or use K, M, G, T, P, E as units for the specified size.
-# ATTENTION: Uncomment the keyword `SystemKeepFree` when values are set!
-ubtu24cis_journald_systemkeepfree: "#SystemKeepFree=500M"
+ubtu24cis_journald_systemkeepfree: "SystemKeepFree=500M"
 # This variable determines the maximum disk space used by `journald`.
 # It defaults to 15% of the available file system.
 # Specify values in bytes or use K, M, G, T, P, E as units for the specified size.
-# ATTENTION: Uncomment the keyword `RuntimeMaxUse` when values are set!
-ubtu24cis_journald_runtimemaxuse: "#RuntimeMaxUse=200M"
+ubtu24cis_journald_runtimemaxuse: "RuntimeMaxUse=200M"
 # This variable determines disk to be kept free by `journald`.
 # Specify values in bytes or use K, M, G, T, P, E as units for the specified size.
-# ATTENTION: Uncomment the keyword `RuntimeKeepFree` when values are set!
-ubtu24cis_journald_runtimekeepfree: "#RuntimeKeepFree=50M"
+ubtu24cis_journald_runtimekeepfree: "RuntimeKeepFree=50M"
 # This variable specifies, the maximum time to store entries in a single journal
 # file before rotating to the next one. Set to 0 to turn off this feature.
 # The given value is interpreted as seconds, unless suffixed with the units
 # `year`, `month`, `week`, `day`, `h` or `m` to override the default time unit of seconds.
-# ATTENTION: Uncomment the keyword `MaxFileSec` when values are set!
-ubtu24cis_journald_maxfilesec: "#MaxFileSec=1month"
+ubtu24cis_journald_maxfilesec: "MaxFileSec=1month"
 
 ## Controls 6.1.2.x (`journald`) and 6.1.3.x (`rsyslog`)
 # This variable governs which logging system are used.
@@ -1289,7 +1281,8 @@ ubtu24cis_rsyslog_ansible_managed: true
 
 ## Controls 6.1.2.1.2 (`journald`) and 6.1.3.6 (`rsyslog`)
 # This variable specifies the address of the remote log host where logs are being sent.
-ubtu24cis_remote_log_server: 192.168.2.100
+# Empty by default: 6.1.2.1.2 and 6.1.3.6 configure forwarding only once a host is set.
+ubtu24cis_remote_log_server: ""
 # This variable expresses whether the system is used as a log server or not.
 # If set to `true`, controls that interfere with log server functionality or
 # require that own system logs be sent to some other log server are skipped.

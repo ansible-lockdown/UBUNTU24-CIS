@@ -5,6 +5,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_2.3.3.1
     - NIST800-53R5_AU-3
@@ -37,6 +38,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_2.3.3.2
     - NIST800-53R5_AU-8
@@ -51,6 +53,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_2.3.3.3
     - NIST800-53R5_AU-8
@@ -59,5 +62,6 @@
     - name: "2.3.3.3 | PATCH | Ensure chrony is enabled and running"
       ansible.builtin.systemd:
         name: chrony
+        masked: false
         state: started
         enabled: true
