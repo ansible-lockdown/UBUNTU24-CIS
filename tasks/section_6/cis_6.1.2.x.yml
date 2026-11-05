@@ -65,6 +65,7 @@
     name: systemd-journal-upload
     masked: false
     enabled: true
+    state: started
 
 - name: "6.1.2.1.4 | PATCH | Ensure systemd-journal-remote service is not in use"
   when:

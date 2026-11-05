@@ -34,6 +34,23 @@
   check_mode: false
   register: prelim_squashfs_builtin
 
+- name: "PRELIM | AUDIT | Section 1.1.2.1 | Discover how /tmp is mounted"
+  when: ubtu24cis_tmp_svc == 'auto'
+  tags: always
+  ansible.builtin.systemd_service:
+    name: tmp.mount
+  check_mode: false
+  register: prelim_tmp_mount_source
+
+- name: "PRELIM | AUDIT | Section 1.1.2.1 | Set /tmp management method"
+  tags: always
+  ansible.builtin.set_fact:
+    prelim_tmp_svc: >-
+      {{ (prelim_tmp_mount_source.status.ActiveState == 'active' and
+          prelim_tmp_mount_source.status.SourcePath | default('') != '/etc/fstab')
+         if ubtu24cis_tmp_svc == 'auto'
+         else ubtu24cis_tmp_svc | bool }}
+
 - name: Include pre-remediation audit tasks
   when: run_audit or audit_only or setup_audit
   tags:

@@ -226,17 +226,22 @@
     - discovered_auditd_immutable_check is defined
   ansible.builtin.debug:
     msg: "Reboot required for auditd to apply new rules as immutable set"
+  changed_when: true
   notify: Set_reboot_required
   listen: Update auditd
 
 - name: Stop auditd process
-  when: discovered_auditd_immutable_check.rc | default(0) == 1
+  when:
+    - not system_is_container
+    - discovered_auditd_immutable_check.rc | default(0) == 1
   ansible.builtin.command: systemctl kill auditd
   changed_when: true
   listen: Update auditd
 
 - name: Start auditd process
-  when: discovered_auditd_immutable_check.rc | default(0) == 1
+  when:
+    - not system_is_container
+    - discovered_auditd_immutable_check.rc | default(0) == 1
   ansible.builtin.systemd:
     name: auditd
     state: started
