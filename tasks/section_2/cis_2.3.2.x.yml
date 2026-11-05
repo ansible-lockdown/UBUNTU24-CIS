@@ -48,6 +48,7 @@
     - name: "2.3.2.2 | PATCH | Ensure systemd-timesyncd is enabled and running | enable if timesyncd"
       ansible.builtin.systemd:
         name: systemd-timesyncd
+        masked: false
         state: started
         enabled: true
 

@@ -24,10 +24,10 @@
       register: discovered_firewall_pkgs
 
     - name: "4.1.1 | AUDIT | Ensure a single firewall configuration utility is in use | Check enabled"
-      when: discovered_firewall_pkgs.stdout not in [ 0, 1 ]
+      when: (discovered_firewall_pkgs.stdout | int) > 1
       ansible.builtin.shell: |
         set -o pipefail
-        for svc in ufw nftables iptables; do if [ "$(systemctl is-enabled $svc | grep enabled &> /dev/null)" ]; then fw_enabled=$(( fw_enabled +1 )); fi; done; echo $fw_enabled
+        for svc in ufw nftables iptables; do if systemctl is-enabled --quiet "$svc" 2>/dev/null; then fw_enabled=$(( fw_enabled +1 )); fi; done; echo $fw_enabled
       args:
         executable: "{{ ubtu24cis_shell_executable }}"
       changed_when: false

@@ -14,10 +14,10 @@
     - NIST800-53R5_CM-6
     - NIST800-53R5_CM-7
     - NIST800-53R5_IA-5
-  ansible.builtin.replace:
+  ansible.builtin.lineinfile:
     path: /etc/shells
     regexp: nologin
-    replace: ""
+    state: absent
 
 - name: "5.4.3.2 | PATCH | Ensure default user shell timeout is configured"
   when: ubtu24cis_rule_5_4_3_2
@@ -74,13 +74,27 @@
     - name: "5.4.3.3 | PATCH | Ensure default user umask is configured | update current settings"
       ansible.builtin.replace:
         path: "{{ item.path }}"
-        regexp: (?i)(umask\s+\d\d\d)
-        replace: '{{ item.line }} {{ ubtu24cis_bash_umask }}'
+        regexp: '(?i)^([ \t]*)umask[ \t]+[0-7]{3,4}\b'
+        replace: '\1{{ item.line }} {{ ubtu24cis_bash_umask }}'
       loop:
         - { path: '/etc/profile', line: 'umask' }
         - { path: '/etc/login.defs', line: 'UMASK' }
       loop_control:
         label: "{{ item }}"
+
+    - name: "5.4.3.3 | AUDIT | Ensure default user umask is configured | discover profile.d scripts"
+      ansible.builtin.find:
+        paths: /etc/profile.d
+        patterns: '*.sh'
+        excludes: 50-umask.sh
+      register: discovered_profile_d_scripts
+
+    - name: "5.4.3.3 | PATCH | Ensure default user umask is configured | comment out umask less restrictive than 027 in profile.d scripts"
+      ansible.builtin.replace:
+        path: "{{ item.path }}"
+        regexp: '^([ \t]*umask[ \t]+0?(0[01][0-7]|0[0-7][^7]|[^0][0-7][0-7])([ \t]*|[ \t]+[^\n]*))$'
+        replace: '# \1'
+      loop: "{{ discovered_profile_d_scripts.files }}"
 
     - name: "5.4.3.3 | PATCH | Ensure default user umask is configured | add profile script to set"
       ansible.builtin.template:

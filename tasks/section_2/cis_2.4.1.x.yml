@@ -15,6 +15,7 @@
     - cron
   ansible.builtin.systemd:
     name: cron
+    masked: false
     state: started
     enabled: true
 
@@ -142,6 +143,17 @@
         path: /etc/cron.deny
         state: absent
 
+    - name: "2.4.1.8 | AUDIT | Ensure crontab is restricted to authorized users | Check for crontab group"
+      ansible.builtin.shell: |
+        set -o pipefail
+        getent group crontab | cut -d: -f1
+      args:
+        executable: "{{ ubtu24cis_shell_executable }}"
+      changed_when: false
+      failed_when: false
+      check_mode: false
+      register: discovered_cron_groups
+
     - name: "2.4.1.8 | PATCH | Ensure crontab is restricted to authorized users | Check for cron.allow"
       ansible.builtin.stat:
         path: /etc/cron.allow
@@ -153,7 +165,7 @@
         dest: /etc/cron.allow
         content: "{{ (ubtu24cis_cron_allow_users | default([])) | join('\n') ~ '\n' }}"
         owner: root
-        group: root
+        group: "{{ ('crontab' in discovered_cron_groups.stdout_lines) | ternary('crontab', 'root') }}"
         mode: "u-x,g-wx,o-rwx"
 
     - name: "2.4.1.8 | PATCH | Ensure crontab is restricted to authorized users | Update cron.allow if exists"
@@ -161,5 +173,5 @@
       ansible.builtin.file:
         path: /etc/cron.allow
         owner: root
-        group: '{{ (discovered_cron_allow_status.stat.gr_name == "crontab") | ternary(omit, "root") }}'
+        group: "{{ ('crontab' in discovered_cron_groups.stdout_lines) | ternary('crontab', 'root') }}"
         mode: 'u-x,g-wx,o-rwx'

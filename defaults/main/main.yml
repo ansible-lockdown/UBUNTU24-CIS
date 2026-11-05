@@ -557,13 +557,15 @@ ubtu24cis_debug_mount_data: false
 
 ubtu24cis_remove_kernel_discovery_script: false
 
-## Control 1.1.2.x
-# If set to `true`, rule will be implemented using the `tmp.mount` systemd-service,
-# otherwise fstab configuration will be used.
+## Controls 1.1.2.1.x - /tmp
+# How /tmp mount options are managed:
+#  - auto:  discover it - a tmp.mount unit if /tmp is mounted by one, otherwise /etc/fstab
+#  - true:  always use the tmp.mount systemd unit (creates it if needed)
+#  - false: always use /etc/fstab
 # These /tmp settings will include nosuid,nodev,noexec to conform to CIS standards.
-ubtu24cis_tmp_svc: false
+ubtu24cis_tmp_svc: auto
 
-# Mount options applied to the tmp.mount systemd unit when ubtu24cis_tmp_svc is true
+# Mount options applied to the tmp.mount systemd unit when /tmp is managed by it (ubtu24cis_tmp_svc)
 ubtu24cis_tmp_partition_mount_options:
   - mode=1777
   - strictatime
@@ -717,7 +719,7 @@ ubtu24cis_nfs_server: true
 # Set this variable to `true` to mask service `nfs`.
 ubtu24cis_nfs_mask: true
 # Set this variable to `true` to keep service `nis`; otherwise, the service is uninstalled.
-ubtu24cis_nis_server: true  # set to mask if nis client required
+ubtu24cis_nis_server: true  # nis client is controlled by ubtu24cis_nis_client_required
 # Set this variable to `true` to mask service `nis`.
 ubtu24cis_nis_mask: false
 # Set this variable to `true` to keep service `print`; otherwise, the service is uninstalled.
@@ -773,6 +775,9 @@ ubtu24cis_xwindow_server: false  # will remove mask not an option
 ubtu24cis_is_mail_server: false
 
 ## Controls 2.2.x - Configure Client Services
+
+# Set this variable to `true` to keep the nis client (package nis); the NIS server is ypserv (2.1.10).
+ubtu24cis_nis_client_required: false
 
 # Set this variable to `true` to keep package `rsh`; otherwise, the package is uninstalled.
 ubtu24cis_rsh_client: false
@@ -1444,70 +1449,15 @@ ubtu24cis_aide_init_async: 600
 ubtu24cis_aide_init_poll: 15
 
 ## Control 6.3.2 - Ensure filesystem integrity is regularly checked
-# The following variable sets how AIDE is scanned.
-# Available options are either cron or timer.
-ubtu24cis_aide_scan: cron
-# The following variable represents a setting for periodical checking of the filesystem's
-# integrity using AIDE. It provides a parameter required to configure the cron job on
-# the target system. Cron is a time-based job scheduling program in Unix OS, which
-# allows tasks to be scheduled and executed automatically at a certain point in time.
-# This variable represents the user account under which the cron job for AIDE will run.
-ubtu24cis_aide_cron_user: root
-# The following variable represents a setting for periodical checking of the filesystem's
-# integrity using AIDE. It provides a parameter required to configure the cron job on
-# the target system. Cron is a time-based job scheduling program in Unix OS, which
-# allows tasks to be scheduled and executed automatically at a certain point in time.
-# This variable represents the path to the AIDE crontab file.
-ubtu24cis_aide_cron_file: /etc/cron.d/aide_cron
-# The following variable represents a setting for periodical checking of the filesystem's
-# integrity using AIDE. It provides a parameter required to configure the cron job on
-# the target system. Cron is a time-based job scheduling program in Unix OS, which
-# allows tasks to be scheduled and executed automatically at a certain point in time.
-# This variable represents the actual command or script that the cron job
-# will execute for running AIDE.
-ubtu24cis_aide_cron_job: '/usr/bin/aide --config /etc/aide/aide.conf --check'
-# These variables define the schedule for the cron job, if aide is selected to be scanned with cron
-# The following variable represents a setting for periodical checking of the filesystem's
-# integrity using AIDE. It provides a parameter required to configure the cron job on
-# the target system. Cron is a time-based job scheduling program in Unix OS, which
-# allows tasks to be scheduled and executed automatically at a certain point in time.
-# This variable governs the minute of the time of day when the AIDE cronjob is run.
-# It must be in the range `0-59`.
-ubtu24cis_aide_cron_minute: 0
-# The following variable represents a setting for periodical checking of the filesystem's
-# integrity using AIDE. It provides a parameter required to configure the cron job on
-# the target system. Cron is a time-based job scheduling program in Unix OS, which
-# allows tasks to be scheduled and executed automatically at a certain point in time.
-# This variable governs the hour of the time of day when the AIDE cronjob is run.
-# It must be in the range `0-23`.
-ubtu24cis_aide_cron_hour: 5
-# The following variable represents a setting for periodical checking of the filesystem's
-# integrity using AIDE. It provides a parameter required to configure the cron job on
-# the target system. Cron is a time-based job scheduling program in Unix OS, which
-# allows tasks to be scheduled and executed automatically at a certain point in time.
-# This variable governs the day of the month when the AIDE cronjob is run.
-# `*` signifies that the job is run on all days; furthermore, specific days
-# can be given in the range `1-31`; several days can be concatenated with a comma.
-# The specified day(s) must be in the range `1-31`.
-ubtu24cis_aide_cron_day: '*'
-# The following variable represents a setting for periodical checking of the filesystem's
-# integrity using AIDE. It provides a parameter required to configure the cron job on
-# the target system. Cron is a time-based job scheduling program in Unix OS, which
-# allows tasks to be scheduled and executed automatically at a certain point in time.
-# This variable governs months when the AIDE cronjob is run.
-# `*` signifies that the job is run in every month; furthermore, specific months
-# can be given in the range `1-12`; several months can be concatenated with commas.
-# The specified month(s) must be in the range `1-12`.
-ubtu24cis_aide_cron_month: '*'
-# The following variable represents a setting for periodical checking of the filesystem's
-# integrity using AIDE. It provides a parameter required to configure the cron job on
-# the target system. Cron is a time-based job scheduling program in Unix OS, which
-# allows tasks to be scheduled and executed automatically at a certain point in time.
-# This variable governs the weekdays, when the AIDE cronjob is run.
-# `*` signifies that the job is run on all weekdays; furthermore, specific weekdays
-# can be given in the range `0-7` (both `0` and `7` represent Sunday); several weekdays
-# can be concatenated with commas.
-ubtu24cis_aide_cron_weekday: '*'
+# AIDE runs from the dailyaidecheck.timer shipped by aide-common, as the benchmark requires. Cron jobs added by
+# earlier role runs are removed. These variables set the timer schedule (OnCalendar) in a drop-in; the package's
+# RandomizedDelaySec still applies. Minute 0-59, hour 0-23; day 1-31, month 1-12 and weekday 0-7 (0 and 7 are Sunday)
+# take `*` for all.
+ubtu24cis_aide_timer_minute: 0
+ubtu24cis_aide_timer_hour: 5
+ubtu24cis_aide_timer_day: '*'
+ubtu24cis_aide_timer_month: '*'
+ubtu24cis_aide_timer_weekday: '*'
 
 ##
 ## Section 7 Control Variables

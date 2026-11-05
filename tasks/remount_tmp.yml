@@ -1,7 +1,7 @@
 ---
 
 - name: "Add filesystem options for /tmp"
-  when: not ubtu24cis_tmp_svc
+  when: not prelim_tmp_svc
   vars:
     mount_point: '/tmp'
   ansible.posix.mount:
@@ -13,7 +13,7 @@
   listen: "Remount /tmp"
 
 - name: "Remounting /tmp"
-  when: not ubtu24cis_tmp_svc
+  when: not prelim_tmp_svc
   vars:
     mount_point: '/tmp'
   ansible.posix.mount:
@@ -24,7 +24,7 @@
   listen: "Remount /tmp"
 
 - name: "Reloading /tmp systemd service"
-  when: ubtu24cis_tmp_svc
+  when: prelim_tmp_svc
   ansible.builtin.systemd:
     name: tmp.mount
     state: reloaded
