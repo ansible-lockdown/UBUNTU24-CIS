@@ -1,0 +1,7 @@
+{{ file_managed_by_ansible }}
+
+[Timer]
+{% set aide_dow = ubtu24cis_aide_timer_weekday | string %}
+{% set aide_dow = {'0': 'Sun', '1': 'Mon', '2': 'Tue', '3': 'Wed', '4': 'Thu', '5': 'Fri', '6': 'Sat', '7': 'Sun'}.get(aide_dow, aide_dow) %}
+OnCalendar=
+OnCalendar={% if aide_dow != '*' %}{{ aide_dow }} {% endif %}*-{{ ubtu24cis_aide_timer_month }}-{{ ubtu24cis_aide_timer_day }} {{ ubtu24cis_aide_timer_hour }}:{{ ubtu24cis_aide_timer_minute }}:00

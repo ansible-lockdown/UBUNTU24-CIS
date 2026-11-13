@@ -91,11 +91,20 @@
     - NIST800-53R5_MP-2
     - permissions
     - motd
-  ansible.builtin.file:
-    path: /etc/motd
-    owner: root
-    group: root
-    mode: 'u-x,go-wx'
+  block:
+    - name: "1.6.4 | AUDIT | Ensure access to /etc/motd is configured | Check for motd file"
+      ansible.builtin.stat:
+        path: /etc/motd
+      check_mode: false
+      register: discovered_motd_file
+
+    - name: "1.6.4 | PATCH | Ensure access to /etc/motd is configured | Set permissions"
+      when: discovered_motd_file.stat.exists
+      ansible.builtin.file:
+        path: /etc/motd
+        owner: root
+        group: root
+        mode: 'u-x,go-wx'
 
 - name: "1.6.5 | PATCH | Ensure access to /etc/issue is configured"
   when: ubtu24cis_rule_1_6_5

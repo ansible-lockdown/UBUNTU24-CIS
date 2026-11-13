@@ -45,12 +45,34 @@
     - rule_5.2.2
     - NIST800-53R5_AC-6
     - sudo
-  ansible.builtin.lineinfile:
-    path: /etc/sudoers
-    regexp: '^Defaults\s+use_'
-    line: 'Defaults        use_pty'
-    insertafter: '^\s*Defaults'
-    validate: '/usr/sbin/visudo -cf %s'
+  block:
+    - name: "5.2.2 | PATCH | Ensure sudo commands use pty | Ensure use_pty is set"
+      ansible.builtin.lineinfile:
+        path: /etc/sudoers
+        regexp: '^Defaults\s+use_'
+        line: 'Defaults        use_pty'
+        insertafter: '^\s*Defaults'
+        validate: '/usr/sbin/visudo -cf %s'
+
+    - name: "5.2.2 | AUDIT | Ensure sudo commands use pty | Discover files with !use_pty"
+      ansible.builtin.shell: |
+        set -o pipefail
+        grep -rlPi -- '^\h*Defaults\h+([^#\n\r]+,\h*)?!use_pty\b' /etc/sudoers /etc/sudoers.d/
+      args:
+        executable: "{{ ubtu24cis_shell_executable }}"
+      changed_when: false
+      failed_when: discovered_sudoers_not_use_pty.rc not in [0, 1]
+      check_mode: false
+      register: discovered_sudoers_not_use_pty
+
+    - name: "5.2.2 | PATCH | Ensure sudo commands use pty | Remove !use_pty"
+      when: discovered_sudoers_not_use_pty.stdout | length > 0
+      ansible.builtin.replace:
+        path: "{{ item }}"
+        regexp: '(?i)^(\s*Defaults\s+(?:[^#\n]+,\s*)?)!use_pty\b'
+        replace: '\1use_pty'
+        validate: '/usr/sbin/visudo -cf %s'
+      loop: "{{ discovered_sudoers_not_use_pty.stdout_lines }}"
 
 - name: "5.2.3 | PATCH | Ensure sudo log file exists"
   when: ubtu24cis_rule_5_2_3
@@ -157,7 +179,7 @@
       when: discovered_ubtu24cis_ssh_timeout_files.stdout | length > 0
       ansible.builtin.replace:
         path: "{{ item }}"
-        regexp: 'timestamp_timeout=(\d+)'
+        regexp: 'timestamp_timeout\s*=\s*(-\d+|1[6-9]|[2-9]\d|\d{3,})\b'
         replace: "timestamp_timeout={{ ubtu24cis_sudo_timestamp_timeout }}"
         validate: '/usr/sbin/visudo -cf %s'
       loop: "{{ discovered_ubtu24cis_ssh_timeout_files.stdout_lines }}"

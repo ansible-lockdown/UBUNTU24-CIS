@@ -53,6 +53,11 @@
         state: enabled
       notify: Reload ufw
 
+    - name: "4.2.3 | PATCH | Ensure ufw service is enabled | unmask service"
+      ansible.builtin.systemd:
+        name: ufw
+        masked: false
+
     - name: "4.2.3 | PATCH | Ensure ufw service is enabled | service"
       ansible.builtin.systemd:
         name: ufw

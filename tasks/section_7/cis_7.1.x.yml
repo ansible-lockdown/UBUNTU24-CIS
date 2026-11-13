@@ -216,7 +216,7 @@
       ansible.builtin.file:
         path: '{{ item }}'
         mode: 'o-w'
-        state: touch
+        state: file
       loop: "{{ discovered_worldwriteable_files.stdout_lines }}"
       loop_control:
         label: "{{ item }}"

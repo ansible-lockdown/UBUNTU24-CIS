@@ -34,7 +34,9 @@
     - rsyslog
   ansible.builtin.systemd:
     name: rsyslog
+    masked: false
     enabled: true
+    state: started
 
 - name: "6.1.3.3 | PATCH | Ensure journald is configured to send logs to rsyslog"
   when: ubtu24cis_rule_6_1_3_3
@@ -180,15 +182,21 @@
     - NIST800-53R5_CM-6
     - rsyslog
   block:
+    - name: "6.1.3.7 | AUDIT | Ensure rsyslog is not configured to receive logs from a remote client | Find rsyslog.d conf files"
+      when: not ubtu24cis_system_is_log_server
+      ansible.builtin.find:
+        paths: /etc/rsyslog.d
+        patterns: '*.conf'
+        file_type: file
+      register: discovered_rsyslog_dropin_files
+
     - name: "6.1.3.7 | PATCH | Ensure rsyslog is not configured to receive logs from a remote client | When not a log host"
       when: not ubtu24cis_system_is_log_server
       ansible.builtin.replace:
-        path: /etc/rsyslog.conf
-        regexp: '({{ item }})'
+        path: "{{ item }}"
+        regexp: '(?i)^(\s*(\$ModLoad\s+imtcp\b|module\(load="?imtcp"?\)|\$(InputTCP|InputRELP|UDP)ServerRun\b|input\(type="?imtcp"?).*)$'
         replace: '#\1'
-      with_items:
-        - '^(\$ModLoad|module\(load="imtcp"\))'
-        - '^(\$(InputTCP|InputRELP|UDP)ServerRun|input\(type="imtcp" port=".*"\))'
+      loop: "{{ ['/etc/rsyslog.conf'] + (discovered_rsyslog_dropin_files.files | map(attribute='path') | list) }}"
       notify: Restart syslog service
 
     - name: "6.1.3.7 | PATCH | Ensure rsyslog is not configured to receive logs from a remote client | When a log server"
@@ -198,7 +206,7 @@
         regexp: "{{ item.regexp }}"
         line: "{{ item.line }}"
       with_items:
-        - { regexp: '^\$ModLoad|^#\$ModLoad', line: '$ModLoad imtcp' }
+        - { regexp: '^#?\s*\$ModLoad\s+imtcp\b', line: '$ModLoad imtcp' }
         - { regexp: '^\$InputTCPServerRun|^#\$InputTCPServerRun', line: '$InputTCPServerRun 514' }
       loop_control:
         label: "{{ item }}"

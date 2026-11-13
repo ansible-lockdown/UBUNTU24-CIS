@@ -203,6 +203,7 @@
       community.general.modprobe:
         name: overlay
         state: absent
+      failed_when: false
 
 - name: "1.1.1.7 | PATCH | Ensure squashfs kernel module is not available"
   when:
@@ -333,6 +334,7 @@
       community.general.modprobe:
         name: usb-storage
         state: absent
+      failed_when: false
 
 - name: "1.1.1.10 | PATCH | Ensure unused filesystems kernel modules are not available"
   when: ubtu24cis_rule_1_1_1_10

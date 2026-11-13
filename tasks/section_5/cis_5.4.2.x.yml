@@ -18,22 +18,21 @@
     - NIST800-53R5_MP-2
   ansible.builtin.shell: |
     set -o pipefail
-    grep -E -v '^(root|halt|sync|shutdown)' /etc/passwd | awk -F: '(!index($7, "sbin/nologin") && $7 != "/bin/nologin" && $7 != "/bin/false" && $7 != "/dev/null") { print $1 }'
+    l_valid_shells="^($(awk -F/ '$NF != "nologin" {print}' /etc/shells | sed -rn '/^\//{s,/,\\\\/,g;p}' | paste -s -d '|' -))$"
+    awk -v pat="$l_valid_shells" -F: '($1 != "root" && $NF ~ pat) {print $1}' /etc/passwd
   args:
     executable: "{{ ubtu24cis_shell_executable }}"
   changed_when: false
   check_mode: false
   register: discovered_interactive_usernames
 
-- name: "5.4.2.1 | PATCH | Ensure root is the only UID 0 account"
-  when:
-    - ubtu24cis_rule_5_4_2_1
-    - ubtu24cis_disruption_high
+- name: "5.4.2.1 | AUDIT | Ensure root is the only UID 0 account"
+  when: ubtu24cis_rule_5_4_2_1
   tags:
     - level1-server
     - level1-workstation
     - automated
-    - patch
+    - audit
     - accounts
     - users
     - rule_5.4.2.1
@@ -43,34 +42,38 @@
     - NIST800-53R5_CM-7
     - NIST800-53R5_IA-5
   block:
-    - name: "5.4.2.1 | AUDIT | Ensure root is the only UID 0 account | discover"
+    - name: "5.4.2.1 | AUDIT | Ensure root is the only UID 0 account | Get accounts other than root with UID 0"
       ansible.builtin.shell: |
         set -o pipefail
-        cat /etc/passwd | awk -F: '($3 == 0 && $1 != "root") {i++;print $1 } END {exit i}'
+        awk -F: '($3 == 0 && $1 != "root") { print $1 }' /etc/passwd
       args:
         executable: "{{ ubtu24cis_shell_executable }}"
       changed_when: false
+      failed_when: discovered_uid_zero_accounts_except_root.rc != 0
       check_mode: false
       register: discovered_uid_zero_accounts_except_root
 
-    - name: "5.4.2.1 | PATCH | Ensure root is the only UID 0 account | lock non root"
-      when: discovered_uid_zero_accounts_except_root.rc
-      ansible.builtin.command: passwd -l {{ item }}
-      changed_when: false
-      failed_when: false
-      loop: "{{ discovered_uid_zero_accounts_except_root.stdout_lines }}"
-      loop_control:
-        label: "{{ item }}"
+    - name: "5.4.2.1 | AUDIT | Ensure root is the only UID 0 account | Warning if other accounts have UID 0"
+      when: discovered_uid_zero_accounts_except_root.stdout | length > 0
+      ansible.builtin.debug:
+        msg:
+          - "Warning!! You have accounts other than root with UID 0 - Please resolve"
+          - "{{ discovered_uid_zero_accounts_except_root.stdout_lines }}"
 
-- name: "5.4.2.2 | PATCH | Ensure root is the only GID 0 account"
-  when:
-    - ubtu24cis_rule_5_4_2_2
-    - ubtu24cis_disruption_high
+    - name: "5.4.2.1 | WARN | Ensure root is the only UID 0 account | warn_count"
+      when: discovered_uid_zero_accounts_except_root.stdout | length > 0
+      ansible.builtin.import_tasks:
+        file: warning_facts.yml
+      vars:
+        warn_control_id: '5.4.2.1'
+
+- name: "5.4.2.2 | AUDIT | Ensure root is the only GID 0 account"
+  when: ubtu24cis_rule_5_4_2_2
   tags:
     - level1-server
     - level1-workstation
     - automated
-    - patch
+    - audit
     - rule_5.4.2.2
     - NIST800-53R5_CM-1
     - NIST800-53R5_CM-2
@@ -91,17 +94,19 @@
       check_mode: false
       register: discovered_gid0_members
 
-    - name: "5.4.2.2 | PATCH | Ensure root is the only GID 0 account | Remove users not root from gid 0"
-      when:
-        - discovered_gid0_members is defined
-        - discovered_gid0_members.stdout | length > 0
-      ansible.builtin.user:
-        name: "{{ item }}"
-        group: 0
-        state: absent
-      loop: "{{ discovered_gid0_members.stdout_lines }}"
-      loop_control:
-        label: "{{ item }}"
+    - name: "5.4.2.2 | AUDIT | Ensure root is the only GID 0 account | Warning if other accounts have GID 0"
+      when: discovered_gid0_members.stdout | length > 0
+      ansible.builtin.debug:
+        msg:
+          - "Warning!! You have accounts other than root with primary GID 0 - Please resolve"
+          - "{{ discovered_gid0_members.stdout_lines }}"
+
+    - name: "5.4.2.2 | WARN | Ensure root is the only GID 0 account | warn_count"
+      when: discovered_gid0_members.stdout | length > 0
+      ansible.builtin.import_tasks:
+        file: warning_facts.yml
+      vars:
+        warn_control_id: '5.4.2.2'
 
 - name: "5.4.2.3 | AUDIT | Ensure group root is the only GID 0 group"
   when: ubtu24cis_rule_5_4_2_3
@@ -264,18 +269,28 @@
     - rule_5.4.2.6
     - NIST800-53R5_AC-3
     - NIST800-53R5_MP-2
-  ansible.builtin.lineinfile:
-    path: /root/.bash_profile
-    regexp: \s*umask
-    line: "umask {{ ubtu24cis_root_umask }}"
-    create: true
-    mode: 'go-rwx'
+  block:
+    - name: "5.4.2.6 | AUDIT | Ensure root user umask is configured | Check root profile files"
+      ansible.builtin.stat:
+        path: "{{ item }}"
+      loop:
+        - /root/.bash_profile
+        - /root/.bashrc
+      register: discovered_root_profile_files
+
+    - name: "5.4.2.6 | PATCH | Ensure root user umask is configured | Set umask lines"
+      when: item.stat.exists
+      ansible.builtin.replace:
+        path: "{{ item.item }}"
+        regexp: '^(\s*)umask\s+\S+.*$'
+        replace: '\1umask {{ ubtu24cis_root_umask }}'
+      loop: "{{ discovered_root_profile_files.results }}"
+      loop_control:
+        label: "{{ item.item }}"
 
 - name: "5.4.2.7 | PATCH | Ensure system accounts do not have a valid login shell"
   when:
     - ubtu24cis_rule_5_4_2_7
-    - "item.id not in discovered_interactive_usernames.stdout"
-    - "'root' not in item.id"
     - ubtu24cis_disruption_high
   tags:
     - level1-server
@@ -288,20 +303,31 @@
     - NIST800-53R5_AC-3
     - NIST800-53R5_AC-11
     - NIST800-53R5_MP-2
-  ansible.builtin.user:
-    name: "{{ item.id }}"
-    shell: /usr/sbin/nologin
-    create_home: false
-  loop: "{{ prelim_captured_passwd_data }}"
-  loop_control:
-    label: "{{ item.id }}"
+  block:
+    - name: "5.4.2.7 | AUDIT | Ensure system accounts do not have a valid login shell | Find system accounts with a valid shell"
+      ansible.builtin.shell: |
+        l_valid_shells="^($(awk -F/ '$NF != "nologin" {print}' /etc/shells | sed -rn '/^\//{s,/,\\\\/,g;p}' | paste -s -d '|' -))$"
+        awk -v pat="$l_valid_shells" -v uid_min="{{ min_int_uid }}" -F: '($1 !~ /^(root|halt|sync|shutdown|nfsnobody)$/ && ($3 < uid_min || $3 == 65534) && $NF ~ pat) {print $1}' /etc/passwd
+      args:
+        executable: "{{ ubtu24cis_shell_executable }}"
+      changed_when: false
+      failed_when: discovered_system_accounts_valid_shell.rc != 0
+      check_mode: false
+      register: discovered_system_accounts_valid_shell
+
+    - name: "5.4.2.7 | PATCH | Ensure system accounts do not have a valid login shell | Set shell to nologin"
+      ansible.builtin.user:
+        name: "{{ item }}"
+        shell: /usr/sbin/nologin
+        create_home: false
+      loop: "{{ discovered_system_accounts_valid_shell.stdout_lines }}"
 
 - name: "5.4.2.8 | PATCH | Ensure accounts without a valid login shell are locked | Lock accounts"
   when:
     - ubtu24cis_rule_5_4_2_8
     - ubtu24cis_disruption_high
-    - "item.id not in discovered_interactive_usernames.stdout"
-    - "'root' not in item.id"
+    - "item.id not in discovered_interactive_usernames.stdout_lines"
+    - "item.id != 'root'"
   tags:
     - level1-server
     - level1-workstation
