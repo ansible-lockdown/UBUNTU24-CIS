@@ -57,9 +57,9 @@
 
 ## Looking for support?
 
-[Lockdown Enterprise](https://www.lockdownenterprise.com#GH_AL_UBUNTU24_CIS)
+[Lockdown Enterprise](https://www.lockdownenterprise.com#GH_AL_UBUNTU24_cis)
 
-[Ansible support](https://www.mindpointgroup.com/cybersecurity-products/ansible-counselor#GH_AL_UBUNTU24_CIS)
+[Ansible support](https://www.mindpointgroup.com/cybersecurity-products/ansible-counselor#GH_AL_UBUNTU24_cis)
 
 ### Community
 

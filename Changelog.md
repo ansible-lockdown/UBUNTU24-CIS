@@ -2,6 +2,74 @@
 
 ## CIS Benchmark 1.0.0
 
+## November 2026 - QA fixes
+
+- playbook user password check matches the exact account name (addresses https://github.com/ansible-lockdown/UBUNTU24-CIS/issues/204) - Thank you @dan-ostermeier
+- 5.4.1.x user lookups use ansible_facts['env']
+- pam-auth-update handlers flushed after 5.3.x
+- Stop and Start auditd handlers skipped in containers
+- immutable auditd rule change now flags a reboot
+- 1.1.1.10 discovery script checks all installed kernels and nested modules
+- ubtu24cis_tmp_svc defaults to auto, /tmp management discovered in prelim
+- ubtu24cis_tmp_svc passed to the audit
+- 1.5.3 coredump.conf change reloads systemd
+- 1.6.4 /etc/motd permissions set only when present
+- 2.2.1 nis client gated on new ubtu24cis_nis_client_required
+- 2.3.2.2 and 2.4.1.1 units unmasked before enable
+- 2.4.2.1 at.allow group daemon when present
+- 3.1.2 wireless modules set to /bin/false
+- 3.2.1 to 3.2.4 loaded modules unloaded
+- 4.1.1 active firewall count fixed
+- 4.2.3 ufw service unmasked
+- 4.4.3.2 to 4.4.3.4 run with 4.4.3.1, IPv6 ssh allowed in
+- 4.4.2.2 INPUT loopback drop task name
+- 5.2.2 !use_pty removed
+- 5.2.6 only negative or over 15 timestamp_timeout replaced
+- 5.3.3.1.x faillock regexps anchored, profile handler notified
+- 5.3.3.2.7 and 5.3.3.2.8 create the pwquality.conf.d directory
+- 5.3.3.3.x pwhistory regexps match the pam-configs profile
+- 5.3.3.4.3 and 5.3.3.4.4 edit the pam-configs unix profile
+- 5.4.1.6 skips the connection user
+- 5.4.2.1 and 5.4.2.2 warn only, no account deleted
+- 5.4.2.6 umask set in /root/.bash_profile and /root/.bashrc
+- 5.4.2.7 nologin set on system accounts with a valid shell
+- 5.4.3.1 nologin lines removed from /etc/shells
+- 5.4.3.3 umask regexp anchored, weak profile.d umask commented out
+- 6.1.1.4 journald stop task commented out
+- 6.1.3.2 rsyslog unmasked and started
+- 6.1.3.7 only imtcp lines changed, rsyslog.d included
+- 6.1.4.1 log file owner and group set
+- 6.2.3.4 clock_settime rule with a0=0x0
+- 6.2.4.3 log_group = adm
+- 6.3.2 timer OnCalendar order fixed, timer started not the service
+- 7.1.11 world writable sticky bit no longer touches files
+- 7.2.9 home directories created for interactive users only
+- 7.2.10 dot file owner matched by exact home directory
+- 1.1.1.6 and 1.1.1.9 module unload no longer fails when in use
+- 1.5.3 coredump.conf settings under [Coredump], only when systemd-coredump installed
+- 1.7.2 and 1.7.3 gdm dconf profile and gdm.d keyfiles
+- 1.7.4 settings written to the dconf user profile
+- 2.4.1.8 cron.allow group crontab when present
+- 2.4.2.1 only when at installed
+- 3.1.2 loaded wireless modules unloaded
+- 5.3.3.4.2 remember removed from pam_unix in all pam-configs profiles
+- 5.4.2.8 valid shells and usernames matched exactly
+- 6.1.2.1.3 systemd-journal-upload started as well as enabled
+- 6.3.2 packaged dailyaidecheck.timer used, cron option removed
+- 6.3.2 timer schedule set by drop-in
+- 6.3.2 cron jobs and unit overrides from earlier role runs removed
+- 6.3.2 warns on other AIDE cron jobs
+- ubtu24cis_aide_cron_* renamed ubtu24cis_aide_timer_*
+- 7.2.1 pwconv migrates accounts without shadowed passwords
+- 7.2.4 shadow group members removed, warn on shadow primary group
+- audit bridge: ubtu24cis_sudo_package, ubtu24cis_coredump_installed, ubtu24cis_at_installed
+- audit_system_type selects the Server or Workstation audit profile
+- 5.2.4 prelim password and lock checks skip users in ubtu24cis_sudoers_exclude_nopasswd_list (port of https://github.com/ansible-lockdown/RHEL10-CIS/issues/129)
+- audit summary capture skipped in check mode
+- audit bridge: legacy_boot key uses the ubtu24cis_ prefix
+- README tracking tags consistent
+- audit bridge: ubtu24cis_apport_installed
+
 ## October 2026 - QA fixes
 
 - 5.3.3.1.1 to 5.3.3.1.3 faillock regexps fixed

@@ -3,7 +3,7 @@
 - name: "2.2.1 | PATCH | Ensure NIS Client is not installed"
   when:
     - ubtu24cis_rule_2_2_1
-    - not ubtu24cis_nis_server
+    - not ubtu24cis_nis_client_required
   tags:
     - level1-server
     - level1-workstation

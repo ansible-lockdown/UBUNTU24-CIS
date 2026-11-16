@@ -80,19 +80,23 @@
       notify: Systemd_daemon_reload
 
     - name: "1.5.3 | PATCH | Ensure core dumps are restricted | coredump.conf"
-      ansible.builtin.lineinfile:
+      when: "'systemd-coredump' in ansible_facts['packages']"
+      community.general.ini_file:
         path: /etc/systemd/coredump.conf
-        regexp: "{{ item.regexp }}"
-        line: "{{ item.line }}"
+        section: Coredump
+        option: "{{ item.option }}"
+        value: "{{ item.value }}"
+        no_extra_spaces: true
         create: true
         owner: root
         group: root
         mode: 'go-r'
       loop:
-        - { regexp: '^Storage', line: 'Storage=none' }
-        - { regexp: '^ProcessSizeMax', line: 'ProcessSizeMax=0' }
+        - { option: 'Storage', value: 'none' }
+        - { option: 'ProcessSizeMax', value: '0' }
       loop_control:
         label: "{{ item }}"
+      notify: Systemd_daemon_reload
 
 - name: "1.5.4 | PATCH | Ensure prelink is not installed"
   when:

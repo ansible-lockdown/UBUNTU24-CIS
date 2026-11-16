@@ -39,6 +39,9 @@
   ansible.builtin.import_tasks:
     file: cis_5.3.3.4.x.yml
 
+- name: "SECTION | 5.3.x | Enable the pam-auth-update profiles before later sections run"
+  ansible.builtin.meta: flush_handlers
+
 - name: "SECTION | 5.4.1.x | Configure shadow password suite parameters"
   when: not system_is_container
   ansible.builtin.import_tasks:

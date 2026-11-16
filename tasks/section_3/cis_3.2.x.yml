@@ -33,6 +33,12 @@
         create: true
         mode: 'go-rwx'
 
+    - name: "3.2.1 | PATCH | Ensure dccp kernel module is not available | Disable dccp"
+      when: not system_is_container
+      community.general.modprobe:
+        name: dccp
+        state: absent
+
 - name: "3.2.2 | PATCH | Ensure tipc kernel module is not available"
   when: ubtu24cis_rule_3_2_2
   tags:
@@ -65,6 +71,12 @@
         line: "blacklist tipc"
         create: true
         mode: 'go-rwx'
+
+    - name: "3.2.2 | PATCH | Ensure tipc kernel module is not available | Disable tipc"
+      when: not system_is_container
+      community.general.modprobe:
+        name: tipc
+        state: absent
 
 - name: "3.2.3 | PATCH | Ensure rds kernel module is not available"
   when: ubtu24cis_rule_3_2_3
@@ -99,6 +111,12 @@
         create: true
         mode: 'go-rwx'
 
+    - name: "3.2.3 | PATCH | Ensure rds kernel module is not available | Disable rds"
+      when: not system_is_container
+      community.general.modprobe:
+        name: rds
+        state: absent
+
 - name: "3.2.4 | PATCH | Ensure sctp kernel module is not available"
   when: ubtu24cis_rule_3_2_4
   tags:
@@ -131,3 +149,9 @@
         line: "blacklist sctp"
         create: true
         mode: 'go-rwx'
+
+    - name: "3.2.4 | PATCH | Ensure sctp kernel module is not available | Disable sctp"
+      when: not system_is_container
+      community.general.modprobe:
+        name: sctp
+        state: absent

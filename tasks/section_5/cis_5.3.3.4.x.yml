@@ -49,7 +49,7 @@
     - name: "5.3.3.4.2 | AUDIT | Ensure pam_unix does not include remember | capture state"
       ansible.builtin.shell: |
         set -o pipefail
-        grep -PH -- '^\h*^\h*[^#\n\r]+\h+pam_unix\.so\b' /etc/pam.d/common-{password,auth,account,session,session-noninteractive} | grep -P -- "remember=\d+" | cut -d':' -f1
+        grep -Pl -- '^\h*([^#\n\r]+\h+)?pam_unix\.so\h+([^#\n\r]+\h+)?remember\b' /usr/share/pam-configs/*
       args:
         executable: "{{ ubtu24cis_shell_executable }}"
       changed_when: false
@@ -60,16 +60,41 @@
     - name: "5.3.3.4.2 | PATCH | Ensure pam_unix does not include remember | Ensure remember removed"
       when: discovered_pam_remember.stdout | length > 0
       ansible.builtin.replace:
-        path: "/{{ ubtu24cis_pam_confd_dir }}{{ ubtu24cis_pam_pwunix_file }}"
-        regexp: remember=\d+
-        replace: ''
+        path: "{{ item }}"
+        regexp: '^([^#\n]*\bpam_unix\.so\b[^#\n]*?)[ \t]+remember(=\S*)?(?=[ \t]|$)'
+        replace: '\1'
       loop: "{{ discovered_pam_remember.stdout_lines }}"
       loop_control:
         label: "{{ item }}"
-      notify: Pam_auth_update_pwunix
+
+    - name: "5.3.3.4.2 | PATCH | Ensure pam_unix does not include remember | Update pam for edited profiles"
+      when: discovered_pam_remember.stdout | length > 0
+      ansible.builtin.command: pam-auth-update --enable {{ item | basename }}
+      changed_when: true
+      loop: "{{ discovered_pam_remember.stdout_lines }}"
+      loop_control:
+        label: "{{ item | basename }}"
+
+- name: "5.3.3.4.3/4 | AUDIT | Capture pam_unix pam-configs profile"
+  when: ubtu24cis_rule_5_3_3_4_3 or
+        ubtu24cis_rule_5_3_3_4_4
+  tags:
+    - level1-server
+    - level1-workstation
+    - automated
+    - patch
+    - pam
+    - rule_5.3.3.4.3
+    - rule_5.3.3.4.4
+    - NIST800-53R5_IA-5
+  ansible.builtin.stat:
+    path: "/{{ ubtu24cis_pam_confd_dir }}{{ ubtu24cis_pam_pwunix_file }}"
+  register: discovered_pam_pwunix_profile
 
 - name: "5.3.3.4.3 | PATCH | Ensure pam_unix includes a strong password hashing algorithm"
-  when: ubtu24cis_rule_5_3_3_4_3
+  when:
+    - ubtu24cis_rule_5_3_3_4_3
+    - discovered_pam_pwunix_profile.stat.exists
   tags:
     - level1-server
     - level1-workstation
@@ -78,28 +103,21 @@
     - pam
     - rule_5.3.3.4.3
     - NIST800-53R5_IA-5
-  block:
-    - name: "5.3.3.4.3 | AUDIT | Ensure pam_unix includes a strong password hashing algorithm | capture state"
-      ansible.builtin.shell: |
-        set -o pipefail
-        grep -PH -- '^\h*password\h+([^#\n\r]+)\h+pam_unix\.so\h+([^#\n\r]+\h+)?!("{{ ubtu24cis_passwd_hash_algo }}")\b' /etc/pam.d/common-password
-      args:
-        executable: "{{ ubtu24cis_shell_executable }}"
-      changed_when: false
-      failed_when: discovered_pam_pwhash.rc not in [ 0, 1 ]
-      check_mode: false
-      register: discovered_pam_pwhash
-
-    - name: "5.3.3.4.3 | PATCH | Ensure pam_unix includes a strong password hashing algorithm | Ensure hash algorithm set"
-      when: discovered_pam_pwhash.stdout | length == 0
-      ansible.builtin.replace:
-        path: /etc/pam.d/common-password
-        regexp: (?i)(md5|bigcrypt|sha256|blowfish|gost_yescrypt|sha512|yescrypt)
-        replace: '{{ ubtu24cis_passwd_hash_algo }}'
-      notify: Pam_auth_update_pwunix
+  ansible.builtin.replace:
+    path: "/{{ ubtu24cis_pam_confd_dir }}{{ ubtu24cis_pam_pwunix_file }}"
+    regexp: "{{ item.regexp }}"
+    replace: "{{ item.replace }}"
+  loop:
+    - regexp: '(?<=[ \t])(?!{{ ubtu24cis_passwd_hash_algo }}(?=[ \t]|$))(?:md5|bigcrypt|sha256|blowfish|gost_yescrypt|sha512|yescrypt)(?=[ \t]|$)'
+      replace: '{{ ubtu24cis_passwd_hash_algo }}'
+    - regexp: '^((?:Password|Password-Initial):[ \t]*\n[ \t]+[^#\n]*\bpam_unix\.so\b(?![^#\n]*[ \t](?:md5|bigcrypt|sha256|blowfish|gost_yescrypt|sha512|yescrypt)(?=[ \t]|$))[^#\n]*?)[ \t]*$'
+      replace: '\1 {{ ubtu24cis_passwd_hash_algo }}'
+  notify: Pam_auth_update_pwunix
 
 - name: "5.3.3.4.4 | PATCH | Ensure pam_unix includes use_authtok"
-  when: ubtu24cis_rule_5_3_3_4_4
+  when:
+    - ubtu24cis_rule_5_3_3_4_4
+    - discovered_pam_pwunix_profile.stat.exists
   tags:
     - level1-server
     - level1-workstation
@@ -108,24 +126,8 @@
     - pam
     - rule_5.3.3.4.4
     - NIST800-53R5_IA-5
-  block:
-    - name: "5.3.3.4.4 | PATCH | Ensure pam_unix includes use_authtok | capture state"
-      ansible.builtin.shell: |
-        set -o pipefail
-        grep -PH -- '^\h*password\h+([^#\n\r]+)\h+pam_unix\.so\h+([^#\n\r]+\h+)?use_authtok\b' /etc/pam.d/common-password
-      args:
-        executable: "{{ ubtu24cis_shell_executable }}"
-      changed_when: false
-      failed_when: discovered_pam_authtok.rc not in [ 0, 1 ]
-      check_mode: false
-      register: discovered_pam_authtok
-
-    - name: "5.3.3.4.4 | PATCH | Ensure pam_unix includes use_authtok | pam_files"
-      when:
-        - discovered_pam_authtok is defined
-        - discovered_pam_authtok | length > 0
-      ansible.builtin.lineinfile:
-        path: /etc/pam.d/common-password
-        regexp: ^(\s*password\s+[success=end.*]\s+pam_unix\.so)(.*)\s+use_authtok\s*=\s*\S+(.*$)
-        line: \1\2\3 use_authtok
-        backrefs: true
+  ansible.builtin.replace:
+    path: "/{{ ubtu24cis_pam_confd_dir }}{{ ubtu24cis_pam_pwunix_file }}"
+    regexp: '^(Password:[ \t]*\n[ \t]+[^#\n]*\bpam_unix\.so\b(?![^#\n]*[ \t]use_authtok(?=[ \t]|$))[^#\n]*?)[ \t]*$'
+    replace: '\1 use_authtok'
+  notify: Pam_auth_update_pwunix

@@ -113,14 +113,21 @@
         file_type: file
       register: discovered_auditd_logs
 
-    - name: "6.2.4.3 | PATCH | Ensure audit log files group owner is configured"
+    - name: "6.2.4.3 | PATCH | Ensure audit log files group owner is configured | set log files group"
       when: item.gr_name not in [ 'root', 'adm' ]
       ansible.builtin.file:
         path: "{{ item.path }}"
-        group: root
+        group: adm
       loop: "{{ discovered_auditd_logs.files }}"
       loop_control:
         label: "{{ item.path }}"
+
+    - name: "6.2.4.3 | PATCH | Ensure audit log files group owner is configured | set log_group"
+      ansible.builtin.lineinfile:
+        path: /etc/audit/auditd.conf
+        regexp: '^\s*#?\s*log_group\s*='
+        line: 'log_group = adm'
+      notify: Update auditd
 
 - name: "6.2.4.4 | PATCH | Ensure the audit log file directory mode is configured"
   when:

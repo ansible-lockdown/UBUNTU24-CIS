@@ -1,13 +1,15 @@
 ---
 
-- name: "5.3.3.2.1-6 | PATCH | Ensure conf.d directory exists"
+- name: "5.3.3.2.x | PATCH | Ensure conf.d directory exists"
   when:
     - ubtu24cis_rule_5_3_3_2_1 or
       ubtu24cis_rule_5_3_3_2_2 or
       ubtu24cis_rule_5_3_3_2_3 or
       ubtu24cis_rule_5_3_3_2_4 or
       ubtu24cis_rule_5_3_3_2_5 or
-      ubtu24cis_rule_5_3_3_2_6
+      ubtu24cis_rule_5_3_3_2_6 or
+      ubtu24cis_rule_5_3_3_2_7 or
+      ubtu24cis_rule_5_3_3_2_8
   tags:
     - level1-server
     - level1-workstation
@@ -19,6 +21,8 @@
     - rule_5.3.3.2.4
     - rule_5.3.3.2.5
     - rule_5.3.3.2.6
+    - rule_5.3.3.2.7
+    - rule_5.3.3.2.8
     - NIST800-53R5_IA-5
   ansible.builtin.file:
     path: '/etc/security/pwquality.conf.d'
@@ -39,6 +43,7 @@
     - rule_5.3.3.2.4
     - rule_5.3.3.2.5
     - rule_5.3.3.2.6
+    - rule_5.3.3.2.7
     - NIST800-53R5_IA-5
   ansible.builtin.find:
     paths:

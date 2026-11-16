@@ -36,18 +36,39 @@
     - NIST800-53R5_IA-5
     - gnome
   block:
-    - name: "1.7.2 | PATCH | Ensure GDM login banner is configured | make directory"
+    - name: "1.7.2 | PATCH | Ensure GDM login banner is configured | make directories"
       ansible.builtin.file:
-        path: "/etc/dconf/db/{{ ubtu24cis_dconf_db_name }}.d"
+        path: "{{ item }}"
         owner: root
         group: root
         mode: 'u+x,go-w'
         state: directory
+      loop:
+        - /etc/dconf/profile
+        - /etc/dconf/db/gdm.d
+      notify: Update dconf
+
+    - name: "1.7.2 | PATCH | Ensure GDM login banner is configured | gdm profile"
+      ansible.builtin.lineinfile:
+        path: /etc/dconf/profile/gdm
+        regexp: "{{ item.regexp }}"
+        line: "{{ item.line }}"
+        insertafter: "{{ item.insertafter }}"
+        create: true
+        owner: root
+        group: root
+        mode: 'u-x,go-wx'
+      loop:
+        - { regexp: '^user-db:user', line: 'user-db:user', insertafter: EOF }
+        - { regexp: '^system-db:gdm', line: 'system-db:gdm', insertafter: '^user-db:user' }
+        - { regexp: '^file-db:/usr/share/gdm/greeter-dconf-defaults', line: 'file-db:/usr/share/gdm/greeter-dconf-defaults', insertafter: '^system-db:gdm' }
+      loop_control:
+        label: "{{ item }}"
       notify: Update dconf
 
     - name: "1.7.2 | PATCH | Ensure GDM login banner is configured | banner settings"
       ansible.builtin.lineinfile:
-        path: "/etc/dconf/db/{{ ubtu24cis_dconf_db_name }}.d/00-login-screen"
+        path: /etc/dconf/db/gdm.d/01-banner-message
         regexp: "{{ item.regexp }}"
         line: "{{ item.line }}"
         insertafter: "{{ item.insertafter }}"
@@ -88,13 +109,31 @@
         mode: 'u+x,go-w'
         state: directory
       loop:
-        - /etc/dconf/db/{{ ubtu24cis_dconf_db_name }}.d
         - /etc/dconf/profile
+        - /etc/dconf/db/gdm.d
       notify: Update dconf
 
-    - name: "1.7.3 | PATCH | Ensure GDM disable-user-list option is enabled | disable-user-list setting login-screen"
+    - name: "1.7.3 | PATCH | Ensure GDM disable-user-list option is enabled | gdm profile"
       ansible.builtin.lineinfile:
-        path: "/etc/dconf/db/{{ ubtu24cis_dconf_db_name }}.d/00-login-screen"
+        path: /etc/dconf/profile/gdm
+        regexp: "{{ item.regexp }}"
+        line: "{{ item.line }}"
+        insertafter: "{{ item.insertafter }}"
+        create: true
+        owner: root
+        group: root
+        mode: 'u-x,go-wx'
+      loop:
+        - { regexp: '^user-db:user', line: 'user-db:user', insertafter: EOF }
+        - { regexp: '^system-db:gdm', line: 'system-db:gdm', insertafter: '^user-db:user' }
+        - { regexp: '^file-db:/usr/share/gdm/greeter-dconf-defaults', line: 'file-db:/usr/share/gdm/greeter-dconf-defaults', insertafter: '^system-db:gdm' }
+      loop_control:
+        label: "{{ item }}"
+      notify: Update dconf
+
+    - name: "1.7.3 | PATCH | Ensure GDM disable-user-list option is enabled | disable-user-list setting"
+      ansible.builtin.lineinfile:
+        path: /etc/dconf/db/gdm.d/00-login-screen
         regexp: "{{ item.regexp }}"
         line: "{{ item.line }}"
         insertafter: "{{ item.insertafter }}"
@@ -105,24 +144,6 @@
       loop:
         - { regexp: '\[org\/gnome\/login-screen\]', line: '[org/gnome/login-screen]', insertafter: EOF }
         - { regexp: 'disable-user-list', line: 'disable-user-list=true', insertafter: '\[org\/gnome\/login-screen\]'}
-      notify: Update dconf
-
-    - name: "1.7.3 | PATCH | Ensure GDM disable-user-list option is enabled | disable-user-list setting profile"
-      ansible.builtin.lineinfile:
-        path: "/etc/dconf/profile/{{ ubtu24cis_dconf_db_name }}"
-        regexp: "{{ item.regexp }}"
-        line: "{{ item.line }}"
-        insertafter: "{{ item.insertafter }}"
-        create: true
-        owner: root
-        group: root
-        mode: 'u-x,go-wx'
-      loop:
-        - { regexp: '^user-db:user', line: 'user-db:user', insertafter: EOF }
-        - { regexp: '^system-db:{{ ubtu24cis_dconf_db_name }}', line: 'system-db:{{ ubtu24cis_dconf_db_name }}', insertafter: 'user-db:user'}
-        - { regexp: '^file-db:/usr/share/gdm/greeter-dconf-defaults', line: 'file-db:/usr/share/gdm/greeter-dconf-defaults', insertafter: 'system-db:{{ ubtu24cis_dconf_db_name }}'}
-      loop_control:
-        label: "{{ item }}"
       notify: Update dconf
 
 - name: "1.7.4 | PATCH | Ensure GDM screen locks when the user is idle"
@@ -140,7 +161,7 @@
   block:
     - name: "1.7.4 | PATCH | Ensure GDM screen locks when the user is idle | session profile"
       ansible.builtin.lineinfile:
-        path: "/etc/dconf/profile/{{ ubtu24cis_dconf_db_name }}"
+        path: /etc/dconf/profile/user
         regexp: "{{ item.regexp }}"
         line: "{{ item.line }}"
         insertafter: "{{ item.after | default(omit) }}"

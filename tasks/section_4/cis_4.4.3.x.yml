@@ -12,6 +12,16 @@
     - NIST800-53R5_SC-7
     - ip6tables
   block:
+    - name: "4.4.3.1 | PATCH | Ensure ip6tables default deny firewall policy | Configure SSH to be allowed in"
+      ansible.builtin.iptables:
+        chain: INPUT
+        protocol: tcp
+        destination_port: 22
+        jump: ACCEPT
+        ctstate: 'NEW,ESTABLISHED'
+        ip_version: ipv6
+      notify: Ip6tables persistent
+
     - name: "4.4.3.1 | PATCH | Ensure ip6tables default deny firewall policy | Configure SSH to be allowed out"
       ansible.builtin.iptables:
         chain: OUTPUT
@@ -44,9 +54,7 @@
         label: "{{ item }}"
 
 - name: "4.4.3.2 | PATCH | Ensure ip6tables loopback traffic is configured"
-  when:
-    - ubtu24cis_rule_4_4_3_2
-    - not ubtu24cis_ipv4_required
+  when: ubtu24cis_rule_4_4_3_2
   tags:
     - level1-server
     - level1-workstation
@@ -85,9 +93,7 @@
       notify: Ip6tables persistent
 
 - name: "4.4.3.3 | PATCH | Ensure ip6tables outbound and established connections are configured"
-  when:
-    - ubtu24cis_rule_4_4_3_3
-    - not ubtu24cis_ipv4_required
+  when: ubtu24cis_rule_4_4_3_3
   tags:
     - level1-server
     - level1-workstation
@@ -117,9 +123,7 @@
     label: "{{ item }}"
 
 - name: "4.4.3.4 | AUDIT | Ensure ip6tables firewall rules exist for all open ports"
-  when:
-    - ubtu24cis_rule_4_4_3_4
-    - not ubtu24cis_ipv4_required
+  when: ubtu24cis_rule_4_4_3_4
   tags:
     - level1-server
     - level1-workstation

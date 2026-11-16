@@ -83,7 +83,7 @@
         jump: ACCEPT
       notify: Iptables persistent
 
-    - name: "4.4.2.2 | PATCH | Ensure iptables loopback traffic is configured | OUTPUT loopback ACCEPT"
+    - name: "4.4.2.2 | PATCH | Ensure iptables loopback traffic is configured | INPUT loopback drop"
       ansible.builtin.iptables:
         action: append
         chain: INPUT

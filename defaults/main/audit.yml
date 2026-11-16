@@ -96,6 +96,9 @@ audit_bin_path: /usr/local/bin/
 audit_bin: "{{ audit_bin_path }}goss"
 audit_format: json
 
+# CIS profile the audit scores against: Server (default) or Workstation (run_audit.sh -w)
+audit_system_type: Server
+
 audit_vars_path: "{{ audit_conf_dir }}/vars/{{ ansible_facts['hostname'] }}.yml"
 audit_results: |
   The{% if not audit_only %} pre remediation{% endif %} audit results are: {{ pre_audit_results }}

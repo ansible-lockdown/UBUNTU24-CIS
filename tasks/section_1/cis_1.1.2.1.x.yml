@@ -37,7 +37,7 @@
     - prelim_mount_point_fs_and_options[mount_point] is defined
     - not prelim_mount_point_fs_and_options[mount_point]['src'] == "tmpfs"
     - ubtu24cis_rule_1_1_2_1_2
-    - not ubtu24cis_tmp_svc
+    - not prelim_tmp_svc
   tags:
     - level1-server
     - level1-workstation
@@ -63,7 +63,7 @@
     - prelim_mount_point_fs_and_options[mount_point] is defined
     - not prelim_mount_point_fs_and_options[mount_point]['src'] == "tmpfs"
     - ubtu24cis_rule_1_1_2_1_3
-    - not ubtu24cis_tmp_svc
+    - not prelim_tmp_svc
   tags:
     - level1-server
     - level1-workstation
@@ -86,7 +86,7 @@
     - prelim_mount_point_fs_and_options[mount_point] is defined
     - not prelim_mount_point_fs_and_options[mount_point]['src'] == "tmpfs"
     - ubtu24cis_rule_1_1_2_1_4
-    - not ubtu24cis_tmp_svc
+    - not prelim_tmp_svc
   tags:
     - level1-server
     - level1-workstation
@@ -107,7 +107,7 @@
 # via systemd
 - name: "1.1.2.1.1/2/3/4 | PATCH | Ensure /tmp is a separate partition with nodev, nosuid and noexec options set | tmp.mount unit"
   when:
-    - ubtu24cis_tmp_svc
+    - prelim_tmp_svc
     - ubtu24cis_rule_1_1_2_1_1 or ubtu24cis_rule_1_1_2_1_2 or ubtu24cis_rule_1_1_2_1_3 or ubtu24cis_rule_1_1_2_1_4
   tags:
     - level1-server

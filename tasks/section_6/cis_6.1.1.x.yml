@@ -169,11 +169,11 @@
             state: started
             enabled: true
 
-        - name: "6.1.1.4 | PATCH | Ensure only one logging system is in use | If rsyslog"
-          when: "'systemd-journal' in ansible_facts['packages']"
-          ansible.builtin.systemd:
-            name: systemd-journald.service
-            state: stopped
-            enabled: false
-          failed_when: discovered_missing_service.changed or "'Could not find' not in discovered_missing_service.msg"
-          register: discovered_missing_service
+        # - name: "6.1.1.4 | PATCH | Ensure only one logging system is in use | If rsyslog"
+        #   when: "'systemd-journal' in ansible_facts['packages']"
+        #   ansible.builtin.systemd:
+        #     name: systemd-journald.service
+        #     state: stopped
+        #     enabled: false
+        #   failed_when: discovered_missing_service.changed or "'Could not find' not in discovered_missing_service.msg"
+        #   register: discovered_missing_service

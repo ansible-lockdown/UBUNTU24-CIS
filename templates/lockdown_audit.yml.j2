@@ -20,7 +20,7 @@ ubtu24cis_level_2: {{ ubtu24cis_level_2 }}
 run_heavy_tests: {{ audit_run_heavy_tests }}
 
 #  True is BIOS based system else set to false
-ubtu24_legacy_boot: true
+ubtu24cis_legacy_boot: true
 
 ##
 ## Rule-specific switches
@@ -51,6 +51,8 @@ ubtu24cis_rule_1_1_2_1_1: {{ ubtu24cis_rule_1_1_2_1_1 }}
 ubtu24cis_rule_1_1_2_1_2: {{ ubtu24cis_rule_1_1_2_1_2 }}
 ubtu24cis_rule_1_1_2_1_3: {{ ubtu24cis_rule_1_1_2_1_3 }}
 ubtu24cis_rule_1_1_2_1_4: {{ ubtu24cis_rule_1_1_2_1_4 }}
+# /tmp is mounted by the tmp.mount systemd unit rather than /etc/fstab
+ubtu24cis_tmp_svc: {{ prelim_tmp_svc | default(false) }}
 
 # /dev/shm
 ubtu24cis_rule_1_1_2_2_1: {{ ubtu24cis_rule_1_1_2_2_1 }}
@@ -494,6 +496,9 @@ ubtu24cis_grub_user: {{ ubtu24cis_grub_user }}
 ubtu24cis_bootloader_password_hash: {{ ubtu24cis_bootloader_password_hash }}  # pragma: allowlist secret
 
 ## Controls 1.5.x
+# Discovered: systemd-coredump installed, else the 1.5.3 coredump.conf test is skipped
+ubtu24cis_coredump_installed: {{ 'systemd-coredump' in (ansible_facts['packages'] | default({})) }}
+ubtu24cis_apport_installed: {{ 'apport' in (ansible_facts['packages'] | default({})) }}
 
 ## Controls 1.6.x - Warning banners
 # The controls 1.6.x set various warning banners and protect the respective files
@@ -580,7 +585,7 @@ ubtu24cis_xwindow_server: {{ ubtu24cis_xwindow_server }}  # will remove mask not
 ubtu24cis_is_mail_server: {{ ubtu24cis_is_mail_server }}
 
 # Client Services
-# ubtu24cis_nis_client_required: {{ ubtu24cis_nis_server }}  # Same package as NIS server
+ubtu24cis_nis_client_required: {{ ubtu24cis_nis_client_required }}
 ubtu24cis_rsh_client: {{ ubtu24cis_rsh_client }}
 ubtu24cis_talk_client: {{ ubtu24cis_talk_client }}
 ubtu24cis_telnet_required: {{ ubtu24cis_telnet_required }}
@@ -616,6 +621,10 @@ ubtu24cis_time_servers:
 {% endfor %}
 
 # Section 3
+## Control 2.4.2.1
+# Discovered: at installed, else the 2.4.2.1 tests are skipped
+ubtu24cis_at_installed: {{ 'at' in (ansible_facts['packages'] | default({})) }}
+
 ## Control 3.1.1 - Ensure system is checked to determine if IPv6 is enabled
 # This variable governs the mechanism of how the disabling of IPV6 is carried out.
 # Its possible values are `grub` and `sysctl`.
@@ -684,6 +693,9 @@ ubtu24cis_disruption_high: {{ ubtu24cis_disruption_high }}
 # set sugroup if differs from wheel
 ubtu24cis_sugroup: nosugroup
 
+# sudo package to check, sudo or sudo-ldap
+ubtu24cis_sudo_package: {{ ubtu24cis_sudo_package }}
+
 # var log location variable
 ubtu24cis_varlog_location: {{ ubtu24cis_sudo_logfile }}
 
@@ -698,7 +710,7 @@ ubtu24cis_remote_log_server: {{ ubtu24cis_remote_log_server }}
 ubtu24cis_config_aide: {{ ubtu24cis_config_aide }}
 
 # aide setup via - cron, timer
-ubtu24cis_aide_scan: {{ ubtu24cis_aide_scan }}
+ubtu24cis_aide_scan: timer
 
 # 6.1.3.6 rsyslog remote offload server
 # ubtu24cis_remote_log_server: taken from above

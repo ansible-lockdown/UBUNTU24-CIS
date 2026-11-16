@@ -40,3 +40,52 @@
       loop: "{{ discovered_logfiles.stdout_lines }}"
       failed_when: discovered_file_exists_tmp.state not in '[ file, absent ]'
       register: discovered_file_exists_tmp
+
+    - name: "6.1.4.1 | AUDIT | Ensure access to all logfiles has been configured | find incorrect owner or group"
+      ansible.builtin.shell: |
+        set -o pipefail
+        find -L /var/log -type f \( ! -user root -o ! -group root \) -print0 | while IFS= read -r -d "" f; do
+          IFS=: read -r u g <<< "$(stat -Lc '%U:%G' "$f")"
+          n="$(basename "$f")"
+          if [[ "$(dirname "$f")" =~ /apt$ ]]; then
+            au="^root$"; ag="^(root|adm)$"
+          else
+            case "$n" in
+              lastlog | lastlog.* | wtmp | wtmp.* | wtmp-* | btmp | btmp.* | btmp-* | README)
+                au="^root$"; ag="^(root|utmp)$" ;;
+              cloud-init.log* | localmessages* | waagent.log* | secure | secure.* | secure-* | auth.log | syslog | messages)
+                au="^(root|syslog)$"; ag="^(root|adm)$" ;;
+              SSSD | sssd)
+                au="^(root|SSSD)$"; ag="^(root|SSSD)$" ;;
+              gdm | gdm3)
+                au="^root$"; ag="^(root|gdm|gdm3)$" ;;
+              *.journal | *.journal~)
+                au="^root$"; ag="^(root|systemd-journal)$" ;;
+              *)
+                au="^(root|syslog)$"; ag="^(root|adm)$"
+                s="$(awk -F: -v x="$u" '$1==x {print $7}' /etc/passwd)"
+                if [ "$u" = "root" ] || [ -z "$s" ] || ! grep -Pq -- "^\h*${s}\b" /etc/shells; then
+                  au="^(root|syslog|${u})$"; ag="^(root|adm|${g})$"
+                fi ;;
+            esac
+          fi
+          fo="-"; fg="-"
+          [[ "$u" =~ $au ]] || fo="root"
+          [[ "$g" =~ $ag ]] || fg="root"
+          if [ "$fo$fg" != "--" ]; then
+            printf '%s:%s:%s\n' "$fo" "$fg" "$f"
+          fi
+        done
+      args:
+        executable: "{{ ubtu24cis_shell_executable }}"
+      changed_when: false
+      failed_when: discovered_logfiles_ownership.rc not in [0, 1]
+      check_mode: false
+      register: discovered_logfiles_ownership
+
+    - name: "6.1.4.1 | PATCH | Ensure access to all logfiles has been configured | change owner and group"
+      ansible.builtin.file:
+        path: "{{ item.split(':', 2)[2] }}"
+        owner: "{{ (item.split(':')[0] == 'root') | ternary('root', omit) }}"
+        group: "{{ (item.split(':')[1] == 'root') | ternary('root', omit) }}"
+      loop: "{{ discovered_logfiles_ownership.stdout_lines }}"

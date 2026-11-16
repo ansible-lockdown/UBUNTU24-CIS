@@ -26,13 +26,13 @@
   check_mode: false
   register: discovered_interactive_users_home
 
-- name: "7.2.1 | AUDIT | Ensure accounts in /etc/passwd use shadowed passwords"
+- name: "7.2.1 | PATCH | Ensure accounts in /etc/passwd use shadowed passwords"
   when: ubtu24cis_rule_7_2_1
   tags:
     - level1-server
     - level1-workstation
     - automated
-    - audit
+    - patch
     - rule_7.2.1
     - NIST800-53R5_IA-5
     - user_accounts
@@ -50,13 +50,18 @@
       when: discovered_nonshadowed_users.stdout | length > 0
       ansible.builtin.debug:
         msg:
-          - "Warning!! You have users that are not using a shadowed password. Please convert the below accounts to use a shadowed password"
+          - "Warning!! The below accounts were not using a shadowed password and are migrated with pwconv. Check whether they are logged in and what they are used for"
           - "{{ discovered_nonshadowed_users.stdout_lines }}"
 
     - name: "7.2.1 | WARNING | Ensure accounts in /etc/passwd use shadowed passwords | warn_count"
       when: discovered_nonshadowed_users.stdout | length > 0
       ansible.builtin.import_tasks:
         file: warning_facts.yml
+
+    - name: "7.2.1 | PATCH | Ensure accounts in /etc/passwd use shadowed passwords | Migrate to shadowed passwords"
+      when: discovered_nonshadowed_users.stdout | length > 0
+      ansible.builtin.command: pwconv
+      changed_when: true
 
 - name: "7.2.2 | PATCH | Ensure /etc/shadow password fields are not empty"
   when: ubtu24cis_rule_7_2_2
@@ -137,19 +142,34 @@
   vars:
     warn_control_id: '7.2.4'
   block:
-    - name: "7.2.4 | AUDIT | Ensure shadow group is empty | check users in group"
+    - name: "7.2.4 | AUDIT | Ensure shadow group is empty | Get shadow group"
       ansible.builtin.getent:
         database: group
         split: ':'
         key: shadow
+        fail_key: false
 
-    - name: "7.2.4 | AUDIT | Ensure shadow group is empty | check users in group"
-      when: ansible_facts['getent_group']['shadow'][2] | length > 0
+    - name: "7.2.4 | PATCH | Ensure shadow group is empty | Remove all members from the shadow group"
+      when: ansible_facts['getent_group']['shadow'] is not none
+      ansible.builtin.replace:
+        path: /etc/group
+        regexp: '^(shadow:[^:]*:[^:]*:)([^:]+)$'
+        replace: '\1'
+
+    - name: "7.2.4 | AUDIT | Ensure shadow group is empty | Get users with shadow as primary group"
+      when: ansible_facts['getent_group']['shadow'] is not none
+      ansible.builtin.set_fact:
+        discovered_shadow_primary_users: "{{ prelim_captured_passwd_data | selectattr('gid', 'equalto', ansible_facts['getent_group']['shadow'][1] | int) | map(attribute='id') | list }}"
+
+    - name: "7.2.4 | AUDIT | Ensure shadow group is empty | Warn on users with shadow as primary group"
+      when: discovered_shadow_primary_users | default([]) | length > 0
       ansible.builtin.debug:
-        msg: "Warning!! - You have users in the shadow group"
+        msg:
+          - "Warning!! - The users below have the shadow group as their primary group, please change it with usermod -g <group> <user>"
+          - "{{ discovered_shadow_primary_users }}"
 
-    - name: "7.2.4 | AUDIT | Ensure shadow group is empty | check users in group"
-      when: ansible_facts['getent_group']['shadow'][2] | length > 0
+    - name: "7.2.4 | WARNING | Ensure shadow group is empty | warn_count"
+      when: discovered_shadow_primary_users | default([]) | length > 0
       ansible.builtin.import_tasks:
         file: warning_facts.yml
 
@@ -323,7 +343,7 @@
         owner: "{{ item.id }}"
         group: "{{ item.gid }}"
         mode: 'g-w,o-rwx'
-      loop: "{{ prelim_captured_passwd_data | selectattr('uid', '>=', min_int_uid | int) | selectattr('uid', '<=', max_int_uid | int) | list }}"
+      loop: "{{ prelim_captured_passwd_data | selectattr('uid', '>=', min_int_uid | int) | selectattr('uid', '<=', max_int_uid | int) | selectattr('dir', 'in', discovered_interactive_users_home.stdout_lines) | list }}"
       loop_control:
         label: "{{ item.id }}"
 
@@ -397,6 +417,9 @@
       when:
         - discovered_homedir_hidden_files.stdout | length > 0
         - ubtu24cis_dotperm_ansiblemanaged
+      vars:
+        discovered_dotfile_home: "{{ item | regex_search('^(?:' ~ (discovered_interactive_users_home.stdout_lines | map('regex_escape') | sort | reverse | join('|')) ~ ')(?=/)') }}"
+        discovered_dotfile_home_owner: "{{ prelim_captured_passwd_data | selectattr('dir', 'equalto', discovered_dotfile_home) | list }}"
       block:
         - name: "7.2.10 | AUDIT | Ensure local interactive user dot files access is configured | Changes files if configured .bash_history & .netrc"
           when:
@@ -420,8 +443,8 @@
         - name: "7.2.10 | AUDIT | Ensure local interactive user dot files access is configured | Changes files ownerships"
           ansible.builtin.file:
             path: "{{ item }}"
-            owner: "{{ prelim_captured_passwd_data | selectattr('dir', 'in', discovered_interactive_users_home.stdout_lines) | selectattr('dir', 'in', item) | map(attribute='uid') | last }}"
-            group: "{{ prelim_captured_passwd_data | selectattr('dir', 'in', discovered_interactive_users_home.stdout_lines) | selectattr('dir', 'in', item) | map(attribute='gid') | last }}"
+            owner: "{{ discovered_dotfile_home_owner | map(attribute='uid') | last }}"
+            group: "{{ discovered_dotfile_home_owner | map(attribute='gid') | last }}"
           failed_when: discovered_dot_bash_history_to_change_ownership.state not in '[ file, absent ]'
           register: discovered_dot_bash_history_to_change_ownership
           loop: "{{ discovered_homedir_hidden_files.stdout_lines }}"
@@ -430,8 +453,8 @@
           ansible.builtin.file:
             path: '{{ item }}'
             mode: 'go-w'
-            owner: "{{ prelim_captured_passwd_data | selectattr('dir', 'in', discovered_interactive_users_home.stdout_lines) | selectattr('dir', 'in', item) | map(attribute='uid') | last }}"
-            group: "{{ prelim_captured_passwd_data | selectattr('dir', 'in', discovered_interactive_users_home.stdout_lines) | selectattr('dir', 'in', item) | map(attribute='gid') | last }}"
+            owner: "{{ discovered_dotfile_home_owner | map(attribute='uid') | last }}"
+            group: "{{ discovered_dotfile_home_owner | map(attribute='gid') | last }}"
           with_items: "{{ discovered_homedir_hidden_files.stdout_lines }}"
 
         - name: "7.2.10 | AUDIT | Ensure local interactive user dot files access is configured | rename .forward or .rhosts files"
