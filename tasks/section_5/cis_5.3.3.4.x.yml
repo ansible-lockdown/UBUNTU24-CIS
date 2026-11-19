@@ -61,19 +61,10 @@
       when: discovered_pam_remember.stdout | length > 0
       ansible.builtin.replace:
         path: "{{ item }}"
-        regexp: '^([^#\n]*\bpam_unix\.so\b[^#\n]*?)[ \t]+remember(=\S*)?(?=[ \t]|$)'
+        regexp: '^([ \t]+[^#\n]*\bpam_unix\.so\b[^#\n]*?)[ \t]+remember(=\S*)?(?=[ \t]|$)'
         replace: '\1'
       loop: "{{ discovered_pam_remember.stdout_lines }}"
-      loop_control:
-        label: "{{ item }}"
-
-    - name: "5.3.3.4.2 | PATCH | Ensure pam_unix does not include remember | Update pam for edited profiles"
-      when: discovered_pam_remember.stdout | length > 0
-      ansible.builtin.command: pam-auth-update --enable {{ item | basename }}
-      changed_when: true
-      loop: "{{ discovered_pam_remember.stdout_lines }}"
-      loop_control:
-        label: "{{ item | basename }}"
+      notify: Pam_auth_update_pwunix
 
 - name: "5.3.3.4.3/4 | AUDIT | Capture pam_unix pam-configs profile"
   when: ubtu24cis_rule_5_3_3_4_3 or

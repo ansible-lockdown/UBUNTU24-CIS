@@ -1,5 +1,139 @@
 # Ubuntu24CIS
 
+## CIS Benchmark 2.0.0
+
+## November 2026 - QA fixes
+
+- audit binary switched from goss to syver v0.16.0
+- prelim_goss_available renamed prelim_audit_bin_available
+- README audit section describes syver
+- optional syver release signature check with gpgv, off by default (audit_bin_verify_signature)
+- audit file renamed syver.yml, goss_template tag renamed syver_template
+- audit_system_type passed to run_audit.sh (-w for Workstation)
+- audit summary reports "not run in check mode" under --check
+- /tmp management auto discovered (ubtu24cis_tmp_svc: auto), bridged to the audit
+- audit bridge: ubtu24_legacy_boot renamed ubtu24cis_legacy_boot
+- playbook user password check matches the exact account name (addresses https://github.com/ansible-lockdown/UBUNTU24-CIS/issues/204) - Thank you @dan-ostermeier
+- 5.2.4 prelim password and lock checks skip users in ubtu24cis_sudoers_exclude_nopasswd_list (port of https://github.com/ansible-lockdown/RHEL10-CIS/issues/129)
+- pam-auth-update handlers flushed after 5.3.x
+- 5.4.1.x ansible_env replaced by ansible_facts['env']
+- 5.4.1.6 never expires the connecting user's password
+- set -o pipefail on every shell task, args executable on 3.1.2
+- auditd stop/start handlers skipped in containers; immutable auditd rule change flags a reboot
+- README support link anchors consistent
+- 1.2.1.4, 1.2.1.5, 1.2.1.7, 1.2.1.8 directory modes symbolic, never loosen
+- 6.1.2.9, 6.1.2.10 forward config mode symbolic
+- 5.4.2.x and 7.2.x interactive users exclude /usr/bin/false and any nologin path
+- interactive user filter matches whole account names
+- 5.4.2.8 compares account names against the interactive user list, not a substring
+- 7.2.2 locks accounts without creating a home directory
+- 2.1.23 keeps xserver-common when ubtu24cis_desktop_required is true (as UBUNTU26-CIS issue https://github.com/ansible-lockdown/UBUNTU26-CIS/issues/3) - Thank you @sam-stenvall-iceye
+- 6.1.2.4 rsyslog config lookup returns a single path
+- 3.3.1.14, 3.3.1.15, 3.3.2.5, 3.3.2.6 applied on routers; 3.3.2.3, 3.3.2.4 skipped on routers
+- README rendered from the canonical template
+- ubtu24cis_sudoers_exclude_nopasswd_list passed to the audit
+- workflow actions pinned to release tags, actions.lock and dependabot added
+- 2.1.6: nginx-plus removed with nginx
+- 5.4.2.7: playbook user and ubtu24cis_system_users_shell accounts keep their shell
+- 5.4.3.3: only umask values weaker than 027 changed, /etc/bash.bashrc included
+- 5.4.2.2: GID 0 account names matched exactly
+- 6.1.3.1: symlinked log files followed, link state accepted
+- 7.2.9: ACLs skip home directories that do not exist
+- update-grub handler failures no longer hidden
+- bridge passes ubtu24cis_system_users_shell and ubtu24cis_playbook_user
+
+## October 2026 - QA fixes
+
+- CIS Benchmark 1.0.0 October 2026 QA fixes merged and ported to 2.0.0 control IDs
+- 1.3.1.3 aa-enforce run through the shell so the glob expands
+- 3.2.1 and 3.2.2 modprobe files get both install and blacklist lines
+- 6.1.1.1.4 no longer changes the vendor tmpfiles file
+- 6.1.1.1.4 override check reads /etc/tmpfiles.d
+- 6.1.1.1.5 to 6.1.1.1.7 journald restart notified per task
+- 6.1.2.4 emerg lookup limited to rsyslog config
+- 6.1.2.5 and 6.1.2.9 skipped until ubtu24cis_remote_log_server is set
+- 6.1.2.6 imtcp regexps escaped
+- 6.1.3.1 login record and sssd log permissions loop fixed
+- 6.1.1.1.4 and 6.2.3.30 tasks named AUDIT
+- automated and manual tags set from the 2.0.0 benchmark
+- unused systemd-journal-upload handler removed
+- README AppArmor note updated for 2.0.0 control IDs
+- 1.2.1.1 checks apt sources for Signed-By
+- 1.2.1.2 disables apt weak dependencies, level 2
+- 1.6.4 sets pam_motd file content; dynamic motd lines commented out in sshd, login, su and gdm-password
+- 2.1.5 removes kea and masks the kea-dhcp services
+- 5.1.23 adds post-quantum KexAlgorithms chosen by the OpenSSH server version
+- 5.1.12 and 5.1.23 write the same KexAlgorithms line
+- 5.4.2.6 sets umask in /root/.profile and /root/.bashrc
+- 5.4.2.7 sets nologin on system accounts with a valid shell
+- 6.3.2 uses dailyaidecheck.timer only, cron option removed
+- ubtu24cis_aide_cron_* schedule variables renamed ubtu24cis_aide_timer_*
+- dailyaidecheck.timer OnCalendar built in systemd order
+- dailyaidecheck.service is static, started only by the timer
+- 1.2.1.3 sets owner and mode on apt gpg key files
+- 1.5.4 sets only fs.suid_dumpable
+- 1.5.11 and 1.5.12 use a coredump.conf.d drop-in with a [Coredump] section
+- 1.6.10 uses ubtu24cis_sshd_banner_file
+- 1.7.x write /etc/dconf/profile/user, 1.7.1 and 1.7.2 lock files added
+- kernel module controls install /bin/false, 3.2.x unload the module
+- 2.1.19 masks inetutils-inetd.service
+- 2.2.1 uses ubtu24cis_nis_client_required
+- 2.3.2.2 and 2.4.1.1 unmask before start
+- 2.4.2.1 at.allow group daemon when present
+- 3.3.x conflicting sysctl entries commented out, package files warned
+- 5.1.x sshd settings in sshd_config.d/00-cis-sshd.conf, Include guard added
+- 5.1.x CIS keywords above the Include line commented out
+- 5.1.24 old ListenAddress lines commented out
+- 5.2.2 removes !use_pty
+- 5.2.6 replaces only negative or over 15 timestamp_timeout values
+- 5.3.2.1 enables pam unix without the template toggle
+- 5.3.3.1.x faillock arguments stripped wherever they sit, root_unlock_time under 60 removed
+- 5.3.3.2.x conf.d directory created for 5.3.3.2.7 and 5.3.3.2.8
+- 5.3.3.3.x pwhistory arguments set in the pam-configs profile
+- 5.3.3.4.2 to 5.3.3.4.4 edit the unix pam-configs profile
+- 5.4.2.1 to 5.4.2.3 audit and warn only
+- 5.4.3.1 removes whole nologin lines
+- 5.4.3.3 four-digit umask kept, weak profile.d umask lines commented out
+- 6.1.1.1.2, 6.1.1.1.6 and 6.1.1.1.7 no longer gated on journald
+- 6.1.1.1.3 ForwardToSyslog drop-in, journald restarted
+- 6.1.2.2 rsyslog unmasked and started
+- 6.1.2.6 comments out only imtcp lines, rsyslog.d included
+- 6.1.3.1 log file owner and group corrected
+- 6.2.3.4 clock_settime a0=0x0 rules added
+- 6.2.3.22 renameat2 added
+- 6.2.3.28 b32 kernel module rule added
+- 6.2.4.4 log_group adm set
+- 7.2.1 runs pwconv when passwords are not shadowed
+- 7.2.4 removes shadow group members
+- stale v1 firewall notes removed
+
+
+## Based on CIS v2.0.0 - August 2026
+
+### Benchmark upgrade v1.0.0 -> v2.0.0
+
+- 312 -> 333 controls: 71 added, 50 retired, 80 renumbered, titles resynced from the v2.0.0 benchmark
+- Section 3.3 split into 3.3.1 (IPv4, 18 controls) and 3.3.2 (IPv6, 8 controls, gated on `ubtu24cis_ipv6_required`), one control per kernel parameter, replacing the 11 combined v1 controls
+- Section 4 reduced to UFW only at 4.1.x - the nftables (4.3.x) and iptables (4.4.x) sections are dropped from the benchmark; `ubtu24cis_firewall_package` no longer selects between firewalls for these controls
+- Section 6.1 renested: journald moves to 6.1.1.1.x, rsyslog to 6.1.2.x, logfiles to 6.1.3.1; the systemd-journal-remote/upload section is dropped
+- Section 6.2.3 auditd rules split: the two combined v1 controls (system network environment, user/group information) become 6.2.3.5-6.2.3.9 and 6.2.3.11-6.2.3.16, each with its own toggle in `templates/audit/99_auditd.rules.j2`
+- Sections 1.2.1 (apt key/source access), 1.5 (per-parameter process hardening), 1.6 (motd/issue/banner access) and 7.1 (system file access) expanded
+- New variables: `ubtu24cis_sshd_banner_file`, `ubtu24cis_sshd_listen_address`, `ubtu24cis_rsyslog_ca_certificate`
+- Removed variables left dead by retired controls: `ubtu24cis_apparmor_mode`, `control_1_3_1_4_was_run`, `ubtu24cis_apparmor_enforce_only`, and the three `ubtu24cis_journal_*certificate/keyfile` variables
+- fixed the collection of audit privileged commands
+
+### Fixed
+
+- 13 controls carried level tags that disagreed with the v2.0.0 Profile Applicability after renumbering; the audit repo had 29 `meta.server`/`meta.workstation` values and 12 Jinja level gates with the same drift
+- `vars/is_container.yml` disabled `ubtu24cis_rule_1_3_1` to `_1_3_4`, IDs this benchmark has never used, so the AppArmor controls were never actually skipped in containers - now `1_3_1_1` to `1_3_1_4`; also dropped `ubtu24cis_rule_6_2_4_11`, which does not exist
+- `molecule/default/converge.yml` set `ubtu24cis_rule_1_3_1_3` twice (duplicate YAML key) after renumbering; the second is now `1_3_1_4`
+- tasks/section_5/cis_5.2.x.yml: the sudoers file discovery task was tagged `rule_5.2.5`/`rule_5.2.6` but gated on `rule_5_2_4`/`rule_5_2_5`, so a tagged 5.2.5 run could skip the task that registers the file list it consumes
+- handlers/main.yml: removed `Iptables persistent` and `Ip6tables persistent`, unreachable once section 4.4 was retired
+- tasks/section_6/cis_6.1.1.1.x.yml: the shared journald conf.d task still gated on retired control 6.1.2.2, whose ID v2 reassigns to the rsyslog service check
+- templates/lockdown_audit.yml.j2: the rule-toggle block had no `############` end marker, so the bridge template was never machine-maintained; added, and the block rebuilt to the v2 toggle set
+- 1.7.3, 1.7.4 and 1.7.5 merge each GDM setting with its former "not overridden" partner in v2; the tasks now write the dconf lock file as well as the setting, which also brings the three `00-*_lock.j2` templates back into use
+- templates/etc/systemd/journald.conf.d/forwardtosyslog.conf.j2 removed - it set `ForwardToSyslog=no` for retired control 6.1.2.2, the opposite of what v2 6.1.1.1.3 requires
+
 ## CIS Benchmark 1.0.0
 
 ## November 2026 - QA fixes

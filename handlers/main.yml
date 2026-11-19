@@ -122,7 +122,6 @@
 - name: Grub update
   ansible.builtin.command: update-grub
   changed_when: true
-  failed_when: false
   notify: Set_reboot_required
 
 - name: Restart timeservice
@@ -152,11 +151,6 @@
 - name: Restart journald
   ansible.builtin.systemd:
     name: systemd-journald
-    state: restarted
-
-- name: Restart systemd_journal_upload
-  ansible.builtin.systemd:
-    name: systemd-journal-upload
     state: restarted
 
 - name: Update exim4 config
@@ -202,14 +196,6 @@
 
 - name: Pam_auth_update_pwhistory
   ansible.builtin.command: pam-auth-update --enable {{ ubtu24cis_pam_pwhistory_file }}
-  changed_when: true
-
-- name: Iptables persistent
-  ansible.builtin.command: bash -c "iptables-save > /etc/iptables/rules.v4"
-  changed_when: true
-
-- name: Ip6tables persistent
-  ansible.builtin.command: bash -c "ip6tables-save > /etc/iptables/rules.v6"
   changed_when: true
 
 - name: Auditd rules reload

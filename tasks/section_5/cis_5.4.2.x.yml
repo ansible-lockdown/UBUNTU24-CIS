@@ -18,8 +18,7 @@
     - NIST800-53R5_MP-2
   ansible.builtin.shell: |
     set -o pipefail
-    l_valid_shells="^($(awk -F/ '$NF != "nologin" {print}' /etc/shells | sed -rn '/^\//{s,/,\\\\/,g;p}' | paste -s -d '|' -))$"
-    awk -v pat="$l_valid_shells" -F: '($1 != "root" && $NF ~ pat) {print $1}' /etc/passwd
+    grep -E -v '^(root|halt|sync|shutdown):' /etc/passwd | awk -F: '($7 !~ /(nologin|false)$/ && $7 != "/dev/null") { print $1 }'
   args:
     executable: "{{ ubtu24cis_shell_executable }}"
   changed_when: false
@@ -41,6 +40,8 @@
     - NIST800-53R5_CM-6
     - NIST800-53R5_CM-7
     - NIST800-53R5_IA-5
+  vars:
+    warn_control_id: '5.4.2.1'
   block:
     - name: "5.4.2.1 | AUDIT | Ensure root is the only UID 0 account | Get accounts other than root with UID 0"
       ansible.builtin.shell: |
@@ -60,12 +61,10 @@
           - "Warning!! You have accounts other than root with UID 0 - Please resolve"
           - "{{ discovered_uid_zero_accounts_except_root.stdout_lines }}"
 
-    - name: "5.4.2.1 | WARN | Ensure root is the only UID 0 account | warn_count"
+    - name: "5.4.2.1 | AUDIT | Ensure root is the only UID 0 account | Set warning count"
       when: discovered_uid_zero_accounts_except_root.stdout | length > 0
       ansible.builtin.import_tasks:
         file: warning_facts.yml
-      vars:
-        warn_control_id: '5.4.2.1'
 
 - name: "5.4.2.2 | AUDIT | Ensure root is the only GID 0 account"
   when: ubtu24cis_rule_5_4_2_2
@@ -82,11 +81,13 @@
     - NIST800-53R5_IA-5
     - user
     - system
+  vars:
+    warn_control_id: '5.4.2.2'
   block:
     - name: "5.4.2.2 | AUDIT | Ensure root is the only GID 0 account | Get members of gid 0"
       ansible.builtin.shell: |
         set -o pipefail
-        awk -F: '($1 !~ /^(sync|shutdown|halt|operator)/ && $4=="0") {print $1}' /etc/passwd | grep -wv 'root'
+        awk -F: '($1 !~ /^(root|sync|shutdown|halt|operator)$/ && $4=="0") {print $1}' /etc/passwd
       args:
         executable: "{{ ubtu24cis_shell_executable }}"
       changed_when: false
@@ -101,12 +102,10 @@
           - "Warning!! You have accounts other than root with primary GID 0 - Please resolve"
           - "{{ discovered_gid0_members.stdout_lines }}"
 
-    - name: "5.4.2.2 | WARN | Ensure root is the only GID 0 account | warn_count"
+    - name: "5.4.2.2 | AUDIT | Ensure root is the only GID 0 account | Set warning count"
       when: discovered_gid0_members.stdout | length > 0
       ansible.builtin.import_tasks:
         file: warning_facts.yml
-      vars:
-        warn_control_id: '5.4.2.2'
 
 - name: "5.4.2.3 | AUDIT | Ensure group root is the only GID 0 group"
   when: ubtu24cis_rule_5_4_2_3
@@ -114,7 +113,7 @@
     - level1-server
     - level1-workstation
     - automated
-    - patch
+    - audit
     - rule_5.4.2.3
     - NIST800-53R5_CM-1
     - NIST800-53R5_CM-2
@@ -123,6 +122,8 @@
     - NIST800-53R5_IA-5
     - user
     - system
+  vars:
+    warn_control_id: '5.4.2.3'
   block:
     - name: "5.4.2.3 | AUDIT | Ensure group root is the only GID 0 group | Get groups with gid 0"
       ansible.builtin.shell: |
@@ -130,28 +131,22 @@
         awk -F: '$3=="0"{print $1}' /etc/group | grep -vw 'root'
       args:
         executable: "{{ ubtu24cis_shell_executable }}"
-      check_mode: false
       changed_when: false
       failed_when: discovered_gid0_groups.rc not in [ 0, 1 ]
+      check_mode: false
       register: discovered_gid0_groups
 
-    - name: "5.4.2.3 | AUDIT | Ensure group root is the only GID 0 group | Warning if others gid 0 groups"
-      when:
-        - discovered_gid0_groups is defined
-        - discovered_gid0_groups.stdout | length > 0
+    - name: "5.4.2.3 | AUDIT | Ensure group root is the only GID 0 group | Warning if other groups have GID 0"
+      when: discovered_gid0_groups.stdout | length > 0
       ansible.builtin.debug:
         msg:
           - "Warning!! You have other groups assigned to GID 0 - Please resolve"
           - "{{ discovered_gid0_groups.stdout_lines }}"
 
-    - name: "5.4.2.3 | WARN | Ensure group root is the only GID 0 group | warn_count"
-      when:
-        - discovered_gid0_groups is defined
-        - discovered_gid0_groups.stdout | length > 0
+    - name: "5.4.2.3 | AUDIT | Ensure group root is the only GID 0 group | Set warning count"
+      when: discovered_gid0_groups.stdout | length > 0
       ansible.builtin.import_tasks:
         file: warning_facts.yml
-      vars:
-        warn_control_id: '5.4.2.3'
 
 - name: "5.4.2.4 | PATCH | Ensure root account access is controlled"
   when: ubtu24cis_rule_5_4_2_4
@@ -274,7 +269,7 @@
       ansible.builtin.stat:
         path: "{{ item }}"
       loop:
-        - /root/.bash_profile
+        - /root/.profile
         - /root/.bashrc
       register: discovered_root_profile_files
 
@@ -306,8 +301,9 @@
   block:
     - name: "5.4.2.7 | AUDIT | Ensure system accounts do not have a valid login shell | Find system accounts with a valid shell"
       ansible.builtin.shell: |
+        set -o pipefail
         l_valid_shells="^($(awk -F/ '$NF != "nologin" {print}' /etc/shells | sed -rn '/^\//{s,/,\\\\/,g;p}' | paste -s -d '|' -))$"
-        awk -v pat="$l_valid_shells" -v uid_min="{{ min_int_uid }}" -F: '($1 !~ /^(root|halt|sync|shutdown|nfsnobody)$/ && ($3 < uid_min || $3 == 65534) && $NF ~ pat) {print $1}' /etc/passwd
+        awk -v pat="$l_valid_shells" -v uid_min="{{ prelim_uid_min_id.stdout }}" -F: '($1 !~ /^(root|halt|sync|shutdown|nfsnobody)$/ && ($3 < uid_min || $3 == 65534) && $NF ~ pat) {print $1}' /etc/passwd
       args:
         executable: "{{ ubtu24cis_shell_executable }}"
       changed_when: false
@@ -316,6 +312,9 @@
       register: discovered_system_accounts_valid_shell
 
     - name: "5.4.2.7 | PATCH | Ensure system accounts do not have a valid login shell | Set shell to nologin"
+      when:
+        - item != ubtu24cis_playbook_user
+        - item not in ubtu24cis_system_users_shell
       ansible.builtin.user:
         name: "{{ item }}"
         shell: /usr/sbin/nologin
@@ -326,8 +325,8 @@
   when:
     - ubtu24cis_rule_5_4_2_8
     - ubtu24cis_disruption_high
-    - "item.id not in discovered_interactive_usernames.stdout_lines"
-    - "item.id != 'root'"
+    - item.id not in discovered_interactive_usernames.stdout_lines
+    - item.id != 'root'
   tags:
     - level1-server
     - level1-workstation

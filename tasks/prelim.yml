@@ -35,7 +35,9 @@
   register: prelim_squashfs_builtin
 
 - name: "PRELIM | AUDIT | Section 1.1.2.1 | Discover how /tmp is mounted"
-  when: ubtu24cis_tmp_svc == 'auto'
+  when:
+    - ubtu24cis_tmp_svc == 'auto'
+    - not system_is_container
   tags: always
   ansible.builtin.systemd_service:
     name: tmp.mount
@@ -46,8 +48,8 @@
   tags: always
   ansible.builtin.set_fact:
     prelim_tmp_svc: >-
-      {{ (prelim_tmp_mount_source.status.ActiveState == 'active' and
-          prelim_tmp_mount_source.status.SourcePath | default('') != '/etc/fstab')
+      {{ ((prelim_tmp_mount_source.status | default({})).ActiveState | default('') == 'active' and
+          (prelim_tmp_mount_source.status | default({})).SourcePath | default('') != '/etc/fstab')
          if ubtu24cis_tmp_svc == 'auto'
          else ubtu24cis_tmp_svc | bool }}
 
@@ -172,7 +174,7 @@
 
 - name: "OPTIONAL | PATCH | Install Logrotate if missing"
   when:
-    - ubtu24cis_rule_6_1_3_8
+    - ubtu24cis_rule_6_1_2_7
     - ubtu24cis_logrotate_pkg_install
   ansible.builtin.package:
     name: logrotate

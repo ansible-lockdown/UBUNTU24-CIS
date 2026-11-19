@@ -11,7 +11,7 @@
   environment:
     AUDIT_BIN: "{{ audit_bin }}"
     AUDIT_CONTENT_LOCATION: "{{ audit_conf_dest | default('/opt') }}"
-    AUDIT_FILE: goss.yml
+    AUDIT_FILE: syver.yml
 
 - name: Post Audit | Audit not run in check mode
   when: ansible_check_mode

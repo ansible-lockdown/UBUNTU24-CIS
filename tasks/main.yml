@@ -30,6 +30,7 @@
   block:
     - name: "Check password set for {{ ubtu24cis_playbook_user }} | password state"  # noqa name[template]
       ansible.builtin.shell: |
+          set -o pipefail
           awk -F: -v u='{{ ubtu24cis_playbook_user }}' '$1 == u {print $2; f=1} END {if (!f) print "not found"}' /etc/shadow
       changed_when: false
       failed_when: false

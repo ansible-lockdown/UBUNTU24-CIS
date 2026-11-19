@@ -1,6 +1,6 @@
 ---
 
-- name: "1.1.2.1.1 | AUDIT | Ensure /tmp is a separate partition"
+- name: "1.1.2.1.1 | AUDIT | Ensure /tmp is tmpfs or a separate partition"
   when: ubtu24cis_rule_1_1_2_1_1
   tags:
     - level1-server
@@ -14,19 +14,19 @@
     warn_control_id: "1.1.2.1.1"
     required_mount: "/tmp"
   block:
-    - name: "1.1.2.1.1 | AUDIT | Ensure /tmp is a separate partition | check for mount"
+    - name: "1.1.2.1.1 | AUDIT | Ensure /tmp is tmpfs or a separate partition | check for mount"
       ansible.builtin.command: findmnt -kn "{{ required_mount }}"
       changed_when: false
       failed_when: discovered_tmp_mount.rc not in [ 0, 1 ]
       check_mode: false
       register: discovered_tmp_mount
 
-    - name: "1.1.2.1.1 | AUDIT | Ensure /tmp is a separate partition | Absent"
+    - name: "1.1.2.1.1 | AUDIT | Ensure /tmp is tmpfs or a separate partition | Absent"
       when: discovered_tmp_mount.rc != 0
       ansible.builtin.debug:
         msg: "Warning!! {{ required_mount }} is not mounted on a separate partition"
 
-    - name: "1.1.2.1.1 | AUDIT | Ensure /tmp is a separate partition | Present"
+    - name: "1.1.2.1.1 | AUDIT | Ensure /tmp is tmpfs or a separate partition | Present"
       when: discovered_tmp_mount.rc != 0
       ansible.builtin.import_tasks:
         file: warning_facts.yml

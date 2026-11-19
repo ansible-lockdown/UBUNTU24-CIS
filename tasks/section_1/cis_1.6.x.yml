@@ -1,6 +1,6 @@
 ---
 
-- name: "1.6.1 | PATCH | Ensure message of the day is configured properly"
+- name: "1.6.1 | PATCH | Ensure /etc/motd is configured"
   when: ubtu24cis_rule_1_6_1
   tags:
     - level1-server
@@ -13,27 +13,13 @@
     - NIST800-53R5_CM-6
     - motd
   block:
-    - name: "1.6.1 | PATCH | Ensure message of the day is configured properly | motd"
+    - name: "1.6.1 | PATCH | Ensure /etc/motd is configured | motd"
       ansible.builtin.template:
         src: etc/motd.j2
         dest: /etc/motd
         mode: 'u-x,go-wx'
 
-    - name: "1.6.1 | PATCH | Ensure message of the day is configured properly | disable dynamic_motd"
-      when: ubtu24cis_disable_dynamic_motd
-      ansible.builtin.lineinfile:
-        path: /etc/pam.d/sshd
-        regexp: "{{ item.regexp }}"
-        line: "{{ item.line }}"
-        backrefs: true
-      loop:
-        - { regexp: '(session\s+optional\s+pam_motd.so\s+motd=/run/motd.dynamic)', line: '# \1' }
-        - { regexp: '(session\s+optional\s+pam_motd.so noupdate)', line: '# \1' }
-        - { regexp: '# Pam_motd.so disabled for CIS benchmark', line: '# Pam_motd.so disabled for CIS benchmark' }
-      loop_control:
-        label: "{{ item }}"
-
-- name: "1.6.2 | PATCH | Ensure local login warning banner is configured properly"
+- name: "1.6.2 | PATCH | Ensure /etc/issue is configured"
   when: ubtu24cis_rule_1_6_2
   tags:
     - level1-server
@@ -46,17 +32,17 @@
     - NIST800-53R5_CM-6
     - banner
   block:
-    - name: "1.6.2 | PATCH | Ensure local login warning banner is configured properly | issue"
+    - name: "1.6.2 | PATCH | Ensure /etc/issue is configured | issue"
       ansible.builtin.template:
         src: etc/issue.j2
         dest: /etc/issue
         mode: 'u-x,go-wx'
 
-    - name: "1.6.2 | PATCH | Ensure local login warning banner is configured properly | issue"
+    - name: "1.6.2 | PATCH | Ensure /etc/issue is configured | issue"
       community.general.dpkg_divert:
         path: /etc/issue
 
-- name: "1.6.3 | PATCH | Ensure remote login warning banner is configured properly"
+- name: "1.6.3 | PATCH | Ensure /etc/issue.net is configured"
   when: ubtu24cis_rule_1_6_3
   tags:
     - level1-server
@@ -69,17 +55,17 @@
     - NIST800-53R5_CM-6
     - banner
   block:
-    - name: "1.6.3 | PATCH | Ensure remote login warning banner is configured properly | issue.net"
+    - name: "1.6.3 | PATCH | Ensure /etc/issue.net is configured | issue.net"
       ansible.builtin.template:
         src: etc/issue.net.j2
         dest: /etc/issue.net
         mode: 'u-x,go-wx'
 
-    - name: "1.6.3 | PATCH | Ensure remote login warning banner is configured properly | issue.net"
+    - name: "1.6.3 | PATCH | Ensure /etc/issue.net is configured | issue.net"
       community.general.dpkg_divert:
         path: /etc/issue.net
 
-- name: "1.6.4 | PATCH | Ensure access to /etc/motd is configured"
+- name: "1.6.4 | PATCH | Ensure pam_motd is configured"
   when: ubtu24cis_rule_1_6_4
   tags:
     - level1-server
@@ -87,26 +73,68 @@
     - automated
     - patch
     - rule_1.6.4
-    - NIST800-53R5_AC-3
-    - NIST800-53R5_MP-2
-    - permissions
+    - NIST800-53R5_CM-1
+    - NIST800-53R5_CM-3
+    - NIST800-53R5_CM-6
     - motd
   block:
-    - name: "1.6.4 | AUDIT | Ensure access to /etc/motd is configured | Check for motd file"
-      ansible.builtin.stat:
-        path: /etc/motd
+    - name: "1.6.4 | AUDIT | Ensure pam_motd is configured | Discover motd files set by pam_motd"
+      ansible.builtin.shell: |
+        set -o pipefail
+        for svc in sshd login su gdm-password; do
+          [ -f "/etc/pam.d/$svc" ] && grep -hPi '^\h*session\h+(required|optional)\h+pam_motd\.so\b.*\bmotd=' "/etc/pam.d/$svc" | grep -oP '\bmotd=\K\S+' | tr -d "\"'"
+        done | sort -u
+      args:
+        executable: "{{ ubtu24cis_shell_executable }}"
+      changed_when: false
+      failed_when: discovered_pam_motd_paths.rc not in [0, 1]
       check_mode: false
-      register: discovered_motd_file
+      register: discovered_pam_motd_paths
 
-    - name: "1.6.4 | PATCH | Ensure access to /etc/motd is configured | Set permissions"
-      when: discovered_motd_file.stat.exists
-      ansible.builtin.file:
-        path: /etc/motd
-        owner: root
-        group: root
+    - name: "1.6.4 | AUDIT | Ensure pam_motd is configured | Discover pam files showing the dynamic motd"
+      ansible.builtin.shell: |
+        set -o pipefail
+        grep -lsP '^\h*session\h+(required|optional)\h+pam_motd\.so\b.*(\bmotd=/run/motd\.dynamic\b|\bnoupdate\b)' /etc/pam.d/sshd /etc/pam.d/login /etc/pam.d/su /etc/pam.d/gdm-password
+      args:
+        executable: "{{ ubtu24cis_shell_executable }}"
+      changed_when: false
+      failed_when: discovered_pam_motd_dynamic.rc not in [0, 1, 2]
+      check_mode: false
+      register: discovered_pam_motd_dynamic
+
+    - name: "1.6.4 | PATCH | Ensure pam_motd is configured | Stop pam_motd showing the dynamic motd and running update-motd"
+      when: ubtu24cis_disable_dynamic_motd
+      ansible.builtin.replace:
+        path: "{{ item }}"
+        regexp: '^(\s*session\s+(required|optional)\s+pam_motd\.so\s+(.*\bmotd=/run/motd\.dynamic\b.*|noupdate.*))$'
+        replace: '# \1'
+      loop: "{{ discovered_pam_motd_dynamic.stdout_lines }}"
+
+    - name: "1.6.4 | PATCH | Ensure pam_motd is configured | Set site motd content in static motd files"
+      when: item != '/run/motd.dynamic'
+      ansible.builtin.template:
+        src: etc/motd.j2
+        dest: "{{ item }}"
         mode: 'u-x,go-wx'
+      loop: "{{ discovered_pam_motd_paths.stdout_lines }}"
 
-- name: "1.6.5 | PATCH | Ensure access to /etc/issue is configured"
+    - name: "1.6.4 | WARN | Ensure pam_motd is configured | Dynamic motd left enabled"
+      when:
+        - not ubtu24cis_disable_dynamic_motd
+        - discovered_pam_motd_dynamic.stdout_lines | length > 0
+      ansible.builtin.debug:
+        msg: "Warning!! pam_motd shows /run/motd.dynamic, which includes the OS name; set ubtu24cis_disable_dynamic_motd: true or review it against site policy"
+
+    - name: "1.6.4 | WARN | Ensure pam_motd is configured | Dynamic motd left enabled | warn_count"
+      when:
+        - not ubtu24cis_disable_dynamic_motd
+        - discovered_pam_motd_dynamic.stdout_lines | length > 0
+      ansible.builtin.import_tasks:
+        file: warning_facts.yml
+      vars:
+        warn_control_id: '1.6.4'
+
+- name: "1.6.5 | PATCH | Ensure sshd warning Banner is configured"
   when: ubtu24cis_rule_1_6_5
   tags:
     - level1-server
@@ -114,17 +142,19 @@
     - automated
     - patch
     - rule_1.6.5
-    - NIST800-53R5_AC-3
-    - NIST800-53R5_MP-2
-    - permissions
+    - NIST800-53R5_CM-1
+    - NIST800-53R5_CM-3
+    - NIST800-53R5_CM-6
     - banner
-  ansible.builtin.file:
-    path: /etc/issue
+    - sshd
+  ansible.builtin.template:
+    src: etc/issue.net.j2
+    dest: "{{ ubtu24cis_sshd_banner_file }}"
     owner: root
     group: root
     mode: 'u-x,go-wx'
 
-- name: "1.6.6 | PATCH | Ensure access to /etc/issue.net is configured"
+- name: "1.6.6 | PATCH | Ensure access to /etc/motd is configured"
   when: ubtu24cis_rule_1_6_6
   tags:
     - level1-server
@@ -135,9 +165,100 @@
     - NIST800-53R5_AC-3
     - NIST800-53R5_MP-2
     - permissions
+    - motd
+  ansible.builtin.file:
+    path: /etc/motd
+    owner: root
+    group: root
+    mode: 'u-x,go-wx'
+
+- name: "1.6.7 | PATCH | Ensure access to /etc/issue is configured"
+  when: ubtu24cis_rule_1_6_7
+  tags:
+    - level1-server
+    - level1-workstation
+    - automated
+    - patch
+    - rule_1.6.7
+    - NIST800-53R5_AC-3
+    - NIST800-53R5_MP-2
+    - permissions
+    - banner
+  ansible.builtin.file:
+    path: /etc/issue
+    owner: root
+    group: root
+    mode: 'u-x,go-wx'
+
+- name: "1.6.8 | PATCH | Ensure access to /etc/issue.net is configured"
+  when: ubtu24cis_rule_1_6_8
+  tags:
+    - level1-server
+    - level1-workstation
+    - automated
+    - patch
+    - rule_1.6.8
+    - NIST800-53R5_AC-3
+    - NIST800-53R5_MP-2
+    - permissions
     - banner
   ansible.builtin.file:
     path: /etc/issue.net
+    owner: root
+    group: root
+    mode: 'u-x,go-wx'
+
+- name: "1.6.9 | PATCH | Ensure access to pam_motd file is configured"
+  when: ubtu24cis_rule_1_6_9
+  tags:
+    - level1-server
+    - level1-workstation
+    - automated
+    - patch
+    - rule_1.6.9
+    - NIST800-53R5_AC-3
+    - NIST800-53R5_MP-2
+    - permissions
+    - motd
+  block:
+    - name: "1.6.9 | AUDIT | Ensure access to pam_motd file is configured | Discover pam_motd paths"
+      # pam.d may reference a motd path that does not exist - e.g. /run/motd.dynamic
+      # once 1.6.4 has disabled dynamic motd - so only emit paths present on disk.
+      ansible.builtin.shell: |
+        set -o pipefail
+        grep -hPo 'motd=\K\S+' /etc/pam.d/* | sort -u | while read -r f; do [ -e "$f" ] && echo "$f"; done
+      args:
+        executable: "{{ ubtu24cis_shell_executable }}"
+      changed_when: false
+      failed_when: discovered_pam_motd_files.rc not in [0, 1]
+      check_mode: false
+      register: discovered_pam_motd_files
+
+    - name: "1.6.9 | PATCH | Ensure access to pam_motd file is configured | Set permissions"
+      when: discovered_pam_motd_files.stdout_lines | length > 0
+      ansible.builtin.file:
+        path: "{{ item }}"
+        owner: root
+        group: root
+        mode: 'u-x,go-wx'
+      loop: "{{ discovered_pam_motd_files.stdout_lines }}"
+      loop_control:
+        label: "{{ item }}"
+
+- name: "1.6.10 | PATCH | Ensure access to sshd warning banner is configured"
+  when: ubtu24cis_rule_1_6_10
+  tags:
+    - level1-server
+    - level1-workstation
+    - automated
+    - patch
+    - rule_1.6.10
+    - NIST800-53R5_AC-3
+    - NIST800-53R5_MP-2
+    - permissions
+    - banner
+  ansible.builtin.file:
+    path: "{{ ubtu24cis_sshd_banner_file }}"
     owner: root
     group: root
     mode: 'u-x,go-wx'

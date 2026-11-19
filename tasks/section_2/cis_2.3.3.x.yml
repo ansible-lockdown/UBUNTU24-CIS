@@ -1,6 +1,6 @@
 ---
 
-- name: "2.3.3.1 | PATCH | Ensure chrony is configured with authorized timeserver"
+- name: "2.3.3.1 | PATCH | Ensure chrony is configured"
   when: ubtu24cis_rule_2_3_3_1
   tags:
     - level1-server
@@ -12,7 +12,7 @@
     - NIST800-53R5_AU-12
     - chrony
   block:
-    - name: "2.3.3.1 | PATCH | Ensure chrony is configured with authorized timeserver | sources"
+    - name: "2.3.3.1 | PATCH | Ensure chrony is configured | sources"
       ansible.builtin.template:
         src: "{{ item }}.j2"
         dest: "/{{ item }}"
@@ -26,7 +26,7 @@
         label: "{{ item }}"
       notify: Restart timeservice
 
-    - name: "2.3.3.1 | PATCH | Ensure chrony is configured with authorized timeserver | load sources"
+    - name: "2.3.3.1 | PATCH | Ensure chrony is configured | load sources"
       ansible.builtin.lineinfile:
         path: /etc/chrony/chrony.conf
         regexp: '^sourcedir /etc/chrony/sources.d'

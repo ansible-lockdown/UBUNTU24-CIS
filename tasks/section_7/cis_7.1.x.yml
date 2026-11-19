@@ -1,6 +1,6 @@
 ---
 
-- name: "7.1.1 | PATCH | Ensure permissions on /etc/passwd are configured"
+- name: "7.1.1 | PATCH | Ensure access to /etc/passwd is configured"
   when: ubtu24cis_rule_7_1_1
   tags:
     - level1-server
@@ -17,7 +17,7 @@
     group: root
     mode: 'u-x,go-wx'
 
-- name: "7.1.2 | PATCH | Ensure permissions on /etc/passwd- are configured"
+- name: "7.1.2 | PATCH | Ensure access to /etc/passwd- is configured"
   when: ubtu24cis_rule_7_1_2
   tags:
     - level1-server
@@ -36,7 +36,7 @@
   failed_when: discovered_file_exists_password_hyphen.state not in '[ file, absent ]'
   register: discovered_file_exists_password_hyphen
 
-- name: "7.1.3 | PATCH | Ensure permissions on /etc/group are configured"
+- name: "7.1.3 | PATCH | Ensure access to /etc/group is configured"
   when: ubtu24cis_rule_7_1_3
   tags:
     - level1-server
@@ -53,7 +53,7 @@
     group: root
     mode: 'u-x,go-wx'
 
-- name: "7.1.4 | PATCH | Ensure permissions on /etc/group- are configured"
+- name: "7.1.4 | PATCH | Ensure access to /etc/group- is configured"
   when: ubtu24cis_rule_7_1_4
   tags:
     - level1-server
@@ -72,7 +72,7 @@
   failed_when: discovered_file_exists_group_hyphen.state not in '[ file, absent ]'
   register: discovered_file_exists_group_hyphen
 
-- name: "7.1.5 | PATCH | Ensure permissions on /etc/shadow are configured"
+- name: "7.1.5 | PATCH | Ensure access to /etc/shadow is configured"
   when: ubtu24cis_rule_7_1_5
   tags:
     - level1-server
@@ -89,7 +89,7 @@
     group: root
     mode: 'u-x,g-wx,o-rwx'
 
-- name: "7.1.6 | PATCH | Ensure permissions on /etc/shadow- are configured"
+- name: "7.1.6 | PATCH | Ensure access to /etc/shadow- is configured"
   when: ubtu24cis_rule_7_1_6
   tags:
     - level1-server
@@ -108,7 +108,7 @@
   failed_when: discovered_file_exists_shadow_hyphen.state not in '[ file, absent ]'
   register: discovered_file_exists_shadow_hyphen
 
-- name: "7.1.7 | PATCH | Ensure permissions on /etc/gshadow are configured"
+- name: "7.1.7 | PATCH | Ensure access to /etc/gshadow is configured"
   when: ubtu24cis_rule_7_1_7
   tags:
     - level1-server
@@ -125,7 +125,7 @@
     group: root
     mode: 'u-x,g-wx,o-rwx'
 
-- name: "7.1.8 | PATCH | Ensure permissions on /etc/gshadow- are configured"
+- name: "7.1.8 | PATCH | Ensure access to /etc/gshadow- is configured"
   when: ubtu24cis_rule_7_1_8
   tags:
     - level1-server
@@ -144,7 +144,7 @@
   failed_when: discovered_file_exists_gshadow_hyphen.state not in '[ file, absent ]'
   register: discovered_file_exists_gshadow_hyphen
 
-- name: "7.1.9 | PATCH | Ensure permissions on /etc/shells are configured"
+- name: "7.1.9 | PATCH | Ensure access to /etc/shells is configured"
   when: ubtu24cis_rule_7_1_9
   tags:
     - level1-server
@@ -161,7 +161,7 @@
     group: root
     mode: 'u-x,go-wx'
 
-- name: "7.1.10 | PATCH | Ensure permissions on /etc/security/opasswd are configured"
+- name: "7.1.10 | PATCH | Ensure access to /etc/security/opasswd is configured"
   when: ubtu24cis_rule_7_1_10
   tags:
     - level1-server
@@ -216,7 +216,7 @@
       ansible.builtin.file:
         path: '{{ item }}'
         mode: 'o-w'
-        state: file
+        state: touch
       loop: "{{ discovered_worldwriteable_files.stdout_lines }}"
       loop_control:
         label: "{{ item }}"
