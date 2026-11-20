@@ -1,368 +1,143 @@
 ---
 
-- name: "3.3.1 | PATCH | Ensure IP forwarding is disabled"
-  when:
-    - ubtu24cis_rule_3_3_1
-    - not ubtu24cis_is_router
+- name: "3.3.x | PATCH | Ensure network kernel parameters are not overridden"
   tags:
     - level1-server
     - level1-workstation
+    - level2-server
     - automated
     - patch
-    - rule_3.3.1
-    - NIST800-53R5_CM-1
-    - NIST800-53R5_CM-2
+    - rule_3.3.1.1
+    - rule_3.3.1.2
+    - rule_3.3.1.3
+    - rule_3.3.1.4
+    - rule_3.3.1.5
+    - rule_3.3.1.6
+    - rule_3.3.1.7
+    - rule_3.3.1.8
+    - rule_3.3.1.9
+    - rule_3.3.1.10
+    - rule_3.3.1.11
+    - rule_3.3.1.12
+    - rule_3.3.1.13
+    - rule_3.3.1.14
+    - rule_3.3.1.15
+    - rule_3.3.1.16
+    - rule_3.3.1.17
+    - rule_3.3.1.18
+    - rule_3.3.2.1
+    - rule_3.3.2.2
+    - rule_3.3.2.3
+    - rule_3.3.2.4
+    - rule_3.3.2.5
+    - rule_3.3.2.6
+    - rule_3.3.2.7
+    - rule_3.3.2.8
     - NIST800-53R5_CM-6
-    - NIST800-53R5_CM-7
-    - NIST800-53R5_IA-5
-    - ip_forwarding
     - sysctl
   block:
-    - name: "3.3.1 | PATCH | Ensure IP forwarding is disabled | IPv4 settings"
-      ansible.posix.sysctl:
-        name: net.ipv4.ip_forward
-        value: '0'
-        sysctl_set: true
-        sysctl_file: "{{ ubtu24cis_sysctl_network_conf }}"
-        state: present
-        reload: true
-        ignoreerrors: true
-      notify: Flush ipv4 route table
+    - name: "3.3.x | AUDIT | Ensure network kernel parameters are not overridden | Discover conflicting entries"
+      ansible.builtin.shell:
+        cmd: |
+          set -o pipefail
+          export LC_ALL=C
+          ufw_file="$(awk -F= '/^[[:space:]]*IPT_SYSCTL=/ {gsub(/["[:space:]]/, "", $2); print $2}' /etc/default/ufw 2>/dev/null | tail -n 1)"
+          target_file="$(readlink -f {{ ubtu24cis_sysctl_network_conf }})"
+          target_name=""
+          for conf_file in /etc/sysctl.d/*.conf; do
+            [ "$(readlink -f "$conf_file")" = "$target_file" ] && target_name="$(basename "$conf_file")"
+          done
+          conf_files=()
+          seen_names=" "
+          for conf_file in /etc/sysctl.d/*.conf /run/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf; do
+            [ -f "$conf_file" ] || continue
+            case "$seen_names" in *" $(basename "$conf_file") "*) continue ;; esac
+            seen_names="${seen_names}$(basename "$conf_file") "
+            conf_files+=("$(readlink -f "$conf_file")")
+          done
+          for conf_file in /etc/sysctl.conf ${ufw_file}; do
+            [ -f "$conf_file" ] && conf_files+=("$(readlink -f "$conf_file")")
+          done
+          mapfile -t conf_files < <(printf '%s\n' "${conf_files[@]}" | sort -u | grep -vxF -- "$target_file")
+          [ -n "${conf_files[0]:-}" ] || exit 0
+          while read -r param_name param_value; do
+            [ -n "$param_name" ] || continue
+            awk -v key="$param_name" -v want="$param_value" -v target_name="$target_name" -v ufw_file="$(readlink -f "${ufw_file:-/nonexistent}")" '
+              /^[[:space:]]*[#;]/ { next }
+              index($0, "=") == 0 { next }
+              {
+                name = substr($0, 1, index($0, "=") - 1)
+                value = substr($0, index($0, "=") + 1)
+                gsub(/[[:space:]]/, "", name)
+                sub(/^-/, "", name)
+                gsub(/\//, ".", name)
+                gsub(/^[[:space:]]+|[[:space:]]+$/, "", value)
+                if (name != key || value == want) next
+                base_count = split(FILENAME, path_parts, "/")
+                if (FILENAME ~ /^\/etc\//) status = "edit"
+                else if (FILENAME != ufw_file && target_name != "" && path_parts[base_count] < target_name) status = "overridden"
+                else status = "warn"
+                print FILENAME "|" key "|" want "|" status
+              }' "${conf_files[@]}"
+          done <<'EOF'
+          {% for item in ubtu24cis_sysctl_network_params if lookup('vars', item.rule) and not (item.router and ubtu24cis_is_router) and (ubtu24cis_ipv6_required or not item.ipv6) %}
+          {{ item.name }} {{ item.value }}
+          {% endfor %}
+          EOF
+        executable: "{{ ubtu24cis_shell_executable }}"
+      vars:
+        ubtu24cis_sysctl_network_params:
+          - { rule: ubtu24cis_rule_3_3_1_1, name: net.ipv4.ip_forward, value: '0', router: true, ipv6: false }
+          - { rule: ubtu24cis_rule_3_3_1_2, name: net.ipv4.conf.all.forwarding, value: '0', router: true, ipv6: false }
+          - { rule: ubtu24cis_rule_3_3_1_3, name: net.ipv4.conf.default.forwarding, value: '0', router: true, ipv6: false }
+          - { rule: ubtu24cis_rule_3_3_1_4, name: net.ipv4.conf.all.send_redirects, value: '0', router: true, ipv6: false }
+          - { rule: ubtu24cis_rule_3_3_1_5, name: net.ipv4.conf.default.send_redirects, value: '0', router: true, ipv6: false }
+          - { rule: ubtu24cis_rule_3_3_1_6, name: net.ipv4.icmp_ignore_bogus_error_responses, value: '1', router: false, ipv6: false }
+          - { rule: ubtu24cis_rule_3_3_1_7, name: net.ipv4.icmp_echo_ignore_broadcasts, value: '1', router: false, ipv6: false }
+          - { rule: ubtu24cis_rule_3_3_1_8, name: net.ipv4.conf.all.accept_redirects, value: '0', router: false, ipv6: false }
+          - { rule: ubtu24cis_rule_3_3_1_9, name: net.ipv4.conf.default.accept_redirects, value: '0', router: false, ipv6: false }
+          - { rule: ubtu24cis_rule_3_3_1_10, name: net.ipv4.conf.all.secure_redirects, value: '0', router: false, ipv6: false }
+          - { rule: ubtu24cis_rule_3_3_1_11, name: net.ipv4.conf.default.secure_redirects, value: '0', router: false, ipv6: false }
+          - { rule: ubtu24cis_rule_3_3_1_12, name: net.ipv4.conf.all.rp_filter, value: '1', router: false, ipv6: false }
+          - { rule: ubtu24cis_rule_3_3_1_13, name: net.ipv4.conf.default.rp_filter, value: '1', router: false, ipv6: false }
+          - { rule: ubtu24cis_rule_3_3_1_14, name: net.ipv4.conf.all.accept_source_route, value: '0', router: true, ipv6: false }
+          - { rule: ubtu24cis_rule_3_3_1_15, name: net.ipv4.conf.default.accept_source_route, value: '0', router: true, ipv6: false }
+          - { rule: ubtu24cis_rule_3_3_1_16, name: net.ipv4.conf.all.log_martians, value: '1', router: false, ipv6: false }
+          - { rule: ubtu24cis_rule_3_3_1_17, name: net.ipv4.conf.default.log_martians, value: '1', router: false, ipv6: false }
+          - { rule: ubtu24cis_rule_3_3_1_18, name: net.ipv4.tcp_syncookies, value: '1', router: false, ipv6: false }
+          - { rule: ubtu24cis_rule_3_3_2_1, name: net.ipv6.conf.all.forwarding, value: '0', router: true, ipv6: true }
+          - { rule: ubtu24cis_rule_3_3_2_2, name: net.ipv6.conf.default.forwarding, value: '0', router: true, ipv6: true }
+          - { rule: ubtu24cis_rule_3_3_2_3, name: net.ipv6.conf.all.accept_redirects, value: '0', router: false, ipv6: true }
+          - { rule: ubtu24cis_rule_3_3_2_4, name: net.ipv6.conf.default.accept_redirects, value: '0', router: false, ipv6: true }
+          - { rule: ubtu24cis_rule_3_3_2_5, name: net.ipv6.conf.all.accept_source_route, value: '0', router: true, ipv6: true }
+          - { rule: ubtu24cis_rule_3_3_2_6, name: net.ipv6.conf.default.accept_source_route, value: '0', router: true, ipv6: true }
+          - { rule: ubtu24cis_rule_3_3_2_7, name: net.ipv6.conf.all.accept_ra, value: '0', router: false, ipv6: true }
+          - { rule: ubtu24cis_rule_3_3_2_8, name: net.ipv6.conf.default.accept_ra, value: '0', router: false, ipv6: true }
+      changed_when: false
+      failed_when: discovered_sysctl_network_conflicts.rc != 0
+      check_mode: false
+      register: discovered_sysctl_network_conflicts
 
-    - name: "3.3.1 | PATCH | Ensure IP forwarding is disabled | IPv6 settings"
-      when: ubtu24cis_ipv6_required
-      ansible.posix.sysctl:
-        name: net.ipv6.conf.all.forwarding
-        value: '0'
-        sysctl_set: true
-        sysctl_file: "{{ ubtu24cis_sysctl_network_conf }}"
-        state: present
-        reload: true
-        ignoreerrors: true
-      notify: Flush ipv6 route table
+    - name: "3.3.x | PATCH | Ensure network kernel parameters are not overridden | Comment out conflicting entries in /etc"
+      when: item.split('|')[3] == 'edit'
+      ansible.builtin.replace:
+        path: "{{ item.split('|')[0] }}"
+        regexp: "^(\\s*-?{{ item.split('|')[1] | replace('.', '[./]') }}\\s*=\\s*(?!{{ item.split('|')[2] }}\\s*$).*)$"
+        replace: '# \1'
+      loop: "{{ discovered_sysctl_network_conflicts.stdout_lines | unique }}"
 
-- name: "3.3.2 | PATCH | Ensure packet redirect sending is disabled"
-  when:
-    - ubtu24cis_rule_3_3_2
-    - not ubtu24cis_is_router
-  tags:
-    - level1-server
-    - level1-workstation
-    - automated
-    - patch
-    - rule_3.3.2
-    - NIST800-53R5_CM-1
-    - NIST800-53R5_CM-2
-    - NIST800-53R5_CM-6
-    - NIST800-53R5_CM-7
-    - NIST800-53R5_IA-5
-    - packet_redirect
-    - sysctl
-  ansible.posix.sysctl:
-    name: "{{ item }}"
-    value: '0'
-    sysctl_set: true
-    sysctl_file: "{{ ubtu24cis_sysctl_network_conf }}"
-    state: present
-    reload: true
-    ignoreerrors: true
-  loop:
-    - net.ipv4.conf.all.send_redirects
-    - net.ipv4.conf.default.send_redirects
-  loop_control:
-    label: "{{ item }}"
-  notify: Flush ipv4 route table
+    - name: "3.3.x | AUDIT | Ensure network kernel parameters are not overridden | Warn on package-owned conflicting entries"
+      when: discovered_sysctl_network_conflicts.stdout_lines | select('search', '[|]warn$') | list | length > 0
+      ansible.builtin.debug:
+        msg:
+          - "Warning!! The following sysctl files outside /etc set a network parameter to a non-compliant value that is applied after {{ ubtu24cis_sysctl_network_conf }}"
+          - "They are package-owned or runtime files and are not edited by this role"
+          - "Shadow them with an /etc/sysctl.d file of the same name or set the value in a file that sorts later (file|parameter|required value|status)"
+          - "{{ discovered_sysctl_network_conflicts.stdout_lines | select('search', '[|]warn$') | unique }}"
 
-- name: "3.3.3 | PATCH | Ensure bogus ICMP responses are ignored"
-  when: ubtu24cis_rule_3_3_3
-  tags:
-    - level1-server
-    - level1-workstation
-    - automated
-    - patch
-    - rule_3.3.3
-    - NIST800-53R5_CM-1
-    - NIST800-53R5_CM-2
-    - NIST800-53R5_CM-6
-    - NIST800-53R5_CM-7
-    - NIST800-53R5_IA-5
-    - icmp
-    - sysctl
-  ansible.posix.sysctl:
-    name: net.ipv4.icmp_ignore_bogus_error_responses
-    value: '1'
-    sysctl_set: true
-    sysctl_file: "{{ ubtu24cis_sysctl_network_conf }}"
-    state: present
-    reload: true
-    ignoreerrors: true
-  notify: Flush ipv4 route table
-
-- name: "3.3.4 | PATCH | Ensure broadcast ICMP requests are ignored"
-  when: ubtu24cis_rule_3_3_4
-  tags:
-    - level1-server
-    - level1-workstation
-    - automated
-    - patch
-    - rule_3.3.4
-    - NIST800-53R5_CM-1
-    - NIST800-53R5_CM-2
-    - NIST800-53R5_CM-6
-    - NIST800-53R5_CM-7
-    - NIST800-53R5_IA-5
-    - icmp
-    - sysctl
-  ansible.posix.sysctl:
-    name: net.ipv4.icmp_echo_ignore_broadcasts
-    value: '1'
-    sysctl_set: true
-    sysctl_file: "{{ ubtu24cis_sysctl_network_conf }}"
-    state: present
-    reload: true
-    ignoreerrors: true
-  notify: Flush ipv4 route table
-
-- name: "3.3.5 | PATCH | Ensure ICMP redirects are not accepted"
-  when: ubtu24cis_rule_3_3_5
-  tags:
-    - level1-server
-    - level1-workstation
-    - automated
-    - patch
-    - rule_3.3.5
-    - NIST800-53R5_CM-1
-    - NIST800-53R5_CM-2
-    - NIST800-53R5_CM-6
-    - NIST800-53R5_CM-7
-    - NIST800-53R5_IA-5
-    - icmp
-    - sysctl
-  block:
-    - name: "3.3.5 | PATCH | Ensure ICMP redirects are not accepted | IPv4 settings"
-      ansible.posix.sysctl:
-        name: "{{ item }}"
-        value: '0'
-        sysctl_set: true
-        sysctl_file: "{{ ubtu24cis_sysctl_network_conf }}"
-        state: present
-        reload: true
-        ignoreerrors: true
-      loop:
-        - net.ipv4.conf.all.accept_redirects
-        - net.ipv4.conf.default.accept_redirects
-      notify: Flush ipv4 route table
-
-    - name: "3.3.5 | PATCH | Ensure ICMP redirects are not accepted | IPv6 settings"
-      ansible.posix.sysctl:
-        name: "{{ item }}"
-        value: '0'
-        sysctl_set: true
-        sysctl_file: "{{ ubtu24cis_sysctl_network_conf }}"
-        state: present
-        reload: true
-        ignoreerrors: true
-      when: ubtu24cis_ipv6_required
-      loop:
-        - net.ipv6.conf.all.accept_redirects
-        - net.ipv6.conf.default.accept_redirects
-      loop_control:
-        label: "{{ item }}"
-      notify: Flush ipv6 route table
-
-- name: "3.3.6 | PATCH | Ensure secure ICMP redirects are not accepted"
-  when: ubtu24cis_rule_3_3_6
-  tags:
-    - level1-server
-    - level1-workstation
-    - automated
-    - patch
-    - rule_3.3.6
-    - NIST800-53R5_CM-1
-    - NIST800-53R5_CM-2
-    - NIST800-53R5_CM-6
-    - NIST800-53R5_CM-7
-    - NIST800-53R5_IA-5
-    - icmp
-    - sysctl
-  ansible.posix.sysctl:
-    name: "{{ item }}"
-    value: '0'
-    sysctl_set: true
-    sysctl_file: "{{ ubtu24cis_sysctl_network_conf }}"
-    state: present
-    reload: true
-    ignoreerrors: true
-  loop:
-    - net.ipv4.conf.all.secure_redirects
-    - net.ipv4.conf.default.secure_redirects
-  loop_control:
-    label: "{{ item }}"
-  notify: Flush ipv4 route table
-
-- name: "3.3.7 | PATCH | Ensure Reverse Path Filtering is enabled"
-  when: ubtu24cis_rule_3_3_7
-  tags:
-    - level1-server
-    - level1-workstation
-    - automated
-    - patch
-    - rule_3.3.7
-    - NIST800-53R5_CM-1
-    - NIST800-53R5_CM-2
-    - NIST800-53R5_CM-6
-    - NIST800-53R5_CM-7
-    - NIST800-53R5_IA-5
-    - reverse_path_filtering
-    - sysctl
-  ansible.posix.sysctl:
-    name: "{{ item }}"
-    value: '1'
-    sysctl_set: true
-    sysctl_file: "{{ ubtu24cis_sysctl_network_conf }}"
-    state: present
-    reload: true
-    ignoreerrors: true
-  loop:
-    - net.ipv4.conf.all.rp_filter
-    - net.ipv4.conf.default.rp_filter
-  loop_control:
-    label: "{{ item }}"
-  notify: Flush ipv4 route table
-
-- name: "3.3.8 | PATCH | Ensure source routed packets are not accepted"
-  when:
-    - ubtu24cis_rule_3_3_8
-    - not ubtu24cis_is_router
-  tags:
-    - level1-server
-    - level1-workstation
-    - automated
-    - patch
-    - rule_3.3.8
-    - NIST800-53R5_CM-1
-    - NIST800-53R5_CM-2
-    - NIST800-53R5_CM-6
-    - NIST800-53R5_CM-7
-    - NIST800-53R5_IA-5
-    - routed_packets
-    - sysctl
-  block:
-    - name: "3.3.8 | PATCH | Ensure source routed packets are not accepted | IPv4 settings"
-      ansible.posix.sysctl:
-        name: "{{ item }}"
-        value: '0'
-        sysctl_set: true
-        sysctl_file: "{{ ubtu24cis_sysctl_network_conf }}"
-        state: present
-        reload: true
-        ignoreerrors: true
-      loop:
-        - net.ipv4.conf.all.accept_source_route
-        - net.ipv4.conf.default.accept_source_route
-      notify: Flush ipv4 route table
-
-    - name: "3.3.8 | PATCH | Ensure source routed packets are not accepted | IPv6 settings"
-      ansible.posix.sysctl:
-        name: "{{ item }}"
-        value: '0'
-        sysctl_set: true
-        sysctl_file: "{{ ubtu24cis_sysctl_network_conf }}"
-        state: present
-        reload: true
-        ignoreerrors: true
-      when: ubtu24cis_ipv6_required
-      loop:
-        - net.ipv6.conf.all.accept_source_route
-        - net.ipv6.conf.default.accept_source_route
-      loop_control:
-        label: "{{ item }}"
-      notify: Flush ipv6 route table
-
-- name: "3.3.9 | PATCH | Ensure suspicious packets are logged"
-  when: ubtu24cis_rule_3_3_9
-  tags:
-    - level1-server
-    - level1-workstation
-    - automated
-    - patch
-    - rule_3.3.9
-    - NIST800-53R5_CM-1
-    - NIST800-53R5_CM-2
-    - NIST800-53R5_CM-6
-    - NIST800-53R5_CM-7
-    - NIST800-53R5_IA-5
-    - suspicious_packets
-    - sysctl
-  ansible.posix.sysctl:
-    name: "{{ item }}"
-    value: '1'
-    sysctl_set: true
-    sysctl_file: "{{ ubtu24cis_sysctl_network_conf }}"
-    state: present
-    reload: true
-    ignoreerrors: true
-  loop:
-    - net.ipv4.conf.all.log_martians
-    - net.ipv4.conf.default.log_martians
-  loop_control:
-    label: "{{ item }}"
-  notify: Flush ipv4 route table
-
-- name: "3.3.10 | PATCH | Ensure tcp syn cookies is enabled"
-  when: ubtu24cis_rule_3_3_10
-  tags:
-    - level1-server
-    - level1-workstation
-    - automated
-    - patch
-    - rule_3.3.10
-    - NIST800-53R5_CM-1
-    - NIST800-53R5_CM-2
-    - NIST800-53R5_CM-6
-    - NIST800-53R5_CM-7
-    - NIST800-53R5_IA-5
-    - tcp_syn_cookies
-    - sysctl
-  ansible.posix.sysctl:
-    name: net.ipv4.tcp_syncookies
-    value: '1'
-    sysctl_set: true
-    sysctl_file: "{{ ubtu24cis_sysctl_network_conf }}"
-    state: present
-    reload: true
-    ignoreerrors: true
-  notify: Flush ipv4 route table
-
-- name: "3.3.11 | PATCH | Ensure IPv6 router advertisements are not accepted"
-  when:
-    - ubtu24cis_rule_3_3_11
-    - ubtu24cis_ipv6_required
-  tags:
-    - level1-server
-    - level1-workstation
-    - automated
-    - patch
-    - rule_3.3.11
-    - NIST800-53R5_CM-1
-    - NIST800-53R5_CM-2
-    - NIST800-53R5_CM-6
-    - NIST800-53R5_CM-7
-    - NIST800-53R5_IA-5
-    - ipv6
-    - router_advertisements
-    - sysctl
-  ansible.posix.sysctl:
-    name: "{{ item }}"
-    value: '0'
-    sysctl_set: true
-    sysctl_file: "{{ ubtu24cis_sysctl_network_conf }}"
-    state: present
-    reload: true
-    ignoreerrors: true
-  loop:
-    - net.ipv6.conf.all.accept_ra
-    - net.ipv6.conf.default.accept_ra
-  loop_control:
-    label: "{{ item }}"
-  notify: Flush ipv6 route table
+    - name: "3.3.x | WARN | Ensure network kernel parameters are not overridden | warn_count"
+      when: discovered_sysctl_network_conflicts.stdout_lines | select('search', '[|]warn$') | list | length > 0
+      ansible.builtin.import_tasks:
+        file: warning_facts.yml
+      vars:
+        warn_control_id: '3.3.x'

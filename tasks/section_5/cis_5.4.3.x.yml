@@ -71,13 +71,14 @@
     - NIST800-53R5_AC-3
     - NIST800-53R5_MP-2
   block:
-    - name: "5.4.3.3 | PATCH | Ensure default user umask is configured | update current settings"
+    - name: "5.4.3.3 | PATCH | Ensure default user umask is configured | tighten weak settings"
       ansible.builtin.replace:
         path: "{{ item.path }}"
-        regexp: '(?i)^([ \t]*)umask[ \t]+[0-7]{3,4}\b'
-        replace: '\1{{ item.line }} {{ ubtu24cis_bash_umask }}'
+        regexp: '(?i)^(\s*)umask\s+(?!(?:0?[0-7][2367]7|u=[rwx]{0,3},g=[rx]{0,2},o=)(?:[\s#;]|$))[^\s#;]+'
+        replace: '\g<1>{{ item.line }} {{ ubtu24cis_bash_umask }}'
       loop:
         - { path: '/etc/profile', line: 'umask' }
+        - { path: '/etc/bash.bashrc', line: 'umask' }
         - { path: '/etc/login.defs', line: 'UMASK' }
       loop_control:
         label: "{{ item }}"

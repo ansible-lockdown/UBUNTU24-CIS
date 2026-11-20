@@ -44,6 +44,7 @@ ubtu24cis_rule_1_1_1_7: {{ ubtu24cis_rule_1_1_1_7 }}
 ubtu24cis_rule_1_1_1_8: {{ ubtu24cis_rule_1_1_1_8 }}
 ubtu24cis_rule_1_1_1_9: {{ ubtu24cis_rule_1_1_1_9 }}
 ubtu24cis_rule_1_1_1_10: {{ ubtu24cis_rule_1_1_1_10 }}
+ubtu24cis_rule_1_1_1_11: {{ ubtu24cis_rule_1_1_1_11 }}
 
 # 1.1.2 Configure Filesystem Partitions
 # /tmp
@@ -92,6 +93,13 @@ ubtu24cis_rule_1_1_2_7_4: {{ ubtu24cis_rule_1_1_2_7_4 }}
 # 1.2.1 Configure Package repositories
 ubtu24cis_rule_1_2_1_1: {{ ubtu24cis_rule_1_2_1_1 }}
 ubtu24cis_rule_1_2_1_2: {{ ubtu24cis_rule_1_2_1_2 }}
+ubtu24cis_rule_1_2_1_3: {{ ubtu24cis_rule_1_2_1_3 }}
+ubtu24cis_rule_1_2_1_4: {{ ubtu24cis_rule_1_2_1_4 }}
+ubtu24cis_rule_1_2_1_5: {{ ubtu24cis_rule_1_2_1_5 }}
+ubtu24cis_rule_1_2_1_6: {{ ubtu24cis_rule_1_2_1_6 }}
+ubtu24cis_rule_1_2_1_7: {{ ubtu24cis_rule_1_2_1_7 }}
+ubtu24cis_rule_1_2_1_8: {{ ubtu24cis_rule_1_2_1_8 }}
+ubtu24cis_rule_1_2_1_9: {{ ubtu24cis_rule_1_2_1_9 }}
 # 1.2.2 Configure Package updates
 ubtu24cis_rule_1_2_2_1: {{ ubtu24cis_rule_1_2_2_1 }}
 
@@ -105,13 +113,20 @@ ubtu24cis_rule_1_3_1_4: {{ ubtu24cis_rule_1_3_1_4 }}
 # 1.4 Configure Bootloader
 ubtu24cis_rule_1_4_1: {{ ubtu24cis_rule_1_4_1 }}
 ubtu24cis_rule_1_4_2: {{ ubtu24cis_rule_1_4_2 }}
-
-# 1.5 Configure additional Process Hardening
 ubtu24cis_rule_1_5_1: {{ ubtu24cis_rule_1_5_1 }}
 ubtu24cis_rule_1_5_2: {{ ubtu24cis_rule_1_5_2 }}
+
+# 1.5 Configure additional Process Hardening
+ubtu24cis_rule_1_5_9: {{ ubtu24cis_rule_1_5_9 }}
 ubtu24cis_rule_1_5_3: {{ ubtu24cis_rule_1_5_3 }}
 ubtu24cis_rule_1_5_4: {{ ubtu24cis_rule_1_5_4 }}
 ubtu24cis_rule_1_5_5: {{ ubtu24cis_rule_1_5_5 }}
+ubtu24cis_rule_1_5_6: {{ ubtu24cis_rule_1_5_6 }}
+ubtu24cis_rule_1_5_7: {{ ubtu24cis_rule_1_5_7 }}
+ubtu24cis_rule_1_5_8: {{ ubtu24cis_rule_1_5_8 }}
+ubtu24cis_rule_1_5_10: {{ ubtu24cis_rule_1_5_10 }}
+ubtu24cis_rule_1_5_11: {{ ubtu24cis_rule_1_5_11 }}
+ubtu24cis_rule_1_5_12: {{ ubtu24cis_rule_1_5_12 }}
 
 # 1.6 Configure Command Line Warning Banners
 ubtu24cis_rule_1_6_1: {{ ubtu24cis_rule_1_6_1 }}
@@ -120,6 +135,10 @@ ubtu24cis_rule_1_6_3: {{ ubtu24cis_rule_1_6_3 }}
 ubtu24cis_rule_1_6_4: {{ ubtu24cis_rule_1_6_4 }}
 ubtu24cis_rule_1_6_5: {{ ubtu24cis_rule_1_6_5 }}
 ubtu24cis_rule_1_6_6: {{ ubtu24cis_rule_1_6_6 }}
+ubtu24cis_rule_1_6_7: {{ ubtu24cis_rule_1_6_7 }}
+ubtu24cis_rule_1_6_8: {{ ubtu24cis_rule_1_6_8 }}
+ubtu24cis_rule_1_6_9: {{ ubtu24cis_rule_1_6_9 }}
+ubtu24cis_rule_1_6_10: {{ ubtu24cis_rule_1_6_10 }}
 
 # 1.7 Configure GNOME Display Manager
 ubtu24cis_rule_1_7_1: {{ ubtu24cis_rule_1_7_1 }}
@@ -129,23 +148,17 @@ ubtu24cis_rule_1_7_4: {{ ubtu24cis_rule_1_7_4 }}
 ubtu24cis_rule_1_7_5: {{ ubtu24cis_rule_1_7_5 }}
 ubtu24cis_rule_1_7_6: {{ ubtu24cis_rule_1_7_6 }}
 ubtu24cis_rule_1_7_7: {{ ubtu24cis_rule_1_7_7 }}
-ubtu24cis_rule_1_7_8: {{ ubtu24cis_rule_1_7_8 }}
-ubtu24cis_rule_1_7_9: {{ ubtu24cis_rule_1_7_9 }}
-ubtu24cis_rule_1_7_10: {{ ubtu24cis_rule_1_7_10 }}
 
 ## Section 2 Fixes
 # Section 2 is Services (Special Purpose Services, and service clients)
 
 # 2.1 Configure Server Services
 ubtu24cis_rule_2_1_1: {{ ubtu24cis_rule_2_1_1 }}
-ubtu24cis_rule_2_1_2: {{ ubtu24cis_rule_2_1_2 }}
 ubtu24cis_rule_2_1_3: {{ ubtu24cis_rule_2_1_3 }}
-ubtu24cis_rule_2_1_4: {{ ubtu24cis_rule_2_1_4 }}
 ubtu24cis_rule_2_1_5: {{ ubtu24cis_rule_2_1_5 }}
-ubtu24cis_rule_2_1_6: {{ ubtu24cis_rule_2_1_6 }}
 ubtu24cis_rule_2_1_7: {{ ubtu24cis_rule_2_1_7 }}
-ubtu24cis_rule_2_1_8: {{ ubtu24cis_rule_2_1_8 }}
 ubtu24cis_rule_2_1_9: {{ ubtu24cis_rule_2_1_9 }}
+ubtu24cis_rule_2_1_8: {{ ubtu24cis_rule_2_1_8 }}
 ubtu24cis_rule_2_1_10: {{ ubtu24cis_rule_2_1_10 }}
 ubtu24cis_rule_2_1_11: {{ ubtu24cis_rule_2_1_11 }}
 ubtu24cis_rule_2_1_12: {{ ubtu24cis_rule_2_1_12 }}
@@ -155,10 +168,14 @@ ubtu24cis_rule_2_1_15: {{ ubtu24cis_rule_2_1_15 }}
 ubtu24cis_rule_2_1_16: {{ ubtu24cis_rule_2_1_16 }}
 ubtu24cis_rule_2_1_17: {{ ubtu24cis_rule_2_1_17 }}
 ubtu24cis_rule_2_1_18: {{ ubtu24cis_rule_2_1_18 }}
-ubtu24cis_rule_2_1_19: {{ ubtu24cis_rule_2_1_19 }}
 ubtu24cis_rule_2_1_20: {{ ubtu24cis_rule_2_1_20 }}
 ubtu24cis_rule_2_1_21: {{ ubtu24cis_rule_2_1_21 }}
+ubtu24cis_rule_2_1_6: {{ ubtu24cis_rule_2_1_6 }}
 ubtu24cis_rule_2_1_22: {{ ubtu24cis_rule_2_1_22 }}
+ubtu24cis_rule_2_1_23: {{ ubtu24cis_rule_2_1_23 }}
+ubtu24cis_rule_2_1_2: {{ ubtu24cis_rule_2_1_2 }}
+ubtu24cis_rule_2_1_4: {{ ubtu24cis_rule_2_1_4 }}
+ubtu24cis_rule_2_1_19: {{ ubtu24cis_rule_2_1_19 }}
 
 # 2.2 Configure client services
 ubtu24cis_rule_2_2_1: {{ ubtu24cis_rule_2_2_1 }}
@@ -188,6 +205,7 @@ ubtu24cis_rule_2_4_1_5: {{ ubtu24cis_rule_2_4_1_5 }}
 ubtu24cis_rule_2_4_1_6: {{ ubtu24cis_rule_2_4_1_6 }}
 ubtu24cis_rule_2_4_1_7: {{ ubtu24cis_rule_2_4_1_7 }}
 ubtu24cis_rule_2_4_1_8: {{ ubtu24cis_rule_2_4_1_8 }}
+ubtu24cis_rule_2_4_1_9: {{ ubtu24cis_rule_2_4_1_9 }}
 # Configure At
 ubtu24cis_rule_2_4_2_1: {{ ubtu24cis_rule_2_4_2_1 }}
 
@@ -200,59 +218,46 @@ ubtu24cis_rule_3_1_3: {{ ubtu24cis_rule_3_1_3 }}
 ubtu24cis_rule_3_2_1: {{ ubtu24cis_rule_3_2_1 }}
 ubtu24cis_rule_3_2_2: {{ ubtu24cis_rule_3_2_2 }}
 ubtu24cis_rule_3_2_3: {{ ubtu24cis_rule_3_2_3 }}
+ubtu24cis_rule_3_2_6: {{ ubtu24cis_rule_3_2_6 }}
 ubtu24cis_rule_3_2_4: {{ ubtu24cis_rule_3_2_4 }}
-# 3.3 Configure Network Kernel Parameters (Host and Router)
-ubtu24cis_rule_3_3_1: {{ ubtu24cis_rule_3_3_1 }}
-ubtu24cis_rule_3_3_2: {{ ubtu24cis_rule_3_3_2 }}
-ubtu24cis_rule_3_3_3: {{ ubtu24cis_rule_3_3_3 }}
-ubtu24cis_rule_3_3_4: {{ ubtu24cis_rule_3_3_4 }}
-ubtu24cis_rule_3_3_5: {{ ubtu24cis_rule_3_3_5 }}
-ubtu24cis_rule_3_3_6: {{ ubtu24cis_rule_3_3_6 }}
-ubtu24cis_rule_3_3_7: {{ ubtu24cis_rule_3_3_7 }}
-ubtu24cis_rule_3_3_8: {{ ubtu24cis_rule_3_3_8 }}
-ubtu24cis_rule_3_3_9: {{ ubtu24cis_rule_3_3_9 }}
-ubtu24cis_rule_3_3_10: {{ ubtu24cis_rule_3_3_10 }}
-ubtu24cis_rule_3_3_11: {{ ubtu24cis_rule_3_3_11 }}
+ubtu24cis_rule_3_2_5: {{ ubtu24cis_rule_3_2_5 }}
+# 3.3.1 Configure IPv4 parameters
+ubtu24cis_rule_3_3_1_1: {{ ubtu24cis_rule_3_3_1_1 }}
+ubtu24cis_rule_3_3_1_2: {{ ubtu24cis_rule_3_3_1_2 }}
+ubtu24cis_rule_3_3_1_3: {{ ubtu24cis_rule_3_3_1_3 }}
+ubtu24cis_rule_3_3_1_4: {{ ubtu24cis_rule_3_3_1_4 }}
+ubtu24cis_rule_3_3_1_5: {{ ubtu24cis_rule_3_3_1_5 }}
+ubtu24cis_rule_3_3_1_6: {{ ubtu24cis_rule_3_3_1_6 }}
+ubtu24cis_rule_3_3_1_7: {{ ubtu24cis_rule_3_3_1_7 }}
+ubtu24cis_rule_3_3_1_8: {{ ubtu24cis_rule_3_3_1_8 }}
+ubtu24cis_rule_3_3_1_9: {{ ubtu24cis_rule_3_3_1_9 }}
+ubtu24cis_rule_3_3_1_10: {{ ubtu24cis_rule_3_3_1_10 }}
+ubtu24cis_rule_3_3_1_11: {{ ubtu24cis_rule_3_3_1_11 }}
+ubtu24cis_rule_3_3_1_12: {{ ubtu24cis_rule_3_3_1_12 }}
+ubtu24cis_rule_3_3_1_13: {{ ubtu24cis_rule_3_3_1_13 }}
+ubtu24cis_rule_3_3_1_14: {{ ubtu24cis_rule_3_3_1_14 }}
+ubtu24cis_rule_3_3_1_15: {{ ubtu24cis_rule_3_3_1_15 }}
+ubtu24cis_rule_3_3_1_16: {{ ubtu24cis_rule_3_3_1_16 }}
+ubtu24cis_rule_3_3_1_17: {{ ubtu24cis_rule_3_3_1_17 }}
+ubtu24cis_rule_3_3_1_18: {{ ubtu24cis_rule_3_3_1_18 }}
+# 3.3.2 Configure IPv6 parameters
+ubtu24cis_rule_3_3_2_1: {{ ubtu24cis_rule_3_3_2_1 }}
+ubtu24cis_rule_3_3_2_2: {{ ubtu24cis_rule_3_3_2_2 }}
+ubtu24cis_rule_3_3_2_3: {{ ubtu24cis_rule_3_3_2_3 }}
+ubtu24cis_rule_3_3_2_4: {{ ubtu24cis_rule_3_3_2_4 }}
+ubtu24cis_rule_3_3_2_5: {{ ubtu24cis_rule_3_3_2_5 }}
+ubtu24cis_rule_3_3_2_6: {{ ubtu24cis_rule_3_3_2_6 }}
+ubtu24cis_rule_3_3_2_7: {{ ubtu24cis_rule_3_3_2_7 }}
+ubtu24cis_rule_3_3_2_8: {{ ubtu24cis_rule_3_3_2_8 }}
 
 ## Section 4 Host Based Firewall
-# 4.1 Single firewall
+# 4.1 Configure Uncomplicated Firewall
 ubtu24cis_rule_4_1_1: {{ ubtu24cis_rule_4_1_1 }}
-# 4.2 Configure Uncomplicated Firewall
-ubtu24cis_rule_4_2_1: {{ ubtu24cis_rule_4_2_1 }}
-ubtu24cis_rule_4_2_2: {{ ubtu24cis_rule_4_2_2 }}
-ubtu24cis_rule_4_2_3: {{ ubtu24cis_rule_4_2_3 }}
-ubtu24cis_rule_4_2_4: {{ ubtu24cis_rule_4_2_4 }}
-ubtu24cis_rule_4_2_5: {{ ubtu24cis_rule_4_2_5 }}
-ubtu24cis_rule_4_2_6: {{ ubtu24cis_rule_4_2_6 }}
-ubtu24cis_rule_4_2_7: {{ ubtu24cis_rule_4_2_7 }}
-# 4.3 nftables
-ubtu24cis_rule_4_3_1: {{ ubtu24cis_rule_4_3_1 }}
-ubtu24cis_rule_4_3_2: {{ ubtu24cis_rule_4_3_2 }}
-ubtu24cis_rule_4_3_3: {{ ubtu24cis_rule_4_3_3 }}
-ubtu24cis_rule_4_3_4: {{ ubtu24cis_rule_4_3_4 }}
-ubtu24cis_rule_4_3_5: {{ ubtu24cis_rule_4_3_5 }}
-ubtu24cis_rule_4_3_6: {{ ubtu24cis_rule_4_3_6 }}
-ubtu24cis_rule_4_3_7: {{ ubtu24cis_rule_4_3_7 }}
-ubtu24cis_rule_4_3_8: {{ ubtu24cis_rule_4_3_8 }}
-ubtu24cis_rule_4_3_9: {{ ubtu24cis_rule_4_3_9 }}
-ubtu24cis_rule_4_3_10: {{ ubtu24cis_rule_4_3_10 }}
+ubtu24cis_rule_4_1_2: {{ ubtu24cis_rule_4_1_2 }}
+ubtu24cis_rule_4_1_3: {{ ubtu24cis_rule_4_1_3 }}
+ubtu24cis_rule_4_1_4: {{ ubtu24cis_rule_4_1_4 }}
+ubtu24cis_rule_4_1_5: {{ ubtu24cis_rule_4_1_5 }}
 
-# Configure iptables software
-ubtu24cis_rule_4_4_1_1: {{ ubtu24cis_rule_4_4_1_1 }}
-ubtu24cis_rule_4_4_1_2: {{ ubtu24cis_rule_4_4_1_2 }}
-ubtu24cis_rule_4_4_1_3: {{ ubtu24cis_rule_4_4_1_3 }}
-
-# Configure IPv4 iptables
-ubtu24cis_rule_4_4_2_1: {{ ubtu24cis_rule_4_4_2_1 }}
-ubtu24cis_rule_4_4_2_2: {{ ubtu24cis_rule_4_4_2_2 }}
-ubtu24cis_rule_4_4_2_3: {{ ubtu24cis_rule_4_4_2_3 }}
-ubtu24cis_rule_4_4_2_4: {{ ubtu24cis_rule_4_4_2_4 }}
-
-# Configure IPv6 iptables
-ubtu24cis_rule_4_4_3_1: {{ ubtu24cis_rule_4_4_3_1 }}
-ubtu24cis_rule_4_4_3_2: {{ ubtu24cis_rule_4_4_3_2 }}
-ubtu24cis_rule_4_4_3_3: {{ ubtu24cis_rule_4_4_3_3 }}
-ubtu24cis_rule_4_4_3_4: {{ ubtu24cis_rule_4_4_3_4 }}
 
 ## Section 5 Access Control
 # 5.1 Configure SSH Server
@@ -272,12 +277,14 @@ ubtu24cis_rule_5_1_13: {{ ubtu24cis_rule_5_1_13 }}
 ubtu24cis_rule_5_1_14: {{ ubtu24cis_rule_5_1_14 }}
 ubtu24cis_rule_5_1_15: {{ ubtu24cis_rule_5_1_15 }}
 ubtu24cis_rule_5_1_16: {{ ubtu24cis_rule_5_1_16 }}
-ubtu24cis_rule_5_1_17: {{ ubtu24cis_rule_5_1_17 }}
 ubtu24cis_rule_5_1_18: {{ ubtu24cis_rule_5_1_18 }}
+ubtu24cis_rule_5_1_17: {{ ubtu24cis_rule_5_1_17 }}
 ubtu24cis_rule_5_1_19: {{ ubtu24cis_rule_5_1_19 }}
 ubtu24cis_rule_5_1_20: {{ ubtu24cis_rule_5_1_20 }}
 ubtu24cis_rule_5_1_21: {{ ubtu24cis_rule_5_1_21 }}
 ubtu24cis_rule_5_1_22: {{ ubtu24cis_rule_5_1_22 }}
+ubtu24cis_rule_5_1_23: {{ ubtu24cis_rule_5_1_23 }}
+ubtu24cis_rule_5_1_24: {{ ubtu24cis_rule_5_1_24 }}
 # 5.2 Configure privilege escalation
 ubtu24cis_rule_5_2_1: {{ ubtu24cis_rule_5_2_1 }}
 ubtu24cis_rule_5_2_2: {{ ubtu24cis_rule_5_2_2 }}
@@ -290,6 +297,7 @@ ubtu24cis_rule_5_2_7: {{ ubtu24cis_rule_5_2_7 }}
 ubtu24cis_rule_5_3_1_1: {{ ubtu24cis_rule_5_3_1_1 }}
 ubtu24cis_rule_5_3_1_2: {{ ubtu24cis_rule_5_3_1_2 }}
 ubtu24cis_rule_5_3_1_3: {{ ubtu24cis_rule_5_3_1_3 }}
+ubtu24cis_rule_5_3_1_4: {{ ubtu24cis_rule_5_3_1_4 }}
 # 5.3.2 Configure pam-auth-update profiles
 ubtu24cis_rule_5_3_2_1: {{ ubtu24cis_rule_5_3_2_1 }}
 ubtu24cis_rule_5_3_2_2: {{ ubtu24cis_rule_5_3_2_2 }}
@@ -343,30 +351,28 @@ ubtu24cis_rule_5_4_3_3: {{ ubtu24cis_rule_5_4_3_3 }}
 ## Section 6
 
 # 6.2.1.x Configure systemd-journald service
-ubtu24cis_rule_6_1_1_1: {{ ubtu24cis_rule_6_1_1_1 }}
-ubtu24cis_rule_6_1_1_2: {{ ubtu24cis_rule_6_1_1_2 }}
-ubtu24cis_rule_6_1_1_3: {{ ubtu24cis_rule_6_1_1_3 }}
-ubtu24cis_rule_6_1_1_4: {{ ubtu24cis_rule_6_1_1_4 }}
+ubtu24cis_rule_6_1_1_1_1: {{ ubtu24cis_rule_6_1_1_1_1 }}
+ubtu24cis_rule_6_1_1_1_4: {{ ubtu24cis_rule_6_1_1_1_4 }}
+ubtu24cis_rule_6_1_1_1_5: {{ ubtu24cis_rule_6_1_1_1_5 }}
 # 6.1.2.1 Configure journald
-ubtu24cis_rule_6_1_2_1_1: {{ ubtu24cis_rule_6_1_2_1_1 }}
-ubtu24cis_rule_6_1_2_1_2: {{ ubtu24cis_rule_6_1_2_1_2 }}
-ubtu24cis_rule_6_1_2_1_3: {{ ubtu24cis_rule_6_1_2_1_3 }}
-ubtu24cis_rule_6_1_2_1_4: {{ ubtu24cis_rule_6_1_2_1_4 }}
+ubtu24cis_rule_6_1_1_1_2: {{ ubtu24cis_rule_6_1_1_1_2 }}
+ubtu24cis_rule_6_1_1_1_7: {{ ubtu24cis_rule_6_1_1_1_7 }}
+ubtu24cis_rule_6_1_1_1_6: {{ ubtu24cis_rule_6_1_1_1_6 }}
+# 6.1.3 Configure rsyslog
+ubtu24cis_rule_6_1_2_1: {{ ubtu24cis_rule_6_1_2_1 }}
 ubtu24cis_rule_6_1_2_2: {{ ubtu24cis_rule_6_1_2_2 }}
+ubtu24cis_rule_6_1_1_1_3: {{ ubtu24cis_rule_6_1_1_1_3 }}
 ubtu24cis_rule_6_1_2_3: {{ ubtu24cis_rule_6_1_2_3 }}
 ubtu24cis_rule_6_1_2_4: {{ ubtu24cis_rule_6_1_2_4 }}
-# 6.1.3 Configure rsyslog
-ubtu24cis_rule_6_1_3_1: {{ ubtu24cis_rule_6_1_3_1 }}
-ubtu24cis_rule_6_1_3_2: {{ ubtu24cis_rule_6_1_3_2 }}
-ubtu24cis_rule_6_1_3_3: {{ ubtu24cis_rule_6_1_3_3 }}
-ubtu24cis_rule_6_1_3_4: {{ ubtu24cis_rule_6_1_3_4 }}
-ubtu24cis_rule_6_1_3_5: {{ ubtu24cis_rule_6_1_3_5 }}
-ubtu24cis_rule_6_1_3_6: {{ ubtu24cis_rule_6_1_3_6 }}
-ubtu24cis_rule_6_1_3_7: {{ ubtu24cis_rule_6_1_3_7 }}
+ubtu24cis_rule_6_1_2_5: {{ ubtu24cis_rule_6_1_2_5 }}
+ubtu24cis_rule_6_1_2_6: {{ ubtu24cis_rule_6_1_2_6 }}
 # 6.1.3.8 logrotate
-ubtu24cis_rule_6_1_3_8: {{ ubtu24cis_rule_6_1_3_8 }}
-# 6.1.4.1 configure logfiles
-ubtu24cis_rule_6_1_4_1: {{ ubtu24cis_rule_6_1_4_1 }}
+ubtu24cis_rule_6_1_2_7: {{ ubtu24cis_rule_6_1_2_7 }}
+ubtu24cis_rule_6_1_2_8: {{ ubtu24cis_rule_6_1_2_8 }}
+ubtu24cis_rule_6_1_2_9: {{ ubtu24cis_rule_6_1_2_9 }}
+ubtu24cis_rule_6_1_2_10: {{ ubtu24cis_rule_6_1_2_10 }}
+# 6.1.3.1 configure logfiles
+ubtu24cis_rule_6_1_3_1: {{ ubtu24cis_rule_6_1_3_1 }}
 # 6.2.1 Configure auditd services
 ubtu24cis_rule_6_2_1_1: {{ ubtu24cis_rule_6_2_1_1 }}
 ubtu24cis_rule_6_2_1_2: {{ ubtu24cis_rule_6_2_1_2 }}
@@ -385,25 +391,34 @@ ubtu24cis_rule_6_2_3_4: {{ ubtu24cis_rule_6_2_3_4 }}
 ubtu24cis_rule_6_2_3_5: {{ ubtu24cis_rule_6_2_3_5 }}
 ubtu24cis_rule_6_2_3_6: {{ ubtu24cis_rule_6_2_3_6 }}
 ubtu24cis_rule_6_2_3_7: {{ ubtu24cis_rule_6_2_3_7 }}
+ubtu24cis_rule_6_2_3_10: {{ ubtu24cis_rule_6_2_3_10 }}
+ubtu24cis_rule_6_2_3_17: {{ ubtu24cis_rule_6_2_3_17 }}
 ubtu24cis_rule_6_2_3_8: {{ ubtu24cis_rule_6_2_3_8 }}
 ubtu24cis_rule_6_2_3_9: {{ ubtu24cis_rule_6_2_3_9 }}
-ubtu24cis_rule_6_2_3_10: {{ ubtu24cis_rule_6_2_3_10 }}
 ubtu24cis_rule_6_2_3_11: {{ ubtu24cis_rule_6_2_3_11 }}
 ubtu24cis_rule_6_2_3_12: {{ ubtu24cis_rule_6_2_3_12 }}
 ubtu24cis_rule_6_2_3_13: {{ ubtu24cis_rule_6_2_3_13 }}
 ubtu24cis_rule_6_2_3_14: {{ ubtu24cis_rule_6_2_3_14 }}
 ubtu24cis_rule_6_2_3_15: {{ ubtu24cis_rule_6_2_3_15 }}
 ubtu24cis_rule_6_2_3_16: {{ ubtu24cis_rule_6_2_3_16 }}
-ubtu24cis_rule_6_2_3_17: {{ ubtu24cis_rule_6_2_3_17 }}
 ubtu24cis_rule_6_2_3_18: {{ ubtu24cis_rule_6_2_3_18 }}
 ubtu24cis_rule_6_2_3_19: {{ ubtu24cis_rule_6_2_3_19 }}
 ubtu24cis_rule_6_2_3_20: {{ ubtu24cis_rule_6_2_3_20 }}
 ubtu24cis_rule_6_2_3_21: {{ ubtu24cis_rule_6_2_3_21 }}
+ubtu24cis_rule_6_2_3_22: {{ ubtu24cis_rule_6_2_3_22 }}
+ubtu24cis_rule_6_2_3_23: {{ ubtu24cis_rule_6_2_3_23 }}
+ubtu24cis_rule_6_2_3_24: {{ ubtu24cis_rule_6_2_3_24 }}
+ubtu24cis_rule_6_2_3_25: {{ ubtu24cis_rule_6_2_3_25 }}
+ubtu24cis_rule_6_2_3_26: {{ ubtu24cis_rule_6_2_3_26 }}
+ubtu24cis_rule_6_2_3_27: {{ ubtu24cis_rule_6_2_3_27 }}
+ubtu24cis_rule_6_2_3_28: {{ ubtu24cis_rule_6_2_3_28 }}
+ubtu24cis_rule_6_2_3_29: {{ ubtu24cis_rule_6_2_3_29 }}
+ubtu24cis_rule_6_2_3_30: {{ ubtu24cis_rule_6_2_3_30 }}
 # 6.2.4 Configure audit file access
-ubtu24cis_rule_6_2_4_1: {{ ubtu24cis_rule_6_2_4_1 }}
 ubtu24cis_rule_6_2_4_2: {{ ubtu24cis_rule_6_2_4_2 }}
 ubtu24cis_rule_6_2_4_3: {{ ubtu24cis_rule_6_2_4_3 }}
 ubtu24cis_rule_6_2_4_4: {{ ubtu24cis_rule_6_2_4_4 }}
+ubtu24cis_rule_6_2_4_1: {{ ubtu24cis_rule_6_2_4_1 }}
 ubtu24cis_rule_6_2_4_5: {{ ubtu24cis_rule_6_2_4_5 }}
 ubtu24cis_rule_6_2_4_6: {{ ubtu24cis_rule_6_2_4_6 }}
 ubtu24cis_rule_6_2_4_7: {{ ubtu24cis_rule_6_2_4_7 }}
@@ -496,9 +511,6 @@ ubtu24cis_grub_user: {{ ubtu24cis_grub_user }}
 ubtu24cis_bootloader_password_hash: {{ ubtu24cis_bootloader_password_hash }}  # pragma: allowlist secret
 
 ## Controls 1.5.x
-# Discovered: systemd-coredump installed, else the 1.5.3 coredump.conf test is skipped
-ubtu24cis_coredump_installed: {{ 'systemd-coredump' in (ansible_facts['packages'] | default({})) }}
-ubtu24cis_apport_installed: {{ 'apport' in (ansible_facts['packages'] | default({})) }}
 
 ## Controls 1.6.x - Warning banners
 # The controls 1.6.x set various warning banners and protect the respective files
@@ -519,7 +531,7 @@ ubtu24cis_disable_dynamic_motd: {{ ubtu24cis_disable_dynamic_motd }}
 # (See https://help.gnome.org/admin/system-admin-guide/stable/dconf-keyfiles.html.en)
 # The default database is `local`.
 ubtu24cis_dconf_db_name: {{ ubtu24cis_dconf_db_name }}
-# Screen lock timings written to the dconf screensaver keyfile (controls 1.7.4 / 1.7.5)
+# Screen lock timings written to the dconf screensaver keyfile (control 1.7.3)
 ubtu24cis_screensaver_idle_delay: {{ ubtu24cis_screensaver_idle_delay }}
 ubtu24cis_screensaver_lock_delay: {{ ubtu24cis_screensaver_lock_delay }}
 
@@ -557,7 +569,7 @@ ubtu24cis_message_server: {{ ubtu24cis_message_server }}  # This is for messagin
 ubtu24cis_message_mask: {{ ubtu24cis_message_mask }}
 ubtu24cis_nfs_server: {{ ubtu24cis_nfs_server }}
 ubtu24cis_nfs_mask: {{ ubtu24cis_nfs_mask }}
-ubtu24cis_nis_server: {{ ubtu24cis_nis_server }}  # set to mask if nis client required
+ubtu24cis_nis_server: {{ ubtu24cis_nis_server }}
 ubtu24cis_nis_mask: {{ ubtu24cis_nis_mask }}
 ubtu24cis_print_server: {{ ubtu24cis_print_server }}  # replaces cups
 ubtu24cis_print_mask: {{ ubtu24cis_print_mask }}
@@ -621,10 +633,6 @@ ubtu24cis_time_servers:
 {% endfor %}
 
 # Section 3
-## Control 2.4.2.1
-# Discovered: at installed, else the 2.4.2.1 tests are skipped
-ubtu24cis_at_installed: {{ 'at' in (ansible_facts['packages'] | default({})) }}
-
 ## Control 3.1.1 - Ensure system is checked to determine if IPv6 is enabled
 # This variable governs the mechanism of how the disabling of IPV6 is carried out.
 # Its possible values are `grub` and `sysctl`.
@@ -647,12 +655,8 @@ ubtu24cis_sysctl_network_conf: {{ ubtu24cis_sysctl_network_conf }}
 #
 ### Section 4
 #
-## Controls 4.1.x, 4.2.x, and 4.3.x - Firewall configuration
-# This variable represents the toggle for which firewall package is used.
-# The options that have an effect on the system are `ufw` and `iptables`.
-# The option `nftables` is also possible, but will only result in a message,
-# that `nftables` has been chosen; all settings have to be carried out manually.
-# Any other value, e.g. `none` will skip all firewall-related controls.
+## Controls 4.1.x - Firewall configuration
+# Benchmark v2.0.0 configures ufw only; there is no nftables or iptables choice.
 ubtu24cis_firewall_package: {{ ubtu24cis_firewall_package }}
 
 ## auditd settings
@@ -679,6 +683,9 @@ ubtu24cis_sshd_deny_users:  {% if ubtu24cis_sshd_deny_users | length > 0 %}DenyU
 
 ubtu24cis_sshd_deny_groups: {% if ubtu24cis_sshd_deny_groups | length > 0 %}DenyGroups {{ ubtu24cis_sshd_deny_groups }}{% endif %}
 
+ubtu24cis_sshd_cis_conf: {{ ubtu24cis_sshd_cis_conf }}
+ubtu24cis_sshd_banner_file: {{ ubtu24cis_sshd_banner_file }}
+ubtu24cis_sshd_listen_address: {{ ubtu24cis_sshd_listen_address }}
 ubtu24cis_sshd_client_alive_interval: {{ ubtu24cis_sshd_client_alive_interval }}
 ubtu24cis_sshd_client_alive_count_max: {{ ubtu24cis_sshd_client_alive_count_max }}
 
@@ -689,12 +696,14 @@ ubtu24cis_pass_warn_age: {{ ubtu24cis_pass_warn_age }}
 
 # existing users only changed when disruption_high is true
 ubtu24cis_disruption_high: {{ ubtu24cis_disruption_high }}
+ubtu24cis_system_users_shell: {{ ubtu24cis_system_users_shell | to_json }}
+ubtu24cis_playbook_user: {{ ubtu24cis_playbook_user }}
+
+## 5.2.4 users the role leaves with NOPASSWD in sudoers
+ubtu24cis_sudoers_exclude_nopasswd_list: {{ ubtu24cis_sudoers_exclude_nopasswd_list | to_json }}
 
 # set sugroup if differs from wheel
 ubtu24cis_sugroup: nosugroup
-
-# sudo package to check, sudo or sudo-ldap
-ubtu24cis_sudo_package: {{ ubtu24cis_sudo_package }}
 
 # var log location variable
 ubtu24cis_varlog_location: {{ ubtu24cis_sudo_logfile }}

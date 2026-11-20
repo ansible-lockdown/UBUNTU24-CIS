@@ -233,7 +233,9 @@
     warn_control_id: '5.4.1.6'
   block:
     - name: "5.4.1.6 | AUDIT | Ensure all users last password change date is in the past | Get current date in Unix Time"
-      ansible.builtin.shell: echo $(($(date --utc +%s)/86400))
+      ansible.builtin.shell: |
+        set -o pipefail
+        echo $(($(date --utc +%s)/86400))
       args:
         executable: "{{ ubtu24cis_shell_executable }}"
       changed_when: false

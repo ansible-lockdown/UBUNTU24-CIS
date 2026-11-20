@@ -19,7 +19,7 @@
     state: started
     enabled: true
 
-- name: "2.4.1.2 | PATCH | Ensure permissions on /etc/crontab are configured"
+- name: "2.4.1.2 | PATCH | Ensure access to /etc/crontab is configured"
   when: ubtu24cis_rule_2_4_1_2
   tags:
     - level1-server
@@ -36,7 +36,7 @@
     group: root
     mode: 'go-rwx'
 
-- name: "2.4.1.3 | PATCH | Ensure permissions on /etc/cron.hourly are configured"
+- name: "2.4.1.3 | PATCH | Ensure access to /etc/cron.hourly is configured"
   when: ubtu24cis_rule_2_4_1_3
   tags:
     - level1-server
@@ -54,7 +54,7 @@
     mode: "u+x,go-rwx"
     state: directory
 
-- name: "2.4.1.4 | PATCH | Ensure permissions on /etc/cron.daily are configured"
+- name: "2.4.1.4 | PATCH | Ensure access to /etc/cron.daily is configured"
   when: ubtu24cis_rule_2_4_1_4
   tags:
     - level1-server
@@ -72,7 +72,7 @@
     mode: "u+x,go-rwx"
     state: directory
 
-- name: "2.4.1.5 | PATCH | Ensure permissions on /etc/cron.weekly are configured"
+- name: "2.4.1.5 | PATCH | Ensure access to /etc/cron.weekly is configured"
   when: ubtu24cis_rule_2_4_1_5
   tags:
     - level1-server
@@ -90,7 +90,7 @@
     mode: "u+x,go-rwx"
     state: directory
 
-- name: "2.4.1.6 | PATCH | Ensure permissions on /etc/cron.monthly are configured"
+- name: "2.4.1.6 | PATCH | Ensure access to /etc/cron.monthly is configured"
   when: ubtu24cis_rule_2_4_1_6
   tags:
     - level1-server
@@ -108,7 +108,7 @@
     mode: "u+x,go-rwx"
     state: directory
 
-- name: "2.4.1.7 | PATCH | Ensure permissions on /etc/cron.d are configured"
+- name: "2.4.1.7 | PATCH | Ensure access to /etc/cron.yearly is configured"
   when: ubtu24cis_rule_2_4_1_7
   tags:
     - level1-server
@@ -120,13 +120,13 @@
     - NIST800-53R5_MP-2
     - cron
   ansible.builtin.file:
-    path: /etc/cron.d
+    path: /etc/cron.yearly
     owner: root
     group: root
     mode: "u+x,go-rwx"
     state: directory
 
-- name: "2.4.1.8 | PATCH | Ensure crontab is restricted to authorized users"
+- name: "2.4.1.8 | PATCH | Ensure access to /etc/cron.d is configured"
   when: ubtu24cis_rule_2_4_1_8
   tags:
     - level1-server
@@ -137,41 +137,48 @@
     - NIST800-53R5_AC-3
     - NIST800-53R5_MP-2
     - cron
+  ansible.builtin.file:
+    path: /etc/cron.d
+    owner: root
+    group: root
+    mode: "u+x,go-rwx"
+    state: directory
+
+- name: "2.4.1.9 | PATCH | Ensure access to crontab is configured"
+  when: ubtu24cis_rule_2_4_1_9
+  tags:
+    - level1-server
+    - level1-workstation
+    - automated
+    - patch
+    - rule_2.4.1.9
+    - NIST800-53R5_AC-3
+    - NIST800-53R5_MP-2
+    - cron
   block:
-    - name: "2.4.1.8 | PATCH | Ensure crontab is restricted to authorized users | Remove cron.deny"
+    - name: "2.4.1.9 | PATCH | Ensure access to crontab is configured | Remove cron.deny"
       ansible.builtin.file:
         path: /etc/cron.deny
         state: absent
 
-    - name: "2.4.1.8 | AUDIT | Ensure crontab is restricted to authorized users | Check for crontab group"
-      ansible.builtin.shell: |
-        set -o pipefail
-        getent group crontab | cut -d: -f1
-      args:
-        executable: "{{ ubtu24cis_shell_executable }}"
-      changed_when: false
-      failed_when: false
-      check_mode: false
-      register: discovered_cron_groups
-
-    - name: "2.4.1.8 | PATCH | Ensure crontab is restricted to authorized users | Check for cron.allow"
+    - name: "2.4.1.9 | PATCH | Ensure access to crontab is configured | Check for cron.allow"
       ansible.builtin.stat:
         path: /etc/cron.allow
       register: discovered_cron_allow_status
 
-    - name: "2.4.1.8 | PATCH | Ensure crontab is restricted to authorized users | Create cron.allow if doesn't exist"
+    - name: "2.4.1.9 | PATCH | Ensure access to crontab is configured | Create cron.allow if doesn't exist"
       when: not discovered_cron_allow_status.stat.exists
       ansible.builtin.copy:
         dest: /etc/cron.allow
         content: "{{ (ubtu24cis_cron_allow_users | default([])) | join('\n') ~ '\n' }}"
         owner: root
-        group: "{{ ('crontab' in discovered_cron_groups.stdout_lines) | ternary('crontab', 'root') }}"
+        group: root
         mode: "u-x,g-wx,o-rwx"
 
-    - name: "2.4.1.8 | PATCH | Ensure crontab is restricted to authorized users | Update cron.allow if exists"
+    - name: "2.4.1.9 | PATCH | Ensure access to crontab is configured | Update cron.allow if exists"
       when: discovered_cron_allow_status.stat.exists
       ansible.builtin.file:
         path: /etc/cron.allow
         owner: root
-        group: "{{ ('crontab' in discovered_cron_groups.stdout_lines) | ternary('crontab', 'root') }}"
+        group: '{{ (discovered_cron_allow_status.stat.gr_name == "crontab") | ternary(omit, "root") }}'
         mode: 'u-x,g-wx,o-rwx'

@@ -91,7 +91,7 @@
     line: 'Defaults        logfile="{{ ubtu24cis_sudo_logfile }}"'
     insertafter: '^\s*Defaults'
 
-- name: "5.2.4 | PATCH | Ensure users must provide password for privilege escalation"
+- name: "5.2.4 | PATCH | Ensure users must provide password for escalation"
   when: ubtu24cis_rule_5_2_4
   tags:
     - level2-server
@@ -102,7 +102,7 @@
     - rule_5.2.4
     - NIST800-53R5_AC-6
   block:
-    - name: "5.2.4 | AUDIT | Ensure users must provide password for privilege escalation | discover accts with NOPASSWD"
+    - name: "5.2.4 | AUDIT | Ensure users must provide password for escalation | discover accts with NOPASSWD"
       ansible.builtin.shell: |
         set -o pipefail
         grep -Ei '(nopasswd)' /etc/sudoers /etc/sudoers.d/* | cut -d':' -f1
@@ -114,7 +114,7 @@
       check_mode: false
       register: discovered_sudoers_nopasswd
 
-    - name: "5.2.4 | PATCH | Ensure users must provide password for privilege escalation"
+    - name: "5.2.4 | PATCH | Ensure users must provide password for escalation"
       when: discovered_sudoers_nopasswd.stdout | length > 0
       ansible.builtin.replace:
         path: "{{ item }}"
@@ -144,7 +144,7 @@
   loop_control:
     label: "{{ item }}"
 
-- name: "5.2.6 | PATCH | Ensure sudo authentication timeout is configured correctly"
+- name: "5.2.6 | PATCH | Ensure sudo timestamp_timeout is configured"
   when: ubtu24cis_rule_5_2_6
   tags:
     - level1-server
@@ -155,7 +155,7 @@
     - rule_5.2.6
     - NIST800-53R5_AC-6
   block:
-    - name: "5.2.6 | AUDIT | Ensure sudo authentication timeout is configured correctly | Get files with timeout set"
+    - name: "5.2.6 | AUDIT | Ensure sudo timestamp_timeout is configured | Get files with timeout set"
       ansible.builtin.shell: |
         set -o pipefail
         grep -is 'timestamp_timeout' /etc/sudoers /etc/sudoers.d/* | cut -d":" -f1 | uniq | sort
@@ -166,7 +166,7 @@
       check_mode: false
       register: discovered_ubtu24cis_ssh_timeout_files
 
-    - name: "5.2.6 | PATCH | Ensure sudo authentication timeout is configured correctly | Set value if no results"
+    - name: "5.2.6 | PATCH | Ensure sudo timestamp_timeout is configured | Set value if no results"
       when: discovered_ubtu24cis_ssh_timeout_files.stdout | length == 0
       ansible.builtin.lineinfile:
         path: /etc/sudoers
@@ -175,7 +175,7 @@
         insertafter: '^\s*Defaults'
         validate: '/usr/sbin/visudo -cf %s'
 
-    - name: "5.2.6 | PATCH | Ensure sudo authentication timeout is configured correctly | Set value if has results"
+    - name: "5.2.6 | PATCH | Ensure sudo timestamp_timeout is configured | Set value if has results"
       when: discovered_ubtu24cis_ssh_timeout_files.stdout | length > 0
       ansible.builtin.replace:
         path: "{{ item }}"

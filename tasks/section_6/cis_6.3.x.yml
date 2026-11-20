@@ -92,86 +92,31 @@
     - rule_6.3.2
     - NIST800-53R5_AU-2
     - aide
-  vars:
-    warn_control_id: '6.3.2'
   block:
-    - name: "6.3.2 | AUDIT | Ensure filesystem integrity is regularly checked | Discover cron jobs added by earlier role runs"
-      ansible.builtin.shell: "grep -lsx '#Ansible: Run AIDE integrity check' /etc/cron.d/*"
-      changed_when: false
-      failed_when: false
-      check_mode: false
-      register: discovered_aide_role_cron
-
-    - name: "6.3.2 | PATCH | Ensure filesystem integrity is regularly checked | Remove cron jobs added by earlier role runs"
-      ansible.builtin.cron:
-        name: Run AIDE integrity check
-        cron_file: "{{ item }}"
-        user: root
-        state: absent
-      loop: "{{ discovered_aide_role_cron.stdout_lines }}"
-
-    - name: "6.3.2 | AUDIT | Ensure filesystem integrity is regularly checked | Discover unit overrides written by earlier role runs"
-      ansible.builtin.command: grep -lsx '# File managed by ansible as part of {{ benchmark }} benchmark' /etc/systemd/system/dailyaidecheck.service /etc/systemd/system/dailyaidecheck.timer
-      changed_when: false
-      failed_when: false
-      check_mode: false
-      register: discovered_aide_role_units
-
-    - name: "6.3.2 | PATCH | Ensure filesystem integrity is regularly checked | Remove unit overrides written by earlier role runs"
-      ansible.builtin.file:
-        path: "{{ item }}"
-        state: absent
-      loop: "{{ discovered_aide_role_units.stdout_lines }}"
-      register: discovered_aide_role_units_removed
-
-    - name: "6.3.2 | PATCH | Ensure filesystem integrity is regularly checked | Timer drop-in directory"
-      ansible.builtin.file:
-        path: /etc/systemd/system/dailyaidecheck.timer.d
-        state: directory
-        owner: root
-        group: root
-        mode: 'u=rwx,go=rx'
-
-    - name: "6.3.2 | PATCH | Ensure filesystem integrity is regularly checked | Timer schedule"
+    - name: "6.3.2 | PATCH | Ensure filesystem integrity is regularly checked | timer template"
       ansible.builtin.template:
-        src: etc/systemd/system/dailyaidecheck.timer.d/ubtu24cis_schedule.conf.j2
-        dest: /etc/systemd/system/dailyaidecheck.timer.d/ubtu24cis_schedule.conf
+        src: "{{ item }}.j2"
+        dest: "/{{ item }}"
         owner: root
         group: root
-        mode: 'u-x,go-wx'
-      register: discovered_aide_timer_schedule
+        mode: 'u-x,g-wx,o-rwx'
+      loop:
+        - etc/systemd/system/dailyaidecheck.service
+        - etc/systemd/system/dailyaidecheck.timer
+      register: discovered_aide_timer_template
 
-    - name: "6.3.2 | PATCH | Ensure filesystem integrity is regularly checked | Unmask service"
+    - name: "6.3.2 | PATCH | Ensure filesystem integrity is regularly checked | unmask service"
       ansible.builtin.systemd:
         name: dailyaidecheck.service
         masked: false
-        daemon_reload: "{{ discovered_aide_role_units_removed is changed or discovered_aide_timer_schedule is changed }}"
+        daemon_reload: "{{ discovered_aide_timer_template is changed }}"
 
-    - name: "6.3.2 | PATCH | Ensure filesystem integrity is regularly checked | Unmask, enable and start timer"
+    - name: "6.3.2 | PATCH | Ensure filesystem integrity is regularly checked | timer"
       ansible.builtin.systemd:
         name: dailyaidecheck.timer
         masked: false
         enabled: true
         state: started
-
-    - name: "6.3.2 | AUDIT | Ensure filesystem integrity is regularly checked | Discover other cron jobs running AIDE"
-      ansible.builtin.shell: grep -lsE '^[^#]*/aide[[:space:]]' /etc/crontab /etc/cron.d/* /var/spool/cron/crontabs/*
-      changed_when: false
-      failed_when: false
-      check_mode: false
-      register: discovered_aide_other_cron
-
-    - name: "6.3.2 | AUDIT | Ensure filesystem integrity is regularly checked | Warn on other cron jobs running AIDE"
-      when: discovered_aide_other_cron.stdout | length > 0
-      ansible.builtin.debug:
-        msg:
-          - "Warning!! AIDE also runs from cron in the files below as well as from dailyaidecheck.timer. Remove the cron job if the timer is the only scheduler wanted"
-          - "{{ discovered_aide_other_cron.stdout_lines }}"
-
-    - name: "6.3.2 | WARNING | Ensure filesystem integrity is regularly checked | warn_count"
-      when: discovered_aide_other_cron.stdout | length > 0
-      ansible.builtin.import_tasks:
-        file: warning_facts.yml
 
 - name: "6.3.3 | PATCH | Ensure cryptographic mechanisms are used to protect the integrity of audit tools"
   when:

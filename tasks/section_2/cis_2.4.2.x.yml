@@ -1,9 +1,7 @@
 ---
 
-- name: "2.4.2.1 | PATCH | Ensure at is restricted to authorized users"
-  when:
-    - ubtu24cis_rule_2_4_2_1
-    - "'at' in ansible_facts['packages']"
+- name: "2.4.2.1 | PATCH | Ensure access to at is configured"
+  when: ubtu24cis_rule_2_4_2_1
   tags:
     - level1-server
     - level1-workstation
@@ -14,12 +12,12 @@
     - NIST800-53R5_MP-2
     - cron
   block:
-    - name: "2.4.2.1 | PATCH | Ensure at is restricted to authorized users | Remove at.deny"
+    - name: "2.4.2.1 | PATCH | Ensure access to at is configured | Remove at.deny"
       ansible.builtin.file:
         path: /etc/at.deny
         state: absent
 
-    - name: "2.4.2.1 | AUDIT | Ensure at is restricted to authorized users | Check for daemon group"
+    - name: "2.4.2.1 | AUDIT | Ensure access to at is configured | Check for daemon group"
       ansible.builtin.shell: |
         set -o pipefail
         getent group daemon | cut -d: -f1
@@ -30,12 +28,12 @@
       check_mode: false
       register: discovered_at_groups
 
-    - name: "2.4.2.1 | PATCH | Ensure at is restricted to authorized users | Check for at.allow"
+    - name: "2.4.2.1 | PATCH | Ensure access to at is configured | Check for at.allow"
       ansible.builtin.stat:
         path: /etc/at.allow
       register: discovered_at_allow_status
 
-    - name: "2.4.2.1 | PATCH | Ensure at is restricted to authorized users | Create at.allow if doesn't exist"
+    - name: "2.4.2.1 | PATCH | Ensure access to at is configured | Create at.allow if doesn't exist"
       when: not discovered_at_allow_status.stat.exists
       ansible.builtin.file:
         path: /etc/at.allow
@@ -44,7 +42,7 @@
         mode: 'u-x,g-wx,o-rwx'
         state: touch
 
-    - name: "2.4.2.1 | PATCH | Ensure at is restricted to authorized users | update at.allow if exists"
+    - name: "2.4.2.1 | PATCH | Ensure access to at is configured | update at.allow if exists"
       when: discovered_at_allow_status.stat.exists
       ansible.builtin.file:
         path: /etc/at.allow

@@ -53,7 +53,7 @@
   ansible.builtin.set_fact:
     update_audit_template: true
 
-- name: "6.2.3.5 | PATCH | Ensure events that modify the system's network environment are collected"
+- name: "6.2.3.5 | PATCH | Ensure events that modify sethostname and setdomainname are collected"
   when: ubtu24cis_rule_6_2_3_5
   tags:
     - level2-server
@@ -67,7 +67,7 @@
   ansible.builtin.set_fact:
     update_audit_template: true
 
-- name: "6.2.3.6 | PATCH | Ensure use of privileged commands are collected"
+- name: "6.2.3.6 | PATCH | Ensure events that modify /etc/issue and /etc/issue.net are collected"
   when: ubtu24cis_rule_6_2_3_6
   tags:
     - level2-server
@@ -76,11 +76,12 @@
     - patch
     - rule_6.2.3.6
     - NIST800-53R5_AU-3
+    - NIST800-53R5_CM-6
     - auditd
   ansible.builtin.set_fact:
     update_audit_template: true
 
-- name: "6.2.3.7 | PATCH | Ensure unsuccessful file access attempts are collected"
+- name: "6.2.3.7 | PATCH | Ensure events that modify /etc/hosts and /etc/hostname are collected"
   when: ubtu24cis_rule_6_2_3_7
   tags:
     - level2-server
@@ -89,11 +90,12 @@
     - patch
     - rule_6.2.3.7
     - NIST800-53R5_AU-3
+    - NIST800-53R5_CM-6
     - auditd
   ansible.builtin.set_fact:
     update_audit_template: true
 
-- name: "6.2.3.8 | PATCH | Ensure events that modify user/group information are collected"
+- name: "6.2.3.8 | PATCH | Ensure events that modify /etc/network and /etc/networks are collected"
   when: ubtu24cis_rule_6_2_3_8
   tags:
     - level2-server
@@ -106,7 +108,7 @@
   ansible.builtin.set_fact:
     update_audit_template: true
 
-- name: "6.2.3.9 | PATCH | Ensure discretionary access control permission modification events are collected"
+- name: "6.2.3.9 | PATCH | Ensure events that modify /etc/netplan are collected"
   when: ubtu24cis_rule_6_2_3_9
   tags:
     - level2-server
@@ -120,7 +122,7 @@
   ansible.builtin.set_fact:
     update_audit_template: true
 
-- name: "6.2.3.10 | PATCH | Ensure successful file system mounts are collected"
+- name: "6.2.3.10 | PATCH | Ensure use of privileged commands are collected"
   when: ubtu24cis_rule_6_2_3_10
   tags:
     - level2-server
@@ -128,12 +130,12 @@
     - automated
     - patch
     - rule_6.2.3.10
-    - NIST800-53R5_CM-6
+    - NIST800-53R5_AU-3
     - auditd
   ansible.builtin.set_fact:
     update_audit_template: true
 
-- name: "6.2.3.11 | PATCH | Ensure session initiation information is collected"
+- name: "6.2.3.11 | PATCH | Ensure events that modify /etc/group information are collected"
   when: ubtu24cis_rule_6_2_3_11
   tags:
     - level2-server
@@ -146,7 +148,7 @@
   ansible.builtin.set_fact:
     update_audit_template: true
 
-- name: "6.2.3.12 | PATCH | Ensure login and logout events are collected"
+- name: "6.2.3.12 | PATCH | Ensure events that modify /etc/passwd information are collected"
   when: ubtu24cis_rule_6_2_3_12
   tags:
     - level2-server
@@ -159,7 +161,7 @@
   ansible.builtin.set_fact:
     update_audit_template: true
 
-- name: "6.2.3.13 | PATCH | Ensure file deletion events by users are collected"
+- name: "6.2.3.13 | PATCH | Ensure events that modify /etc/shadow and /etc/gshadow are collected"
   when: ubtu24cis_rule_6_2_3_13
   tags:
     - level2-server
@@ -167,13 +169,12 @@
     - automated
     - patch
     - rule_6.2.3.13
-    - NIST800-53R5_AU-12
-    - NIST800-53R5_SC-7
+    - NIST800-53R5_AU-3
     - auditd
   ansible.builtin.set_fact:
     update_audit_template: true
 
-- name: "6.2.3.14 | PATCH | Ensure events that modify the system's Mandatory Access Controls are collected"
+- name: "6.2.3.14 | PATCH | Ensure events that modify /etc/security/opasswd are collected"
   when: ubtu24cis_rule_6_2_3_14
   tags:
     - level2-server
@@ -182,12 +183,11 @@
     - patch
     - rule_6.2.3.14
     - NIST800-53R5_AU-3
-    - NIST800-53R5_CM-6
     - auditd
   ansible.builtin.set_fact:
     update_audit_template: true
 
-- name: "6.2.3.15 | PATCH | Ensure successful and unsuccessful attempts to use the chcon command are collected"
+- name: "6.2.3.15 | PATCH | Ensure events that modify /etc/nsswitch.conf file are collected"
   when: ubtu24cis_rule_6_2_3_15
   tags:
     - level2-server
@@ -195,14 +195,12 @@
     - automated
     - patch
     - rule_6.2.3.15
-    - NIST800-53R5_AU-2
-    - NIST800-53R5_AU-12
-    - NIST800-53R5_SI-5
+    - NIST800-53R5_AU-3
     - auditd
   ansible.builtin.set_fact:
     update_audit_template: true
 
-- name: "6.2.3.16 | PATCH | Ensure successful and unsuccessful attempts to use the setfacl command are collected"
+- name: "6.2.3.16 | PATCH | Ensure events that modify /etc/pam.conf and /etc/pam.d/ information are collected"
   when: ubtu24cis_rule_6_2_3_16
   tags:
     - level2-server
@@ -210,14 +208,12 @@
     - automated
     - patch
     - rule_6.2.3.16
-    - NIST800-53R5_AU-2
-    - NIST800-53R5_AU-12
-    - NIST800-53R5_SI-5
+    - NIST800-53R5_AU-3
     - auditd
   ansible.builtin.set_fact:
     update_audit_template: true
 
-- name: "6.2.3.17 | PATCH | Ensure successful and unsuccessful attempts to use the chacl command are collected"
+- name: "6.2.3.17 | PATCH | Ensure unsuccessful file access attempts are collected"
   when: ubtu24cis_rule_6_2_3_17
   tags:
     - level2-server
@@ -225,14 +221,12 @@
     - automated
     - patch
     - rule_6.2.3.17
-    - NIST800-53R5_AU-2
-    - NIST800-53R5_AU-12
-    - NIST800-53R5_SI-5
+    - NIST800-53R5_AU-3
     - auditd
   ansible.builtin.set_fact:
     update_audit_template: true
 
-- name: "6.2.3.18 | PATCH | Ensure successful and unsuccessful attempts to use the usermod command are collected"
+- name: "6.2.3.18 | PATCH | Ensure discretionary access control permission modification events are collected"
   when: ubtu24cis_rule_6_2_3_18
   tags:
     - level2-server
@@ -240,14 +234,13 @@
     - automated
     - patch
     - rule_6.2.3.18
-    - NIST800-53R5_AU-2
-    - NIST800-53R5_AU-12
-    - NIST800-53R5_SI-5
+    - NIST800-53R5_AU-3
+    - NIST800-53R5_CM-6
     - auditd
   ansible.builtin.set_fact:
     update_audit_template: true
 
-- name: "6.2.3.19 | PATCH | Ensure kernel module loading unloading and modification is collected"
+- name: "6.2.3.19 | PATCH | Ensure successful file system mounts are collected"
   when: ubtu24cis_rule_6_2_3_19
   tags:
     - level2-server
@@ -255,13 +248,12 @@
     - automated
     - patch
     - rule_6.2.3.19
-    - NIST800-53R5_AU-3
     - NIST800-53R5_CM-6
     - auditd
   ansible.builtin.set_fact:
     update_audit_template: true
 
-- name: "6.2.3.20 | PATCH | Ensure the audit configuration is immutable"
+- name: "6.2.3.20 | PATCH | Ensure session initiation information is collected"
   when: ubtu24cis_rule_6_2_3_20
   tags:
     - level2-server
@@ -269,6 +261,134 @@
     - automated
     - patch
     - rule_6.2.3.20
+    - NIST800-53R5_AU-3
+    - auditd
+  ansible.builtin.set_fact:
+    update_audit_template: true
+
+- name: "6.2.3.21 | PATCH | Ensure login and logout events are collected"
+  when: ubtu24cis_rule_6_2_3_21
+  tags:
+    - level2-server
+    - level2-workstation
+    - automated
+    - patch
+    - rule_6.2.3.21
+    - NIST800-53R5_AU-3
+    - auditd
+  ansible.builtin.set_fact:
+    update_audit_template: true
+
+- name: "6.2.3.22 | PATCH | Ensure file deletion events by users are collected"
+  when: ubtu24cis_rule_6_2_3_22
+  tags:
+    - level2-server
+    - level2-workstation
+    - automated
+    - patch
+    - rule_6.2.3.22
+    - NIST800-53R5_AU-12
+    - NIST800-53R5_SC-7
+    - auditd
+  ansible.builtin.set_fact:
+    update_audit_template: true
+
+- name: "6.2.3.23 | PATCH | Ensure events that modify the system's Mandatory Access Controls are collected"
+  when: ubtu24cis_rule_6_2_3_23
+  tags:
+    - level2-server
+    - level2-workstation
+    - automated
+    - patch
+    - rule_6.2.3.23
+    - NIST800-53R5_AU-3
+    - NIST800-53R5_CM-6
+    - auditd
+  ansible.builtin.set_fact:
+    update_audit_template: true
+
+- name: "6.2.3.24 | PATCH | Ensure successful and unsuccessful attempts to use the chcon command are collected"
+  when: ubtu24cis_rule_6_2_3_24
+  tags:
+    - level2-server
+    - level2-workstation
+    - automated
+    - patch
+    - rule_6.2.3.24
+    - NIST800-53R5_AU-2
+    - NIST800-53R5_AU-12
+    - NIST800-53R5_SI-5
+    - auditd
+  ansible.builtin.set_fact:
+    update_audit_template: true
+
+- name: "6.2.3.25 | PATCH | Ensure successful and unsuccessful attempts to use the setfacl command are collected"
+  when: ubtu24cis_rule_6_2_3_25
+  tags:
+    - level2-server
+    - level2-workstation
+    - automated
+    - patch
+    - rule_6.2.3.25
+    - NIST800-53R5_AU-2
+    - NIST800-53R5_AU-12
+    - NIST800-53R5_SI-5
+    - auditd
+  ansible.builtin.set_fact:
+    update_audit_template: true
+
+- name: "6.2.3.26 | PATCH | Ensure successful and unsuccessful attempts to use the chacl command are collected"
+  when: ubtu24cis_rule_6_2_3_26
+  tags:
+    - level2-server
+    - level2-workstation
+    - automated
+    - patch
+    - rule_6.2.3.26
+    - NIST800-53R5_AU-2
+    - NIST800-53R5_AU-12
+    - NIST800-53R5_SI-5
+    - auditd
+  ansible.builtin.set_fact:
+    update_audit_template: true
+
+- name: "6.2.3.27 | PATCH | Ensure successful and unsuccessful attempts to use the usermod command are collected"
+  when: ubtu24cis_rule_6_2_3_27
+  tags:
+    - level2-server
+    - level2-workstation
+    - automated
+    - patch
+    - rule_6.2.3.27
+    - NIST800-53R5_AU-2
+    - NIST800-53R5_AU-12
+    - NIST800-53R5_SI-5
+    - auditd
+  ansible.builtin.set_fact:
+    update_audit_template: true
+
+- name: "6.2.3.28 | PATCH | Ensure kernel module loading unloading and modification is collected"
+  when: ubtu24cis_rule_6_2_3_28
+  tags:
+    - level2-server
+    - level2-workstation
+    - automated
+    - patch
+    - rule_6.2.3.28
+    - NIST800-53R5_AU-3
+    - NIST800-53R5_CM-6
+    - auditd
+  ansible.builtin.set_fact:
+    update_audit_template: true
+
+- name: "6.2.3.29 | PATCH | Ensure the audit configuration is immutable"
+  when: ubtu24cis_rule_6_2_3_29
+  tags:
+    - level2-server
+    - level2-workstation
+    - automated
+    - patch
+    - rule_6.2.3.29
     - NIST800-53R5_AC-3
     - NIST800-53R5_AU-3
     - NIST800-53R5_AU-12
@@ -277,15 +397,15 @@
   ansible.builtin.set_fact:
     update_audit_template: true
 
-- name: "6.2.3.21 | AUDIT | Ensure the running and on disk configuration is the same"
-  when: ubtu24cis_rule_6_2_3_21
+- name: "6.2.3.30 | AUDIT | Ensure the running and on disk configuration is the same"
+  when: ubtu24cis_rule_6_2_3_30
   tags:
     - level2-server
     - level2-workstation
     - manual
     - scored
     - audit
-    - rule_6.2.3.21
+    - rule_6.2.3.30
     - NIST800-53R5_AU-3
     - auditd
   ansible.builtin.command: augenrules --check

@@ -83,7 +83,7 @@
         group: root
         mode: 'go-rwx'
 
-- name: "5.3.3.2.2 | PATCH | Ensure minimum password length is configured"
+- name: "5.3.3.2.2 | PATCH | Ensure password length is configured"
   when: ubtu24cis_rule_5_3_3_2_2
   tags:
     - level1-server
@@ -94,7 +94,7 @@
     - NIST800-53R5_IA-5
     - pam
   block:
-    - name: "5.3.3.2.2 | PATCH | Ensure minimum password length is configured | Remove minlen from conf files except expected file"
+    - name: "5.3.3.2.2 | PATCH | Ensure password length is configured | Remove minlen from conf files except expected file"
       when: "ubtu24cis_passwd_minlen_file not in item.path"
       ansible.builtin.replace:
         path: "{{ item.path }}"
@@ -107,7 +107,7 @@
       loop_control:
         label: "{{ item }}"
 
-    - name: "5.3.3.2.2 | PATCH | Ensure minimum password length is configured | Ensure minlen file exists"
+    - name: "5.3.3.2.2 | PATCH | Ensure password length is configured | Ensure minlen file exists"
       ansible.builtin.template:
         src: "{{ ubtu24cis_passwd_minlen_file }}.j2"
         dest: "/{{ ubtu24cis_passwd_minlen_file }}"

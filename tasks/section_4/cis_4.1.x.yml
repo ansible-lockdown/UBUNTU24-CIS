@@ -1,0 +1,141 @@
+---
+
+- name: "4.1.1 | PATCH | Ensure ufw is installed"
+  when: ubtu24cis_rule_4_1_1
+  tags:
+    - level1-server
+    - level1-workstation
+    - automated
+    - patch
+    - rule_4.1.1
+    - NIST800-53R5_SC-7
+    - apt
+    - ufw
+  ansible.builtin.package:
+    name: ufw
+    state: present
+    lock_timeout: "{{ ubtu24cis_apt_lock_timeout }}"
+
+- name: "4.1.2 | PATCH | Ensure ufw service is configured"
+  when: ubtu24cis_rule_4_1_2
+  tags:
+    - level1-server
+    - level1-workstation
+    - automated
+    - patch
+    - rule_4.1.2
+    - NIST800-53R5_SC-7
+    - ufw
+  block:
+    - name: "4.1.2 | PATCH | Ensure ufw service is configured | ssh port enabled"
+      community.general.ufw:
+        rule: allow
+        name: OpenSSH
+        state: enabled
+      notify: Reload ufw
+
+    - name: "4.1.2 | PATCH | Ensure ufw service is configured | unmask service"
+      ansible.builtin.systemd:
+        name: ufw
+        masked: false
+
+    - name: "4.1.2 | PATCH | Ensure ufw service is configured | service"
+      ansible.builtin.systemd:
+        name: ufw
+        enabled: true
+        force: true
+        state: started
+
+- name: "4.1.3 | PATCH | Ensure ufw incoming default is configured"
+  when: ubtu24cis_rule_4_1_3
+  tags:
+    - level1-server
+    - level1-workstation
+    - automated
+    - patch
+    - rule_4.1.3
+    - NIST800-53R5_SC-7
+    - ufw
+  community.general.ufw:
+    default: deny
+    direction: incoming
+  notify: Reload ufw
+
+- name: "OPTIONAL | PATCH | UFW allow required outbound connections"
+  when:
+    - ubtu24cis_rule_4_1_4
+    - ubtu24cis_ufw_allow_out_ports != "all"
+  tags:
+    - level1-server
+    - level1-workstation
+    - patch
+    - ufw
+  community.general.ufw:
+    rule: allow
+    direction: out
+    proto: "{{ item.proto }}"
+    to_port: '{{ item.port }}'
+  loop: "{{ ubtu24cis_ufw_allow_out_ports }}"
+  loop_control:
+    label: "{{ item.port }}/{{ item.proto }}"
+  notify: Reload ufw
+
+- name: "OPTIONAL | PATCH | UFW allow all outbound connections"
+  when:
+    - ubtu24cis_rule_4_1_4
+    - ubtu24cis_ufw_allow_out_ports == "all"
+  tags:
+    - level1-server
+    - level1-workstation
+    - patch
+    - ufw
+  community.general.ufw:
+    rule: allow
+    direction: out
+  notify: Reload ufw
+
+- name: "4.1.4 | PATCH | Ensure ufw outgoing default is configured"
+  when: ubtu24cis_rule_4_1_4
+  tags:
+    - level2-server
+    - level2-workstation
+    - automated
+    - patch
+    - rule_4.1.4
+    - NIST800-53R5_SC-7
+    - ufw
+  community.general.ufw:
+    default: deny
+    direction: outgoing
+  notify: Reload ufw
+
+- name: "4.1.5 | PATCH | Ensure ufw routed default is configured"
+  when: ubtu24cis_rule_4_1_5
+  tags:
+    - level1-server
+    - level1-workstation
+    - automated
+    - patch
+    - rule_4.1.5
+    - NIST800-53R5_SC-7
+    - ufw
+  community.general.ufw:
+    default: deny
+    direction: routed
+  notify: Reload ufw
+
+- name: "OPTIONAL | PATCH | UFW firewall force to use /etc/sysctl.conf settings"
+  when:
+    - ubtu24cis_firewall_package == "ufw"
+    - ubtu24cis_ufw_use_sysctl
+  tags:
+    - level1-server
+    - level1-workstation
+    - patch
+    - ufw
+  ansible.builtin.lineinfile:
+    path: /etc/default/ufw
+    regexp: ^IPT_SYSCTL=.*
+    line: IPT_SYSCTL=/etc/sysctl.conf
+    mode: 'u-x,go-wx'
+  notify: Reload ufw

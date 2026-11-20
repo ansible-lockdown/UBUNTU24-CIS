@@ -1,6 +1,6 @@
 ---
 
-- name: "5.1.1 | PATCH | Ensure permissions on /etc/ssh/sshd_config are configured"
+- name: "5.1.1 | PATCH | Ensure access to /etc/ssh/sshd_config is configured"
   when: ubtu24cis_rule_5_1_1
   tags:
     - level1-server
@@ -12,21 +12,21 @@
     - NIST800-53R5_MP-2
     - sshd
   block:
-    - name: "5.1.1 | PATCH | Ensure permissions on /etc/ssh/sshd_config are configured"
+    - name: "5.1.1 | PATCH | Ensure access to /etc/ssh/sshd_config is configured"
       ansible.builtin.file:
         path: /etc/ssh/sshd_config
         owner: root
         group: root
         mode: 'u-x,go-rwx'
 
-    - name: "5.1.1 | PATCH | Ensure permissions on /etc/ssh/sshd_config are configured | find conf files"
+    - name: "5.1.1 | PATCH | Ensure access to /etc/ssh/sshd_config is configured | find conf files"
       ansible.builtin.find:
         paths: /etc/ssh/sshd_config.d
         file_type: file
         patterns: '*.conf'
       register: discovered_sshd_confs
 
-    - name: "5.1.1 | PATCH | Ensure permissions on /etc/ssh/sshd_config are configured"
+    - name: "5.1.1 | PATCH | Ensure access to /etc/ssh/sshd_config is configured"
       ansible.builtin.file:
         path: "{{ item.path }}"
         recurse: false
@@ -37,7 +37,7 @@
       loop_control:
         label: "{{ item }}"
 
-- name: "5.1.2 | PATCH | Ensure permissions on SSH private host key files are configured"
+- name: "5.1.2 | PATCH | Ensure access to SSH private host key files is configured"
   when: ubtu24cis_rule_5_1_2
   tags:
     - level1-server
@@ -49,13 +49,13 @@
     - NIST800-53R5_MP-2
     - sshd
   block:
-    - name: "5.1.2 | AUDIT | Ensure permissions on SSH private host key files are configured | Find ssh_host private keys"
+    - name: "5.1.2 | AUDIT | Ensure access to SSH private host key files is configured | Find ssh_host private keys"
       ansible.builtin.find:
         paths: /etc/ssh
         patterns: 'ssh_host_*_key'
       register: discovered_ssh_host_priv_keys
 
-    - name: "5.1.2 | PATCH | Ensure permissions on SSH private host key files are configured | Set permissions"
+    - name: "5.1.2 | PATCH | Ensure access to SSH private host key files is configured | Set permissions"
       ansible.builtin.file:
         path: "{{ item.path }}"
         owner: root
@@ -66,7 +66,7 @@
       loop_control:
         label: "{{ item.path }}"
 
-- name: "5.1.3 | PATCH | Ensure permissions on SSH public host key files are configured"
+- name: "5.1.3 | PATCH | Ensure access to SSH public host key files is configured"
   when: ubtu24cis_rule_5_1_3
   tags:
     - level1-server
@@ -78,13 +78,13 @@
     - NIST800-53R5_MP-2
     - sshd
   block:
-    - name: "5.1.3 | AUDIT | Ensure permissions on SSH public host key files are configured | Find ssh_host public keys"
+    - name: "5.1.3 | AUDIT | Ensure access to SSH public host key files is configured | Find ssh_host public keys"
       ansible.builtin.find:
         paths: /etc/ssh
         patterns: 'ssh_host_*_key.pub'
       register: discovered_ssh_host_pub_keys
 
-    - name: "5.1.3 | PATCH | Ensure permissions on SSH public host key files are configured | Set permissions"
+    - name: "5.1.3 | PATCH | Ensure access to SSH public host key files is configured | Set permissions"
       ansible.builtin.file:
         path: "{{ item.path }}"
         owner: root
@@ -94,6 +94,21 @@
         - "{{ discovered_ssh_host_pub_keys.files }}"
       loop_control:
         label: "{{ item.path }}"
+
+- name: "5.1.x | PATCH | Ensure sshd_config includes sshd_config.d drop-ins"
+  when: ubtu24cis_rule_5_1_4 or ubtu24cis_rule_5_1_5 or ubtu24cis_rule_5_1_6 or ubtu24cis_rule_5_1_7 or ubtu24cis_rule_5_1_8 or ubtu24cis_rule_5_1_9 or ubtu24cis_rule_5_1_10 or ubtu24cis_rule_5_1_11 or ubtu24cis_rule_5_1_12 or ubtu24cis_rule_5_1_13 or ubtu24cis_rule_5_1_14 or ubtu24cis_rule_5_1_15 or ubtu24cis_rule_5_1_16 or ubtu24cis_rule_5_1_17 or ubtu24cis_rule_5_1_18 or ubtu24cis_rule_5_1_19 or ubtu24cis_rule_5_1_20 or ubtu24cis_rule_5_1_21 or ubtu24cis_rule_5_1_22 or ubtu24cis_rule_5_1_23 or ubtu24cis_rule_5_1_24
+  tags:
+    - level1-server
+    - level1-workstation
+    - patch
+    - sshd
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^\s*Include\s+/etc/ssh/sshd_config\.d/\*\.conf'
+    line: 'Include /etc/ssh/sshd_config.d/*.conf'
+    insertbefore: BOF
+    validate: 'sshd -t -f %s'
+  notify: Restart sshd
 
 - name: "5.1.4 | PATCH | Ensure sshd access is configured"
   when: ubtu24cis_rule_5_1_4
@@ -118,35 +133,51 @@
     - name: "5.1.4 | PATCH | Ensure sshd access is configured | Add allowed users"
       when: "ubtu24cis_sshd_allow_users | default('') | length > 0"
       ansible.builtin.lineinfile:
-        path: /etc/ssh/sshd_config
+        path: "{{ ubtu24cis_sshd_cis_conf }}"
+        create: true
+        owner: root
+        group: root
+        mode: 'u-x,go-rwx'
         regexp: '(?i)^(#?)\s*AllowUsers'
         line: 'AllowUsers {{ ubtu24cis_sshd_allow_users }}'
         validate: 'sshd -t -f %s'
       notify: Restart sshd
 
     - name: "5.1.4 | PATCH | Ensure sshd access is configured | Add allowed groups"
-      when: "ubtu24cis_sshd_allow_groups| default('') | length > 0"
+      when: "ubtu24cis_sshd_allow_groups | default('') | length > 0"
       ansible.builtin.lineinfile:
-        path: /etc/ssh/sshd_config
+        path: "{{ ubtu24cis_sshd_cis_conf }}"
+        create: true
+        owner: root
+        group: root
+        mode: 'u-x,go-rwx'
         regexp: '(?i)^(#?)\s*AllowGroups'
         line: 'AllowGroups {{ ubtu24cis_sshd_allow_groups }}'
         validate: 'sshd -t -f %s'
       notify: Restart sshd
 
     - name: "5.1.4 | PATCH | Ensure sshd access is configured | Add deny users"
-      when: "ubtu24cis_sshd_deny_users| default('') | length > 0"
+      when: "ubtu24cis_sshd_deny_users | default('') | length > 0"
       ansible.builtin.lineinfile:
-        path: /etc/ssh/sshd_config
+        path: "{{ ubtu24cis_sshd_cis_conf }}"
+        create: true
+        owner: root
+        group: root
+        mode: 'u-x,go-rwx'
         regexp: '(?i)^(#?)\s*DenyUsers'
         line: 'DenyUsers {{ ubtu24cis_sshd_deny_users }}'
         validate: 'sshd -t -f %s'
       notify: Restart sshd
 
     - name: "5.1.4 | PATCH | Ensure sshd access is configured | Add deny groups"
-      when: "ubtu24cis_sshd_deny_groups| default('') | length > 0"
+      when: "ubtu24cis_sshd_deny_groups | default('') | length > 0"
       ansible.builtin.lineinfile:
-        path: /etc/ssh/sshd_config
-        regexp: '^DenyGroups|^#DenyGroups'
+        path: "{{ ubtu24cis_sshd_cis_conf }}"
+        create: true
+        owner: root
+        group: root
+        mode: 'u-x,go-rwx'
+        regexp: '(?i)^(#?)\s*DenyGroups'
         line: 'DenyGroups {{ ubtu24cis_sshd_deny_groups }}'
         validate: 'sshd -t -f %s'
       notify: Restart sshd
@@ -166,10 +197,13 @@
     - NIST800-53R5_IA-5
     - sshd
   ansible.builtin.lineinfile:
-    path: /etc/ssh/sshd_config
-    regexp: ^Banner
-    line: Banner /etc/issue.net
-    insertafter: '^# no default banner path'
+    path: "{{ ubtu24cis_sshd_cis_conf }}"
+    create: true
+    owner: root
+    group: root
+    mode: 'u-x,go-rwx'
+    regexp: (?i)^(#?)\s*Banner
+    line: 'Banner {{ ubtu24cis_sshd_banner_file }}'
     validate: 'sshd -t -f %s'
   notify: Restart sshd
 
@@ -184,10 +218,13 @@
     - NIST800-53R5_SC-8
     - sshd
   ansible.builtin.lineinfile:
-    path: /etc/ssh/sshd_config
-    regexp: ^Ciphers
+    path: "{{ ubtu24cis_sshd_cis_conf }}"
+    create: true
+    owner: root
+    group: root
+    mode: 'u-x,go-rwx'
+    regexp: (?i)^(#?)\s*Ciphers
     line: "Ciphers {{ ubtu24cis_sshd_ciphers | join(',') }}"
-    insertafter: '^# Ciphers and keying'
     validate: 'sshd -t -f %s'
   notify: Restart sshd
 
@@ -206,15 +243,19 @@
     - NIST800-53R5_IA-5
     - sshd
   ansible.builtin.lineinfile:
-    path: /etc/ssh/sshd_config
+    path: "{{ ubtu24cis_sshd_cis_conf }}"
+    create: true
+    owner: root
+    group: root
+    mode: 'u-x,go-rwx'
     regexp: "{{ item.regexp }}"
     line: "{{ item.line }}"
     validate: 'sshd -t -f %s'
   with_items:
-    - { regexp: '^ClientAliveInterval', line: 'ClientAliveInterval {{ ubtu24cis_sshd_client_alive_interval }}' }
-    - { regexp: '^ClientAliveCountMax', line: 'ClientAliveCountMax {{ ubtu24cis_sshd_client_alive_count_max }}' }
+    - { regexp: '(?i)^(#?)\s*ClientAliveInterval', line: 'ClientAliveInterval {{ ubtu24cis_sshd_client_alive_interval }}' }
+    - { regexp: '(?i)^(#?)\s*ClientAliveCountMax', line: 'ClientAliveCountMax {{ ubtu24cis_sshd_client_alive_count_max }}' }
   loop_control:
-    label: "{{ item }}"
+    label: "{{ item.line }}"
   notify: Restart sshd
 
 - name: "5.1.8 | PATCH | Ensure sshd DisableForwarding is enabled"
@@ -228,7 +269,11 @@
     - NIST800-53R5_CM-7
     - sshd
   ansible.builtin.lineinfile:
-    path: /etc/ssh/sshd_config
+    path: "{{ ubtu24cis_sshd_cis_conf }}"
+    create: true
+    owner: root
+    group: root
+    mode: 'u-x,go-rwx'
     regexp: (?i)^(#?)\s*DisableForwarding
     line: 'DisableForwarding yes'
     validate: 'sshd -t -f %s'
@@ -249,7 +294,11 @@
     - NIST800-53R5_IA-5
     - sshd
   ansible.builtin.lineinfile:
-    path: /etc/ssh/sshd_config
+    path: "{{ ubtu24cis_sshd_cis_conf }}"
+    create: true
+    owner: root
+    group: root
+    mode: 'u-x,go-rwx'
     regexp: (?i)^(#?)\s*GSSAPIAuthentication
     line: 'GSSAPIAuthentication no'
     validate: 'sshd -t -f %s'
@@ -270,7 +319,11 @@
     - NIST800-53R5_IA-5
     - sshd
   ansible.builtin.lineinfile:
-    path: /etc/ssh/sshd_config
+    path: "{{ ubtu24cis_sshd_cis_conf }}"
+    create: true
+    owner: root
+    group: root
+    mode: 'u-x,go-rwx'
     regexp: (?i)^(#?)\s*HostbasedAuthentication
     line: 'HostbasedAuthentication no'
     validate: 'sshd -t -f %s'
@@ -291,11 +344,45 @@
     - NIST800-53R5_IA-5
     - sshd
   ansible.builtin.lineinfile:
-    path: /etc/ssh/sshd_config
+    path: "{{ ubtu24cis_sshd_cis_conf }}"
+    create: true
+    owner: root
+    group: root
+    mode: 'u-x,go-rwx'
     regexp: (?i)^(#?)\s*IgnoreRhosts
     line: 'IgnoreRhosts yes'
     validate: 'sshd -t -f %s'
   notify: Restart sshd
+
+- name: "5.1.12/23 | AUDIT | Set KexAlgorithms from the OpenSSH server version"
+  when: ubtu24cis_rule_5_1_12 or ubtu24cis_rule_5_1_23
+  tags:
+    - level1-server
+    - level1-workstation
+    - automated
+    - audit
+    - rule_5.1.12
+    - rule_5.1.23
+    - sshd
+  block:
+    - name: "5.1.12/23 | AUDIT | Set KexAlgorithms from the OpenSSH server version | Get OpenSSH server version"
+      ansible.builtin.shell: |
+        set -o pipefail
+        sshd -V 2>&1 | grep -oP 'OpenSSH_\K[0-9]+\.[0-9]+'
+      args:
+        executable: "{{ ubtu24cis_shell_executable }}"
+      changed_when: false
+      failed_when: discovered_sshd_version.stdout | length == 0
+      check_mode: false
+      register: discovered_sshd_version
+
+    - name: "5.1.12/23 | AUDIT | Set KexAlgorithms from the OpenSSH server version | Set post-quantum algorithms"
+      ansible.builtin.set_fact:
+        discovered_sshd_kex_pqc: "{{ ubtu24cis_sshd_kex_pqc_algorithms_openssh_9_9 if discovered_sshd_version.stdout is version('9.9', '>=') else (ubtu24cis_sshd_kex_pqc_algorithms_openssh_8_5 if discovered_sshd_version.stdout is version('8.5', '>=') else []) }}"
+
+    - name: "5.1.12/23 | AUDIT | Set KexAlgorithms from the OpenSSH server version | Set KexAlgorithms line"
+      ansible.builtin.set_fact:
+        discovered_sshd_kex_line: "KexAlgorithms {{ ((discovered_sshd_kex_pqc if ubtu24cis_rule_5_1_23 else []) + ubtu24cis_sshd_kex_algorithms) | unique | join(',') }}"
 
 - name: "5.1.12 | PATCH | Ensure sshd KexAlgorithms is configured"
   when: ubtu24cis_rule_5_1_12
@@ -308,10 +395,13 @@
     - NIST800-53R5_SC-8
     - sshd
   ansible.builtin.lineinfile:
-    path: /etc/ssh/sshd_config
+    path: "{{ ubtu24cis_sshd_cis_conf }}"
+    create: true
+    owner: root
+    group: root
+    mode: 'u-x,go-rwx'
     regexp: (?i)^(#?)\s*KexAlgorithms
-    line: "KexAlgorithms {{ ubtu24cis_sshd_kex_algorithms | join(',') }}"
-    insertafter: '^# Ciphers and keying'
+    line: "{{ discovered_sshd_kex_line }}"
     validate: 'sshd -t -f %s'
   notify: Restart sshd
 
@@ -326,10 +416,13 @@
     - NIST800-53R5_CM-6
     - sshd
   ansible.builtin.lineinfile:
-    path: /etc/ssh/sshd_config
+    path: "{{ ubtu24cis_sshd_cis_conf }}"
+    create: true
+    owner: root
+    group: root
+    mode: 'u-x,go-rwx'
     regexp: (?i)^(#?)\s*LoginGraceTime
     line: 'LoginGraceTime {{ ubtu24cis_sshd_login_grace_time }}'
-    insertafter: '^# Authentication'
     validate: 'sshd -t -f %s'
   notify: Restart sshd
 
@@ -346,10 +439,13 @@
     - NIST800-53R5_SI-5
     - sshd
   ansible.builtin.lineinfile:
-    path: /etc/ssh/sshd_config
+    path: "{{ ubtu24cis_sshd_cis_conf }}"
+    create: true
+    owner: root
+    group: root
+    mode: 'u-x,go-rwx'
     regexp: (?i)^(#?)\s*LogLevel
     line: 'LogLevel {{ ubtu24cis_sshd_log_level }}'
-    insertafter: '^# Logging'
     validate: 'sshd -t -f %s'
   notify: Restart sshd
 
@@ -368,10 +464,13 @@
     - NIST800-53R5_IA-5
     - sshd
   ansible.builtin.lineinfile:
-    path: /etc/ssh/sshd_config
+    path: "{{ ubtu24cis_sshd_cis_conf }}"
+    create: true
+    owner: root
+    group: root
+    mode: 'u-x,go-rwx'
     regexp: (?i)^(#?)\s*MACs
     line: "MACs {{ ubtu24cis_sshd_macs | join(',') }}"
-    insertafter: '^# Ciphers and keying'
     validate: 'sshd -t -f %s'
   notify: Restart sshd
 
@@ -386,14 +485,17 @@
     - NIST800-53R5_AU-3
     - sshd
   ansible.builtin.lineinfile:
-    path: /etc/ssh/sshd_config
+    path: "{{ ubtu24cis_sshd_cis_conf }}"
+    create: true
+    owner: root
+    group: root
+    mode: 'u-x,go-rwx'
     regexp: (?i)^(#?)\s*MaxAuthTries
     line: 'MaxAuthTries {{ ubtu24cis_sshd_max_auth_tries }}'
-    insertafter: '^# Authentication'
     validate: 'sshd -t -f %s'
   notify: Restart sshd
 
-- name: "5.1.17 | PATCH | Ensure sshd MaxSessions is configured"
+- name: "5.1.17 | PATCH | Ensure sshd MaxStartups is configured"
   when: ubtu24cis_rule_5_1_17
   tags:
     - level1-server
@@ -408,14 +510,17 @@
     - NIST800-53R5_IA-5
     - sshd
   ansible.builtin.lineinfile:
-    path: /etc/ssh/sshd_config
-    regexp: (?i)^(#?)\s*MaxSessions
-    line: 'MaxSessions {{ ubtu24cis_sshd_max_sessions }}'
-    insertafter: '^# Authentication'
+    path: "{{ ubtu24cis_sshd_cis_conf }}"
+    create: true
+    owner: root
+    group: root
+    mode: 'u-x,go-rwx'
+    regexp: (?i)^(#?)\s*MaxStartups
+    line: 'MaxStartups 10:30:60'
     validate: 'sshd -t -f %s'
   notify: Restart sshd
 
-- name: "5.1.18 | PATCH | Ensure sshd MaxStartups is configured"
+- name: "5.1.18 | PATCH | Ensure sshd MaxSessions is configured"
   when: ubtu24cis_rule_5_1_18
   tags:
     - level1-server
@@ -430,11 +535,13 @@
     - NIST800-53R5_IA-5
     - sshd
   ansible.builtin.lineinfile:
-    path: /etc/ssh/sshd_config
-    regexp: (?i)^(#?)\s*MaxStartups
-    line: 'MaxStartups 10:30:60'
-    insertbefore: '^Match'
-    firstmatch: true
+    path: "{{ ubtu24cis_sshd_cis_conf }}"
+    create: true
+    owner: root
+    group: root
+    mode: 'u-x,go-rwx'
+    regexp: (?i)^(#?)\s*MaxSessions
+    line: 'MaxSessions {{ ubtu24cis_sshd_max_sessions }}'
     validate: 'sshd -t -f %s'
   notify: Restart sshd
 
@@ -453,10 +560,13 @@
     - NIST800-53R5_IA-5
     - sshd
   ansible.builtin.lineinfile:
-    path: /etc/ssh/sshd_config
+    path: "{{ ubtu24cis_sshd_cis_conf }}"
+    create: true
+    owner: root
+    group: root
+    mode: 'u-x,go-rwx'
     regexp: (?i)^(#?)\s*PermitEmptyPasswords
     line: 'PermitEmptyPasswords no'
-    insertafter: '# To disable tunneled clear text passwords'
     validate: 'sshd -t -f %s'
   notify: Restart sshd
 
@@ -471,7 +581,11 @@
     - NIST800-53R5_AC-6
     - sshd
   ansible.builtin.lineinfile:
-    path: /etc/ssh/sshd_config
+    path: "{{ ubtu24cis_sshd_cis_conf }}"
+    create: true
+    owner: root
+    group: root
+    mode: 'u-x,go-rwx'
     regexp: (?i)^(#?)\s*PermitRootLogin
     line: 'PermitRootLogin no'
     validate: 'sshd -t -f %s'
@@ -492,7 +606,11 @@
     - NIST800-53R5_IA-5
     - sshd
   ansible.builtin.lineinfile:
-    path: /etc/ssh/sshd_config
+    path: "{{ ubtu24cis_sshd_cis_conf }}"
+    create: true
+    owner: root
+    group: root
+    mode: 'u-x,go-rwx'
     regexp: (?i)^(#?)\s*PermitUserEnvironment
     line: 'PermitUserEnvironment no'
     validate: 'sshd -t -f %s'
@@ -514,9 +632,137 @@
     - sshd
     - pam
   ansible.builtin.lineinfile:
-    path: /etc/ssh/sshd_config
+    path: "{{ ubtu24cis_sshd_cis_conf }}"
+    create: true
+    owner: root
+    group: root
+    mode: 'u-x,go-rwx'
     regexp: (?i)^(#?)\s*UsePAM
     line: 'UsePAM yes'
-    insertafter: '^# and ChallengeResponseAuthentication'
     validate: 'sshd -t -f %s'
   notify: Restart sshd
+
+- name: "5.1.23 | PATCH | Ensure sshd post-quantum cryptography key exchange algorithms are configured"
+  when: ubtu24cis_rule_5_1_23
+  tags:
+    - level1-server
+    - level1-workstation
+    - automated
+    - patch
+    - rule_5.1.23
+    - NIST800-53R5_SC-8
+    - sshd
+  block:
+    - name: "5.1.23 | PATCH | Ensure sshd post-quantum cryptography key exchange algorithms are configured | KexAlgorithms"
+      when: discovered_sshd_kex_pqc | length > 0
+      ansible.builtin.lineinfile:
+        path: "{{ ubtu24cis_sshd_cis_conf }}"
+        create: true
+        owner: root
+        group: root
+        mode: 'u-x,go-rwx'
+        regexp: (?i)^(#?)\s*KexAlgorithms
+        line: "{{ discovered_sshd_kex_line }}"
+        validate: 'sshd -t -f %s'
+      notify: Restart sshd
+
+    - name: "5.1.23 | WARN | Ensure sshd post-quantum cryptography key exchange algorithms are configured | OpenSSH too old"
+      when: discovered_sshd_kex_pqc | length == 0
+      ansible.builtin.debug:
+        msg: "Warning!! OpenSSH {{ discovered_sshd_version.stdout }} has no post-quantum key exchange algorithm; 8.5 or later is required"
+
+    - name: "5.1.23 | WARN | Ensure sshd post-quantum cryptography key exchange algorithms are configured | OpenSSH too old | warn_count"
+      when: discovered_sshd_kex_pqc | length == 0
+      ansible.builtin.import_tasks:
+        file: warning_facts.yml
+      vars:
+        warn_control_id: '5.1.23'
+
+- name: "5.1.24 | PATCH | Ensure sshd ListenAddress is configured"
+  when: ubtu24cis_rule_5_1_24
+  tags:
+    - level2-server
+    - level2-workstation
+    - automated
+    - patch
+    - rule_5.1.24
+    - NIST800-53R5_CM-6
+    - NIST800-53R5_CM-7
+    - sshd
+  block:
+    - name: "5.1.24 | PATCH | Ensure sshd ListenAddress is configured | Apply if address configured"
+      when: ubtu24cis_sshd_listen_address | length > 0
+      ansible.builtin.lineinfile:
+        path: "{{ ubtu24cis_sshd_cis_conf }}"
+        create: true
+        owner: root
+        group: root
+        mode: 'u-x,go-rwx'
+        regexp: (?i)^(#?)\s*ListenAddress
+        line: "ListenAddress {{ ubtu24cis_sshd_listen_address }}"
+        validate: 'sshd -t -f %s'
+      notify: Restart sshd
+
+    - name: "5.1.24 | PATCH | Ensure sshd ListenAddress is configured | Comment out ListenAddress in sshd_config"
+      when: ubtu24cis_sshd_listen_address | length > 0
+      ansible.builtin.replace:
+        path: /etc/ssh/sshd_config
+        regexp: '(?i)^([ \t]*ListenAddress[ \t=].*)$'
+        replace: '# \1'
+        validate: 'sshd -t -f %s'
+      notify: Restart sshd
+
+    - name: "5.1.24 | AUDIT | Ensure sshd ListenAddress is configured | Warn if not configured"
+      when: ubtu24cis_sshd_listen_address | length == 0
+      ansible.builtin.debug:
+        msg: "Warning!! ubtu24cis_sshd_listen_address is not set. Set it to a private network interface address to comply with 5.1.24."
+
+    - name: "5.1.24 | WARN | Ensure sshd ListenAddress is configured | Warn Count"
+      when: ubtu24cis_sshd_listen_address | length == 0
+      ansible.builtin.import_tasks:
+        file: warning_facts.yml
+      vars:
+        warn_control_id: '5.1.24'
+
+- name: "5.1.x | PATCH | Comment out CIS-managed sshd settings above the Include line so the drop-in applies"
+  tags:
+    - level1-server
+    - level1-workstation
+    - patch
+    - sshd
+  ansible.builtin.replace:
+    path: /etc/ssh/sshd_config
+    regexp: '(?i)^([ \t]*{{ item.key }}[ \t=].*)$'
+    replace: '# \1'
+    after: '\A'
+    before: '\n[ \t]*Include\s+/etc/ssh/sshd_config\.d/'
+    validate: 'sshd -t -f %s'
+  loop: "{{ ubtu24cis_sshd_cis_keywords | dict2items | selectattr('value') | list }}"
+  loop_control:
+    label: "{{ item.key }}"
+  notify: Restart sshd
+  vars:
+    ubtu24cis_sshd_cis_keywords:
+      AllowUsers: "{{ ubtu24cis_rule_5_1_4 and ubtu24cis_sshd_allow_users | default('') | length > 0 }}"
+      AllowGroups: "{{ ubtu24cis_rule_5_1_4 and ubtu24cis_sshd_allow_groups | default('') | length > 0 }}"
+      DenyUsers: "{{ ubtu24cis_rule_5_1_4 and ubtu24cis_sshd_deny_users | default('') | length > 0 }}"
+      DenyGroups: "{{ ubtu24cis_rule_5_1_4 and ubtu24cis_sshd_deny_groups | default('') | length > 0 }}"
+      Banner: "{{ ubtu24cis_rule_5_1_5 }}"
+      Ciphers: "{{ ubtu24cis_rule_5_1_6 }}"
+      ClientAliveInterval: "{{ ubtu24cis_rule_5_1_7 }}"
+      ClientAliveCountMax: "{{ ubtu24cis_rule_5_1_7 }}"
+      DisableForwarding: "{{ ubtu24cis_rule_5_1_8 }}"
+      GSSAPIAuthentication: "{{ ubtu24cis_rule_5_1_9 }}"
+      HostbasedAuthentication: "{{ ubtu24cis_rule_5_1_10 }}"
+      IgnoreRhosts: "{{ ubtu24cis_rule_5_1_11 }}"
+      KexAlgorithms: "{{ ubtu24cis_rule_5_1_12 or (ubtu24cis_rule_5_1_23 and discovered_sshd_kex_pqc | default([]) | length > 0) }}"
+      LoginGraceTime: "{{ ubtu24cis_rule_5_1_13 }}"
+      LogLevel: "{{ ubtu24cis_rule_5_1_14 }}"
+      MACs: "{{ ubtu24cis_rule_5_1_15 }}"
+      MaxAuthTries: "{{ ubtu24cis_rule_5_1_16 }}"
+      MaxStartups: "{{ ubtu24cis_rule_5_1_17 }}"
+      MaxSessions: "{{ ubtu24cis_rule_5_1_18 }}"
+      PermitEmptyPasswords: "{{ ubtu24cis_rule_5_1_19 }}"
+      PermitRootLogin: "{{ ubtu24cis_rule_5_1_20 }}"
+      PermitUserEnvironment: "{{ ubtu24cis_rule_5_1_21 }}"
+      UsePAM: "{{ ubtu24cis_rule_5_1_22 }}"

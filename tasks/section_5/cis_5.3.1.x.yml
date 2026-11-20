@@ -15,7 +15,7 @@
     state: latest
     lock_timeout: "{{ ubtu24cis_apt_lock_timeout }}"
 
-- name: "5.3.1.2 | PATCH | Ensure libpam-modules is installed"
+- name: "5.3.1.2 | PATCH | Ensure latest version of libpam-modules is installed"
   when: ubtu24cis_rule_5_3_1_2
   tags:
     - level1-server
@@ -30,7 +30,7 @@
     state: latest
     lock_timeout: "{{ ubtu24cis_apt_lock_timeout }}"
 
-- name: "5.3.1.3 | PATCH | Ensure libpam-pwquality is installed"
+- name: "5.3.1.3 | PATCH | Ensure latest version of libpam-pwquality is installed"
   when: ubtu24cis_rule_5_3_1_3
   tags:
     - level1-server
@@ -42,5 +42,20 @@
     - NIST800-53R5_NA
   ansible.builtin.package:
     name: libpam-pwquality
+    state: latest
+    lock_timeout: "{{ ubtu24cis_apt_lock_timeout }}"
+
+- name: "5.3.1.4 | PATCH | Ensure latest version of cracklib-runtime is installed"
+  when: ubtu24cis_rule_5_3_1_4
+  tags:
+    - level1-server
+    - level1-workstation
+    - automated
+    - patch
+    - pam
+    - rule_5.3.1.4
+    - NIST800-53R5_NA
+  ansible.builtin.package:
+    name: cracklib-runtime
     state: latest
     lock_timeout: "{{ ubtu24cis_apt_lock_timeout }}"

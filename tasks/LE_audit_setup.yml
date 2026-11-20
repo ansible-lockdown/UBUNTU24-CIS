@@ -12,10 +12,97 @@
       ansible.builtin.set_fact:
         audit_pkg_arch_name: ARM64
 
+- name: Pre Audit Setup | Verify the signed audit binary checksums
+  when:
+    - get_audit_binary_method == 'download'
+    - audit_bin_verify_signature
+  block:
+    - name: Pre Audit Setup | Verify the signed audit binary checksums | Create a working directory
+      ansible.builtin.tempfile:
+        state: directory
+        suffix: _syver
+      changed_when: false
+      check_mode: false
+      register: discovered_audit_bin_sig_dir
+
+    - name: Pre Audit Setup | Verify the signed audit binary checksums | Download the checksums, signature and signing key
+      ansible.builtin.get_url:
+        url: "{{ audit_bin_release_url }}{{ item }}"
+        dest: "{{ discovered_audit_bin_sig_dir.path }}/{{ item }}"
+        mode: 'u+r,go-rwx'
+        validate_certs: "{{ audit_bin_validate_certs }}"
+      changed_when: false
+      check_mode: false
+      loop:
+        - "{{ audit_bin_sums_file }}"
+        - "{{ audit_bin_sums_file }}.sig"
+        - "{{ audit_bin_signing_key_file }}"
+
+    - name: Pre Audit Setup | Verify the signed audit binary checksums | Convert the signing key to a keyring
+      ansible.builtin.command:
+        argv:
+          - gpg
+          - --homedir
+          - "{{ discovered_audit_bin_sig_dir.path }}"
+          - --batch
+          - --yes
+          - --output
+          - "{{ discovered_audit_bin_sig_dir.path }}/{{ audit_bin_signing_key_file }}.gpg"
+          - --dearmor
+          - "{{ discovered_audit_bin_sig_dir.path }}/{{ audit_bin_signing_key_file }}"
+      changed_when: false
+      failed_when: false
+      check_mode: false
+      register: discovered_audit_bin_keyring
+
+    - name: Pre Audit Setup | Verify the signed audit binary checksums | Verify the signature
+      ansible.builtin.command:
+        argv:
+          - gpgv
+          - --homedir
+          - "{{ discovered_audit_bin_sig_dir.path }}"
+          - --status-fd
+          - '1'
+          - --keyring
+          - "{{ discovered_audit_bin_sig_dir.path }}/{{ audit_bin_signing_key_file }}.gpg"
+          - "{{ discovered_audit_bin_sig_dir.path }}/{{ audit_bin_sums_file }}.sig"
+          - "{{ discovered_audit_bin_sig_dir.path }}/{{ audit_bin_sums_file }}"
+      changed_when: false
+      failed_when: false
+      check_mode: false
+      register: discovered_audit_bin_sig
+
+    - name: Pre Audit Setup | Verify the signed audit binary checksums | Read the checksums
+      ansible.builtin.slurp:
+        src: "{{ discovered_audit_bin_sig_dir.path }}/{{ audit_bin_sums_file }}"
+      check_mode: false
+      register: discovered_audit_bin_sums
+
+    - name: Pre Audit Setup | Verify the signed audit binary checksums | Assert the signature and checksum match
+      ansible.builtin.assert:
+        that:
+          - discovered_audit_bin_keyring.rc == 0
+          - discovered_audit_bin_sig.rc == 0
+          - ('[GNUPG:] VALIDSIG ' ~ audit_bin_signing_key_fingerprint | upper ~ ' ') in discovered_audit_bin_sig.stdout
+          - (audit_bin_version[audit_pkg_arch_name + '_checksum'] | regex_replace('^sha256:', '') ~ '  syver-linux-' ~ audit_pkg_arch_name | lower) in (discovered_audit_bin_sums.content | b64decode).splitlines()
+        fail_msg: >-
+          {{ audit_bin_sums_file }} could not be trusted. Either the signature did not verify against the signing key
+          {{ audit_bin_signing_key_fingerprint }} (gpg --dearmor rc {{ discovered_audit_bin_keyring.rc }}, gpgv rc {{ discovered_audit_bin_sig.rc }}: {{ discovered_audit_bin_sig.stderr | default('') }}),
+          or the pinned {{ audit_pkg_arch_name }} checksum in audit_bin_version is not the one in the signed file.
+        success_msg: "{{ audit_bin_sums_file }} is signed by {{ audit_bin_signing_key_fingerprint }} and lists the pinned checksum"
+  always:
+    - name: Pre Audit Setup | Verify the signed audit binary checksums | Remove the working directory
+      when: discovered_audit_bin_sig_dir.path is defined
+      ansible.builtin.file:
+        path: "{{ discovered_audit_bin_sig_dir.path }}"
+        state: absent
+      changed_when: false
+      check_mode: false
+
 - name: Pre Audit Setup | Download audit binary
   when: get_audit_binary_method == 'download'
   ansible.builtin.get_url:
-    url: "{{ audit_bin_url }}{{ audit_pkg_arch_name }}"
+    url: "{{ audit_bin_url }}{{ audit_pkg_arch_name | lower }}"
     dest: "{{ audit_bin }}"
     owner: root
     group: root

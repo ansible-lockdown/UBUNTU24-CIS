@@ -43,7 +43,7 @@ ansible_facts_path: /etc/ansible/facts.d
 # The audit variable found at the base
 benchmark: UBUNTU24-CIS
 ## metadata for Audit benchmark
-benchmark_version: v1.0.0
+benchmark_version: v2.0.0
 
 # We've defined disruption-high to indicate items that are likely to cause
 # disruption in a normal workflow.  These items can be remediated automatically
@@ -71,7 +71,7 @@ ubtu24cis_uses_root: false
 ubtu24cis_shell_executable: /bin/bash
 
 # A location that can be used as a temporary location to execute scripts
-# note the drive with need exec permissions used by 1.1.1.10
+# note the drive with need exec permissions used by 1.1.1.11
 ubtu24cis_temp_exec_location: /var
 
 # UID settings for interactive users
@@ -88,15 +88,15 @@ min_int_uid: 1000
 max_int_uid: 65533
 
 ###
-### Settings for associated Audit role using Goss
+### Settings for associated Audit role using Syver
 ###
 
 ###########################################
-### Goss is required on the remote host ###
+### Syver is required on the remote host ###
 
 #  moved to defaults/main/audit.yml
 
-### Goss Settings ##
+### Syver Settings ##
 ####### END ########
 
 ###
@@ -124,6 +124,7 @@ ubtu24cis_rule_1_1_1_7: true
 ubtu24cis_rule_1_1_1_8: true
 ubtu24cis_rule_1_1_1_9: true
 ubtu24cis_rule_1_1_1_10: true
+ubtu24cis_rule_1_1_1_11: true
 # 1.1.2 Configure Filesystem Partitions
 # /tmp
 ubtu24cis_rule_1_1_2_1_1: true
@@ -163,6 +164,13 @@ ubtu24cis_rule_1_1_2_7_4: true
 # 1.2.1 Configure Package repositories
 ubtu24cis_rule_1_2_1_1: true
 ubtu24cis_rule_1_2_1_2: true
+ubtu24cis_rule_1_2_1_3: true
+ubtu24cis_rule_1_2_1_4: true
+ubtu24cis_rule_1_2_1_5: true
+ubtu24cis_rule_1_2_1_6: true
+ubtu24cis_rule_1_2_1_7: true
+ubtu24cis_rule_1_2_1_8: true
+ubtu24cis_rule_1_2_1_9: true
 # 1.2.2 Configure Package updates
 ubtu24cis_rule_1_2_2_1: true
 # 1.3 Mandatory Access Control
@@ -174,12 +182,19 @@ ubtu24cis_rule_1_3_1_4: true
 # 1.4 Configure Bootloader
 ubtu24cis_rule_1_4_1: true
 ubtu24cis_rule_1_4_2: true
-# 1.5 Configure additional Process Hardening
 ubtu24cis_rule_1_5_1: true
 ubtu24cis_rule_1_5_2: true
+# 1.5 Configure additional Process Hardening
+ubtu24cis_rule_1_5_9: true
 ubtu24cis_rule_1_5_3: true
 ubtu24cis_rule_1_5_4: true
 ubtu24cis_rule_1_5_5: true
+ubtu24cis_rule_1_5_6: true
+ubtu24cis_rule_1_5_7: true
+ubtu24cis_rule_1_5_8: true
+ubtu24cis_rule_1_5_10: true
+ubtu24cis_rule_1_5_11: true
+ubtu24cis_rule_1_5_12: true
 # 1.6 Configure Command Line Warning Banners
 ubtu24cis_rule_1_6_1: true
 ubtu24cis_rule_1_6_2: true
@@ -187,6 +202,10 @@ ubtu24cis_rule_1_6_3: true
 ubtu24cis_rule_1_6_4: true
 ubtu24cis_rule_1_6_5: true
 ubtu24cis_rule_1_6_6: true
+ubtu24cis_rule_1_6_7: true
+ubtu24cis_rule_1_6_8: true
+ubtu24cis_rule_1_6_9: true
+ubtu24cis_rule_1_6_10: true
 # 1.7 Configure GNOME Display Manager
 ubtu24cis_rule_1_7_1: true
 ubtu24cis_rule_1_7_2: true
@@ -195,22 +214,16 @@ ubtu24cis_rule_1_7_4: true
 ubtu24cis_rule_1_7_5: true
 ubtu24cis_rule_1_7_6: true
 ubtu24cis_rule_1_7_7: true
-ubtu24cis_rule_1_7_8: true
-ubtu24cis_rule_1_7_9: true
-ubtu24cis_rule_1_7_10: true
 
 ## Section 2 Fixes
 # Section 2 is Services (Special Purpose Services, and service clients)
 # 2.1 Configure Server Services
 ubtu24cis_rule_2_1_1: true
-ubtu24cis_rule_2_1_2: true
 ubtu24cis_rule_2_1_3: true
-ubtu24cis_rule_2_1_4: true
 ubtu24cis_rule_2_1_5: true
-ubtu24cis_rule_2_1_6: true
 ubtu24cis_rule_2_1_7: true
-ubtu24cis_rule_2_1_8: true
 ubtu24cis_rule_2_1_9: true
+ubtu24cis_rule_2_1_8: true
 ubtu24cis_rule_2_1_10: true
 ubtu24cis_rule_2_1_11: true
 ubtu24cis_rule_2_1_12: true
@@ -220,10 +233,14 @@ ubtu24cis_rule_2_1_15: true
 ubtu24cis_rule_2_1_16: true
 ubtu24cis_rule_2_1_17: true
 ubtu24cis_rule_2_1_18: true
-ubtu24cis_rule_2_1_19: true
 ubtu24cis_rule_2_1_20: true
 ubtu24cis_rule_2_1_21: true
+ubtu24cis_rule_2_1_6: true
 ubtu24cis_rule_2_1_22: true
+ubtu24cis_rule_2_1_23: true
+ubtu24cis_rule_2_1_2: true
+ubtu24cis_rule_2_1_4: true
+ubtu24cis_rule_2_1_19: true
 # 2.2 Configure client services
 ubtu24cis_rule_2_2_1: true
 ubtu24cis_rule_2_2_2: true
@@ -250,6 +267,7 @@ ubtu24cis_rule_2_4_1_5: true
 ubtu24cis_rule_2_4_1_6: true
 ubtu24cis_rule_2_4_1_7: true
 ubtu24cis_rule_2_4_1_8: true
+ubtu24cis_rule_2_4_1_9: true
 # 2.4.2 Configure At
 ubtu24cis_rule_2_4_2_1: true
 
@@ -265,58 +283,45 @@ ubtu24cis_rule_3_2_1: true
 ubtu24cis_rule_3_2_2: true
 ubtu24cis_rule_3_2_3: true
 ubtu24cis_rule_3_2_4: true
-# 3.3 Configure Network Kernel Parameters (Host and Router)
-ubtu24cis_rule_3_3_1: true
-ubtu24cis_rule_3_3_2: true
-ubtu24cis_rule_3_3_3: true
-ubtu24cis_rule_3_3_4: true
-ubtu24cis_rule_3_3_5: true
-ubtu24cis_rule_3_3_6: true
-ubtu24cis_rule_3_3_7: true
-ubtu24cis_rule_3_3_8: true
-ubtu24cis_rule_3_3_9: true
-ubtu24cis_rule_3_3_10: true
-ubtu24cis_rule_3_3_11: true
+ubtu24cis_rule_3_2_5: true
+ubtu24cis_rule_3_2_6: true
+# 3.3.1 Configure IPv4 parameters
+ubtu24cis_rule_3_3_1_1: true
+ubtu24cis_rule_3_3_1_2: true
+ubtu24cis_rule_3_3_1_3: true
+ubtu24cis_rule_3_3_1_4: true
+ubtu24cis_rule_3_3_1_5: true
+ubtu24cis_rule_3_3_1_6: true
+ubtu24cis_rule_3_3_1_7: true
+ubtu24cis_rule_3_3_1_8: true
+ubtu24cis_rule_3_3_1_9: true
+ubtu24cis_rule_3_3_1_10: true
+ubtu24cis_rule_3_3_1_11: true
+ubtu24cis_rule_3_3_1_12: true
+ubtu24cis_rule_3_3_1_13: true
+ubtu24cis_rule_3_3_1_14: true
+ubtu24cis_rule_3_3_1_15: true
+ubtu24cis_rule_3_3_1_16: true
+ubtu24cis_rule_3_3_1_17: true
+ubtu24cis_rule_3_3_1_18: true
+# 3.3.2 Configure IPv6 parameters
+ubtu24cis_rule_3_3_2_1: true
+ubtu24cis_rule_3_3_2_2: true
+ubtu24cis_rule_3_3_2_3: true
+ubtu24cis_rule_3_3_2_4: true
+ubtu24cis_rule_3_3_2_5: true
+ubtu24cis_rule_3_3_2_6: true
+ubtu24cis_rule_3_3_2_7: true
+ubtu24cis_rule_3_3_2_8: true
 
 ## Section 4 Fixes
-# Section 4 is Firewall configuration (Configure single firewall utility, Configure Uncomplicated Firewall,
-# Configure nftables and Configure iptables)
-# 4.1 single firewall
+# Section 4 is Firewall configuration (Configure Uncomplicated Firewall)
+# 4.1 Configure Uncomplicated Firewall
 ubtu24cis_rule_4_1_1: true
-# 4.2 Configure UncomplicatedFirewall
-ubtu24cis_rule_4_2_1: true
-ubtu24cis_rule_4_2_2: true
-ubtu24cis_rule_4_2_3: true
-ubtu24cis_rule_4_2_4: true
-ubtu24cis_rule_4_2_5: true
-ubtu24cis_rule_4_2_6: true
-ubtu24cis_rule_4_2_7: true
-# 4.3 Configure nftables
-ubtu24cis_rule_4_3_1: true
-ubtu24cis_rule_4_3_2: true
-ubtu24cis_rule_4_3_3: true
-ubtu24cis_rule_4_3_4: true
-ubtu24cis_rule_4_3_5: true
-ubtu24cis_rule_4_3_6: true
-ubtu24cis_rule_4_3_7: true
-ubtu24cis_rule_4_3_8: true
-ubtu24cis_rule_4_3_9: true
-ubtu24cis_rule_4_3_10: true
-# 4.4.1 Configure iptables software
-ubtu24cis_rule_4_4_1_1: true
-ubtu24cis_rule_4_4_1_2: true
-ubtu24cis_rule_4_4_1_3: true
-# 4.4.2 Configure IPv4 iptables
-ubtu24cis_rule_4_4_2_1: true
-ubtu24cis_rule_4_4_2_2: true
-ubtu24cis_rule_4_4_2_3: true
-ubtu24cis_rule_4_4_2_4: true
-# 4.4.3 Configure IPv6 iptables
-ubtu24cis_rule_4_4_3_1: true
-ubtu24cis_rule_4_4_3_2: true
-ubtu24cis_rule_4_4_3_3: true
-ubtu24cis_rule_4_4_3_4: true
-
+ubtu24cis_rule_4_1_2: true
+ubtu24cis_rule_4_1_3: true
+ubtu24cis_rule_4_1_4: true
+ubtu24cis_rule_4_1_5: true
 ## Section 5 Fixes
 # Section 5 is Access Control (Configure SSH Server, Configure PAM
 # and User Accounts and Environment)
@@ -337,12 +342,14 @@ ubtu24cis_rule_5_1_13: true
 ubtu24cis_rule_5_1_14: true
 ubtu24cis_rule_5_1_15: true
 ubtu24cis_rule_5_1_16: true
-ubtu24cis_rule_5_1_17: true
 ubtu24cis_rule_5_1_18: true
+ubtu24cis_rule_5_1_17: true
 ubtu24cis_rule_5_1_19: true
 ubtu24cis_rule_5_1_20: true
 ubtu24cis_rule_5_1_21: true
 ubtu24cis_rule_5_1_22: true
+ubtu24cis_rule_5_1_23: true
+ubtu24cis_rule_5_1_24: true
 # 5.2 Configure privilege escalation
 ubtu24cis_rule_5_2_1: true
 ubtu24cis_rule_5_2_2: true
@@ -355,6 +362,7 @@ ubtu24cis_rule_5_2_7: true
 ubtu24cis_rule_5_3_1_1: true
 ubtu24cis_rule_5_3_1_2: true
 ubtu24cis_rule_5_3_1_3: true
+ubtu24cis_rule_5_3_1_4: true
 # 5.3.2 Configure pam-auth-update profiles
 ubtu24cis_rule_5_3_2_1: true
 ubtu24cis_rule_5_3_2_2: true
@@ -408,30 +416,28 @@ ubtu24cis_rule_5_4_3_3: true
 ## Section 6 Fixes
 # Section 6 is Logging and Auditing (System Logging, System Auditing, Configure Integrity Checking)
 # 6.1.1.x Configure systemd-journald service
-ubtu24cis_rule_6_1_1_1: true
-ubtu24cis_rule_6_1_1_2: true
-ubtu24cis_rule_6_1_1_3: true
-ubtu24cis_rule_6_1_1_4: true
+ubtu24cis_rule_6_1_1_1_1: true
+ubtu24cis_rule_6_1_1_1_4: true
+ubtu24cis_rule_6_1_1_1_5: true
 # 6.1.2.1 Configure systemd-journal-remote
-ubtu24cis_rule_6_1_2_1_1: true
-ubtu24cis_rule_6_1_2_1_2: true
-ubtu24cis_rule_6_1_2_1_3: true
-ubtu24cis_rule_6_1_2_1_4: true
+ubtu24cis_rule_6_1_1_1_2: true
+ubtu24cis_rule_6_1_1_1_7: true
+ubtu24cis_rule_6_1_1_1_6: true
+# 6.1.3 Configure rsyslog
+ubtu24cis_rule_6_1_2_1: true
 ubtu24cis_rule_6_1_2_2: true
+ubtu24cis_rule_6_1_1_1_3: true
 ubtu24cis_rule_6_1_2_3: true
 ubtu24cis_rule_6_1_2_4: true
-# 6.1.3 Configure rsyslog
+ubtu24cis_rule_6_1_2_5: true
+ubtu24cis_rule_6_1_2_6: true
+# 6.1.2.7 logrotate
+ubtu24cis_rule_6_1_2_7: true
+ubtu24cis_rule_6_1_2_8: true
+ubtu24cis_rule_6_1_2_9: true
+ubtu24cis_rule_6_1_2_10: true
+# 6.1.3.1 configure logfiles
 ubtu24cis_rule_6_1_3_1: true
-ubtu24cis_rule_6_1_3_2: true
-ubtu24cis_rule_6_1_3_3: true
-ubtu24cis_rule_6_1_3_4: true
-ubtu24cis_rule_6_1_3_5: true
-ubtu24cis_rule_6_1_3_6: true
-ubtu24cis_rule_6_1_3_7: true
-# 6.1.3.8 logrotate
-ubtu24cis_rule_6_1_3_8: true
-# 6.1.4.1 configure logfiles
-ubtu24cis_rule_6_1_4_1: true
 # 6.2.1 Configure auditd services
 ubtu24cis_rule_6_2_1_1: true
 ubtu24cis_rule_6_2_1_2: true
@@ -450,25 +456,34 @@ ubtu24cis_rule_6_2_3_4: true
 ubtu24cis_rule_6_2_3_5: true
 ubtu24cis_rule_6_2_3_6: true
 ubtu24cis_rule_6_2_3_7: true
+ubtu24cis_rule_6_2_3_10: true
+ubtu24cis_rule_6_2_3_17: true
 ubtu24cis_rule_6_2_3_8: true
 ubtu24cis_rule_6_2_3_9: true
-ubtu24cis_rule_6_2_3_10: true
 ubtu24cis_rule_6_2_3_11: true
 ubtu24cis_rule_6_2_3_12: true
 ubtu24cis_rule_6_2_3_13: true
 ubtu24cis_rule_6_2_3_14: true
 ubtu24cis_rule_6_2_3_15: true
 ubtu24cis_rule_6_2_3_16: true
-ubtu24cis_rule_6_2_3_17: true
 ubtu24cis_rule_6_2_3_18: true
 ubtu24cis_rule_6_2_3_19: true
 ubtu24cis_rule_6_2_3_20: true
 ubtu24cis_rule_6_2_3_21: true
+ubtu24cis_rule_6_2_3_22: true
+ubtu24cis_rule_6_2_3_23: true
+ubtu24cis_rule_6_2_3_24: true
+ubtu24cis_rule_6_2_3_25: true
+ubtu24cis_rule_6_2_3_26: true
+ubtu24cis_rule_6_2_3_27: true
+ubtu24cis_rule_6_2_3_28: true
+ubtu24cis_rule_6_2_3_29: true
+ubtu24cis_rule_6_2_3_30: true
 # 6.2.4 Configure audit file access
-ubtu24cis_rule_6_2_4_1: true
 ubtu24cis_rule_6_2_4_2: true
 ubtu24cis_rule_6_2_4_3: true
 ubtu24cis_rule_6_2_4_4: true
+ubtu24cis_rule_6_2_4_1: true
 ubtu24cis_rule_6_2_4_5: true
 ubtu24cis_rule_6_2_4_6: true
 ubtu24cis_rule_6_2_4_7: true
@@ -552,7 +567,7 @@ ubtu24cis_ignore_apt_update_changed_when: false
 # mount point for the controls in section1.
 ubtu24cis_debug_mount_data: false
 
-## 1.1.1.10 Ability to remove temporary script after control has run
+## 1.1.1.11 Ability to remove temporary script after control has run
 # may cause issues with later testing if required for investigation etc
 
 ubtu24cis_remove_kernel_discovery_script: false
@@ -577,23 +592,11 @@ ubtu24cis_tmp_partition_mount_options:
 # AppArmor security policies define what system resources applications can access and their privileges.
 # This automatically limits the damage that the software can do to files accessible by the calling user.
 
-## Controls 1.3.1.3 and 1.3.1.4 Ensure all AppArmor Profiles are in enforce (1.3.1.3/4) or complain (1.3.1.3) mode
+## Controls 1.3.1.3 and 1.3.1.3 Ensure all AppArmor Profiles are in enforce (1.3.1.3/4) or complain (1.3.1.3) mode
 
-# This variable disables the implementation of rules 1.3.1.3 and 1.3.1.4
-# regarding enforcing profiles or putting them in complain mode.
+# This variable disables the implementation of control 1.3.1.3, which puts every
+# AppArmor profile into enforce mode.
 ubtu24cis_apparmor_disable: false
-
-# This variable specifies whether enforce mode or complain mode is set in Control 1.3.1.3.
-# Possible values are `enforce` and `complain`.
-# ATTENTION: if Control 1.3.1.4 is run (e.g., when running level 2 rules), it OVERRIDES control 1.3.1.3
-# and sets `enforce` mode, no matter what this variable's value is.
-ubtu24cis_apparmor_mode: complain
-# This variable is used as a check for the implementation of control 1.3.1.3.
-# As explained in the variable's description from above, if control 1.3.1.4 is run
-# it overrides this control. So this control will get skipped if control 1.3.1.4
-# is executed. Default value is `false`, and it will only get changed to `true`
-# automatically by the role if the tasks associated for control 1.3.1.4 are executed.
-control_1_3_1_4_was_run: false
 
 ## Controls 1.4.1 - Ensure bootloader password is set
 # The name of the user in the single-user mode. You have to login with this user for example in
@@ -621,7 +624,7 @@ ubtu24cis_grub_file: /boot/grub/grub.cfg
 # Ability to set file in which the kernel sysctl changes are placed
 ubtu24cis_sysctl_kernel_conf: /etc/sysctl.d/98_cis_kernel.conf
 
-## Control 1.5.2 - Ensure ptrace_scope is restricted
+## Control 1.5.3 - Ensure ptrace_scope is restricted
 # This variable allows the user to choose the ptrace value.
 # The ptrace() system call provides a means by which one
 # process (the "tracer") may observe and control the execution
@@ -652,8 +655,8 @@ ubtu24cis_ptrace_value: 1
 ubtu24cis_warning_banner: |
         Authorized users only. All activity may be monitored and reported.
 
-## Control 1.6.1 - Ensure message of the day is configured properly
-# This variable governs, whether dynamic motd is disabled
+## Control 1.6.4 - Ensure pam_motd is configured
+# When true, the pam_motd lines (motd=/run/motd.dynamic and noupdate) are commented out in pam files that show the dynamic motd
 ubtu24cis_disable_dynamic_motd: true
 
 ## Controls 1.7.x - Settings for GDM
@@ -769,14 +772,14 @@ ubtu24cis_xinetd_mask: false
 # Set this variable to `true` to keep service `xwindow`; otherwise, the service is uninstalled.
 ubtu24cis_xwindow_server: false  # will remove mask not an option
 
-## Control 2.1.21 - Ensure mail transfer agent is configured for local-only mode
+## Control 2.1.2 - Ensure mail transfer agent is configured for local-only mode
 # This variable if set to 'false', ensures that the mail transfer agent is configured for
 # local-only mode.
 ubtu24cis_is_mail_server: false
 
 ## Controls 2.2.x - Configure Client Services
 
-# Set this variable to `true` to keep the nis client (package nis); the NIS server is ypserv (2.1.10).
+# Set this variable to `true` to keep the nis client (package nis); the NIS server is ypserv (2.1.13).
 ubtu24cis_nis_client_required: false
 
 # Set this variable to `true` to keep package `rsh`; otherwise, the package is uninstalled.
@@ -849,8 +852,9 @@ ubtu24cis_is_router: false
 ## Section 4 Control Variables
 ##
 
-## Control 4.2.5 - Ensure ufw outbound connections are configured
-# The value of this variable represents the ports for the firewall to allow oubound traffic from.
+## Control 4.1.4 - Ensure ufw outgoing default is configured (OPTIONAL outbound allowances)
+# Ports allowed outbound before 4.1.4 sets the outgoing default to deny.
+# The value of this variable represents the ports for the firewall to allow outbound traffic from.
 # If you want to allow outbound traffic on all ports, set the variable to `all`, e.g.,
 # `ubtu24cis_ufw_allow_out_ports: "all"`.
 ubtu24cis_ufw_allow_out_ports:
@@ -865,24 +869,14 @@ ubtu24cis_ufw_allow_out_ports:
   - port: 443
     proto: tcp
 
-## Controls 4.2.x - nftables
-# Nftables is not supported in this role. Some tasks have parts of them commented out, this is one example
-# of such a task.
-# "ubtu24cis_nftables_table_name" is the name of the table in nftables you want to create.
-# The default nftables table name is "inet filter". This variable name will be the one all
-# nftables configs are applied to.
-# ubtu24cis_nftables_table_name: "inet filter"
-
-## Controls 4.3.x, 4.4.1.x and 4.4.2.x - Firewall configuration
-# This variable represents the toggle for which firewall package is used.
-# The options that have an effect on the system are `ufw` and `iptables`.
-# The option `nftables` is also possible, but will only result in a message,
-# that `nftables` has been chosen; all settings have to be carried out manually.
-# Any other value, e.g. `none` will skip all firewall-related controls.
+## Controls 4.1.x - Firewall configuration
+# Benchmark v2.0.0 configures ufw only (section 4.1); there is no nftables or iptables choice.
+# `ufw` enables the OPTIONAL task below that points ufw at /etc/sysctl.conf; any other value
+# (the container vars set `None`) skips it.
 ubtu24cis_firewall_package: "ufw"
 
-# This variable is used in a preliminary task that forces the UFW firewall to use /etc/sysctl.conf
-# settings. If set to "true" the task will get done in the prelim section of the role.
+# This variable is used in an OPTIONAL task in section 4.1 that forces the UFW firewall to use
+# /etc/sysctl.conf settings. If set to "true" the task is run.
 ubtu24cis_ufw_use_sysctl: true
 
 ##
@@ -899,6 +893,20 @@ ubtu24cis_ufw_use_sysctl: true
 # - `VERBOSE`: logs a higher level of detail, including login attempts and key exchanges;
 # - `DEBUG`: generates very detailed debugging information including sensitive information.
 ubtu24cis_sshd_log_level: "INFO"
+
+# CIS 5.1.x sshd settings are written to this drop-in. It must sort before any other drop-in so its values
+# win (sshd uses the first value it reads), and sshd_config must Include /etc/ssh/sshd_config.d/*.conf.
+ubtu24cis_sshd_cis_conf: /etc/ssh/sshd_config.d/00-cis-sshd.conf
+
+## Control 5.1.5 - Ensure sshd Banner is configured
+# This variable specifies the file sshd presents to a client before authentication.
+ubtu24cis_sshd_banner_file: /etc/issue.net
+
+## Control 5.1.24 - Ensure sshd ListenAddress is configured
+# This variable specifies the address sshd listens on. Leave it empty to have the
+# role warn instead of writing a ListenAddress, as an incorrect value locks out
+# remote access.
+ubtu24cis_sshd_listen_address: ""
 # This variable specifies the maximum number of authentication attempts that are
 # allowed for a single SSH session.
 ubtu24cis_sshd_max_auth_tries: 4
@@ -942,7 +950,17 @@ ubtu24cis_sshd_kex_algorithms:
   - diffie-hellman-group16-sha512
   - diffie-hellman-group18-sha512
   - diffie-hellman-group14-sha256
-  # - sntrup761x25519-sha512@openssh.com  # Post-quantum KEX (enable if your OpenSSH version supports it; check with: ssh -Q kex)
+
+## Control 5.1.23 - Ensure sshd post-quantum cryptography key exchange algorithms are configured
+# Post-quantum KexAlgorithms are chosen from the OpenSSH server version found when section 5.1 runs
+# (after any package updates) and placed ahead of ubtu24cis_sshd_kex_algorithms.
+# OpenSSH 9.9 or later:
+ubtu24cis_sshd_kex_pqc_algorithms_openssh_9_9:
+  - mlkem768x25519-sha256
+  - sntrup761x25519-sha512
+# OpenSSH 8.5 to 9.8:
+ubtu24cis_sshd_kex_pqc_algorithms_openssh_8_5:
+  - sntrup761x25519-sha512@openssh.com
 
 # This variable, if specified, configures a list of USER name patterns, separated by spaces, to allow SSH
 # access for users whose user name matches one of the patterns. This is done
@@ -1025,14 +1043,10 @@ ubtu24cis_pam_pwunix_file: 'unix'
 # or overwrites the existing file (that has the same name) of the target, implementing
 # the needed configuration.
 # Should NOT be enabled, if allowing custom config that enabled pam_faillock
-# NOTE that you also need to set `ubtu24cis_pam_auth_unix` to `true`:
-# 'Pam_auth_update_pwunix' will only be run if both these variables
-# are set to `true`.
+# It only controls the template; the profile is enabled whenever `ubtu24cis_pam_auth_unix` is `true`.
 ubtu24cis_pam_create_pamunix_file: false
 # Allow pam-auth-update --enable ubtu24cis_pam_pwunix_file to run
-# NOTE that you also need to set `ubtu24cis_pam_create_pamunix_file`
-# to `true`: 'Pam_auth_update_pwunix' will only be run if both these
-# variables are set to `true`.
+# when pam_unix is missing from any /etc/pam.d/common-* file or the profile changes.
 ubtu24cis_pam_auth_unix: true
 
 ## Control 5.3.2.2 - Ensure pam_faillock module is enabled
@@ -1227,6 +1241,11 @@ ubtu24cis_pass_inactive: 45
 # restrictive.
 ubtu24cis_root_umask: '0027'  # 0027 or more restrictive
 
+## Control 5.4.2.7 - Ensure system accounts do not have a valid login shell
+# The system users on this list are allowed to keep a shell (e.g. applications
+# that require a shell to function). The connecting user is never changed.
+ubtu24cis_system_users_shell: []
+
 # Control 5.4.3.2 - Configuring user shell timeout
 # This dictionary is related to ensuring the rule about user shell timeout
 # This variable represents the amount of seconds a command or process is allowed to
@@ -1250,7 +1269,7 @@ ubtu24cis_bash_umask: '027'
 ## Section 6 Control Variables
 ##
 
-## Control 6.1.1.3 - Ensure journald log file rotation is configured
+## Control 6.1.1.1.5 - Ensure journald log file rotation is configured
 # These variables specify how much disk space the journal may use up at most
 # Specify values in bytes or use K, M, G, T, P, E as units for the specified sizes.
 # See https://www.freedesktop.org/software/systemd/man/journald.conf.html for more information.
@@ -1279,47 +1298,39 @@ ubtu24cis_journald_maxfilesec: "MaxFileSec=1month"
 # Available options for this variable is `rsyslog` or `journald`.
 ubtu24cis_syslog_service: 'journald'
 
-## Control 6.1.3.5 - Ensure rsyslog logging is configured
+## Control 6.1.2.4 - Ensure rsyslog logging is configured
 # This variable governs whether the rsyslog configuration is to be set by this Ansible role.
 # Set it to `true` to configure via Ansible and to `false` otherwise.
 ubtu24cis_rsyslog_ansible_managed: true
 
-## Controls 6.1.2.1.2 (`journald`) and 6.1.3.6 (`rsyslog`)
+## Controls 6.1.2.5 and 6.1.2.9 (`rsyslog`)
 # This variable specifies the address of the remote log host where logs are being sent.
-# Empty by default: 6.1.2.1.2 and 6.1.3.6 configure forwarding only once a host is set.
+# Empty by default: 6.1.2.5 and 6.1.2.9 configure forwarding only once a host is set.
 ubtu24cis_remote_log_server: ""
 # This variable expresses whether the system is used as a log server or not.
 # If set to `true`, controls that interfere with log server functionality or
 # require that own system logs be sent to some other log server are skipped.
 ubtu24cis_system_is_log_server: false
 
-## Control 6.1.2.1.2 - Ensure systemd-journal-upload authentication is configured
-# This variable specifies the path to the private key file used by the remote journal
-# server to authenticate itself to the client. This key is used alongside the server's
-# public certificate to establish secure communication.
-ubtu24cis_journal_upload_serverkeyfile:
-# This variable specifies the path to the public certificate file of the remote journal
-# server. This certificate is used to verify the authenticity of the remote server.
-ubtu24cis_journal_servercertificatefile:
-# This variable specifies the path to a file containing one or more public certificates
-# of certificate authorities (CAs) that the client trusts. These trusted certificates are used
-# to validate the authenticity of the remote server's certificate.
-ubtu24cis_journal_trustedcertificatefile:
+## Control 6.1.2.10 - Ensure rsyslog CA certificates are configured
+# This variable specifies the CA certificate bundle rsyslog presents when forwarding
+# logs over gtls.
+ubtu24cis_rsyslog_ca_certificate: /etc/ssl/certs/ca-certificates.crt
 
-## Control 6.1.3.6 remote syslog server setup
-# uses ubtu24cis_remote_log_server a per journald 6.1.2.1.2
+## Control 6.1.2.5 remote syslog server setup
+# uses ubtu24cis_remote_log_server as above
 ubtu24cis_remote_log_port: 514
 ubtu24cis_remote_log_protocol: tcp
 
-## Control 6.1.3.8 - Ensure logrotate is configured
-# This variable enables the installation of logrotate, which is needed for the implementation of Control 6.1.3.8
+## Control 6.1.2.7 - Ensure logrotate is configured
+# This variable enables the installation of logrotate, which is needed for the implementation of Control 6.1.2.7
 ubtu24cis_logrotate_pkg_install: false
 # This variable sets the daily, weekly, monthly, yearly value for the log rotation.
 # To conform to CIS standards this just needs to comply with your site policy
 ubtu24cis_logrotate: "daily"
 
 ## Controls 6.2.3.x - Audit template
-# This variable is set to true by tasks 6.2.3.1 to 6.2.3.20. As a result, the
+# This variable is set to true by tasks 6.2.3.1 to 6.2.3.29. As a result, the
 # audit settings are overwritten with the role's template. In order to exclude
 # specific rules, you must set the variable of form `ubtu24cis_rule_4_1_3_x` above
 # to `false`.
@@ -1449,10 +1460,8 @@ ubtu24cis_aide_init_async: 600
 ubtu24cis_aide_init_poll: 15
 
 ## Control 6.3.2 - Ensure filesystem integrity is regularly checked
-# AIDE runs from the dailyaidecheck.timer shipped by aide-common, as the benchmark requires. Cron jobs added by
-# earlier role runs are removed. These variables set the timer schedule (OnCalendar) in a drop-in; the package's
-# RandomizedDelaySec still applies. Minute 0-59, hour 0-23; day 1-31, month 1-12 and weekday 0-7 (0 and 7 are Sunday)
-# take `*` for all.
+# AIDE runs from dailyaidecheck.timer, as the benchmark requires. These variables set the timer schedule
+# (OnCalendar). Minute 0-59, hour 0-23; day 1-31, month 1-12 and weekday 0-7 (0 and 7 are Sunday) take `*` for all.
 ubtu24cis_aide_timer_minute: 0
 ubtu24cis_aide_timer_hour: 5
 ubtu24cis_aide_timer_day: '*'

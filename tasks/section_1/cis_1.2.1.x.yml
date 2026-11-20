@@ -1,6 +1,6 @@
 ---
 
-- name: "1.2.1.1 | AUDIT | Ensure GPG keys are configured"
+- name: "1.2.1.1 | AUDIT | Ensure the source.list and .source files use the Signed-By option"
   when: ubtu24cis_rule_1_2_1_1
   tags:
     - level1-server
@@ -11,55 +11,185 @@
     - NIST800-53R5_SI-2
     - gpg
     - keys
-  vars:
-    warn_control_id: '1.2.1.1'
   block:
-    - name: "1.2.1.1 | AUDIT | Ensure GPG keys are configured | Get apt gpg keys"
-      ansible.builtin.command: apt-key list
+    - name: "1.2.1.1 | AUDIT | Ensure the source.list and .source files use the Signed-By option | Find sources without Signed-By"
+      ansible.builtin.shell: |
+        set -o pipefail
+        grep -PRiLs -- '^([^#\n\r]+)?\bSigned-By\b' /etc/apt/sources.list /etc/apt/sources.list.d/*.list /etc/apt/sources.list.d/*.sources
+      args:
+        executable: "{{ ubtu24cis_shell_executable }}"
       changed_when: false
-      failed_when: discovered_apt_gpgkeys.rc not in [0, 1]
+      failed_when: discovered_apt_unsigned_sources.rc not in [0, 1, 2]
       check_mode: false
-      register: discovered_apt_gpgkeys
+      register: discovered_apt_unsigned_sources
 
-    - name: "1.2.1.1 | AUDIT | Ensure GPG keys are configured | Message out apt gpg keys"
+    - name: "1.2.1.1 | AUDIT | Ensure the source.list and .source files use the Signed-By option | Warn on sources without Signed-By"
+      when: discovered_apt_unsigned_sources.stdout_lines | length > 0
       ansible.builtin.debug:
         msg:
-          - "Warning!! Below are the apt gpg keys configured"
-          - "Please review to make sure they are configured"
-          - "in accordance with site policy"
-          - "{{ discovered_apt_gpgkeys.stdout_lines }}"
+          - "Warning!! The following apt source files do not use the Signed-By option"
+          - "Please update them in accordance with site policy"
+          - "{{ discovered_apt_unsigned_sources.stdout_lines }}"
 
-    - name: "1.2.1.1 | WARN | Ensure GPG keys are configured | warn_count"
+    - name: "1.2.1.1 | WARN | Ensure the source.list and .source files use the Signed-By option | warn_count"
+      when: discovered_apt_unsigned_sources.stdout_lines | length > 0
       ansible.builtin.import_tasks:
         file: warning_facts.yml
+      vars:
+        warn_control_id: '1.2.1.1'
 
-- name: "1.2.1.2 | AUDIT | Ensure package manager repositories are configured"
+- name: "1.2.1.2 | PATCH | Ensure weak dependencies are configured"
   when: ubtu24cis_rule_1_2_1_2
   tags:
-    - level1-server
-    - level1-workstation
-    - manual
-    - audit
+    - level2-server
+    - level2-workstation
+    - automated
+    - patch
     - rule_1.2.1.2
     - NIST800-53R5_SI-2
     - apt
-  vars:
-    warn_control_id: '1.2.1.2'
+  ansible.builtin.copy:
+    dest: /etc/apt/apt.conf.d/60-no-weak-dependencies
+    content: |
+      APT::Install-Recommends "0";
+      APT::Install-Suggests "0";
+    owner: root
+    group: root
+    mode: 'u-x,go-wx'
+
+- name: "1.2.1.3 | PATCH | Ensure access to gpg key files are configured"
+  when: ubtu24cis_rule_1_2_1_3
+  tags:
+    - level1-server
+    - level1-workstation
+    - automated
+    - patch
+    - rule_1.2.1.3
+    - NIST800-53R5_AC-6
+    - permissions
+    - gpg
   block:
-    - name: "1.2.1.2 | AUDIT | Ensure package manager repositories are configured | Get repositories"
-      ansible.builtin.command: apt-cache policy
+    - name: "1.2.1.3 | AUDIT | Ensure access to gpg key files are configured | Discover non-conforming gpg key files"
+      ansible.builtin.shell: |
+        set -o pipefail
+        find -L /usr/share/keyrings /etc/apt/trusted.gpg.d /etc/apt/keyrings -mount -xdev -type f \( ! -user root -o ! -group root -o -perm /133 \) \( -name '*.gpg' -o -name '*.asc' \) -print 2>/dev/null
+      args:
+        executable: "{{ ubtu24cis_shell_executable }}"
       changed_when: false
-      failed_when: discovered_apt_policy.rc not in [0, 1]
+      failed_when: discovered_gpg_key_perms.rc not in [0, 1]
       check_mode: false
-      register: discovered_apt_policy
+      register: discovered_gpg_key_perms
 
-    - name: "1.2.1.2 | AUDIT | Ensure package manager repositories are configured | Message out repository configs"
-      ansible.builtin.debug:
-        msg:
-          - "Warning!! Below are the apt package repositories"
-          - "Please review to make sure they conform to your sites policies"
-          - "{{ discovered_apt_policy.stdout_lines }}"
+    - name: "1.2.1.3 | PATCH | Ensure access to gpg key files are configured | Set owner and mode"
+      ansible.builtin.file:
+        path: "{{ item }}"
+        owner: root
+        group: root
+        mode: 'u-x,go-wx'
+      loop: "{{ discovered_gpg_key_perms.stdout_lines }}"
 
-    - name: "1.2.1.2 | WARN | Ensure package manager repositories are configured | warn_count"
-      ansible.builtin.import_tasks:
-        file: warning_facts.yml
+- name: "1.2.1.4 | PATCH | Ensure access to /etc/apt/trusted.gpg.d directory is configured"
+  when: ubtu24cis_rule_1_2_1_4
+  tags:
+    - level1-server
+    - level2-workstation
+    - automated
+    - patch
+    - rule_1.2.1.4
+    - NIST800-53R5_AC-6
+    - permissions
+  ansible.builtin.file:
+    path: /etc/apt/trusted.gpg.d
+    state: directory
+    owner: root
+    group: root
+    mode: 'go-w'
+
+- name: "1.2.1.5 | PATCH | Ensure access to /etc/apt/auth.conf.d directory is configured"
+  when: ubtu24cis_rule_1_2_1_5
+  tags:
+    - level1-server
+    - level2-workstation
+    - automated
+    - patch
+    - rule_1.2.1.5
+    - NIST800-53R5_AC-6
+    - permissions
+  ansible.builtin.file:
+    path: /etc/apt/auth.conf.d
+    state: directory
+    owner: root
+    group: root
+    mode: 'go-w'
+
+- name: "1.2.1.6 | PATCH | Ensure access to files in the /etc/apt/auth.conf.d/ directory is configured"
+  when: ubtu24cis_rule_1_2_1_6
+  tags:
+    - level1-server
+    - level1-workstation
+    - automated
+    - patch
+    - rule_1.2.1.6
+    - NIST800-53R5_AC-6
+    - permissions
+  ansible.builtin.shell: |
+    set -o pipefail
+    chown root:root /etc/apt/auth.conf.d/*.conf 2>/dev/null
+    chmod u-x,g-wx,o-rwx /etc/apt/auth.conf.d/*.conf 2>/dev/null
+    true
+  args:
+    executable: "{{ ubtu24cis_shell_executable }}"
+  changed_when: false
+
+- name: "1.2.1.7 | PATCH | Ensure access to /usr/share/keyrings directory is configured"
+  when: ubtu24cis_rule_1_2_1_7
+  tags:
+    - level1-server
+    - level2-workstation
+    - automated
+    - patch
+    - rule_1.2.1.7
+    - NIST800-53R5_AC-6
+    - permissions
+  ansible.builtin.file:
+    path: /usr/share/keyrings
+    state: directory
+    owner: root
+    group: root
+    mode: 'go-w'
+
+- name: "1.2.1.8 | PATCH | Ensure access to /etc/apt/sources.list.d directory is configured"
+  when: ubtu24cis_rule_1_2_1_8
+  tags:
+    - level1-server
+    - level2-workstation
+    - automated
+    - patch
+    - rule_1.2.1.8
+    - NIST800-53R5_AC-6
+    - permissions
+  ansible.builtin.file:
+    path: /etc/apt/sources.list.d
+    state: directory
+    owner: root
+    group: root
+    mode: 'go-w'
+
+- name: "1.2.1.9 | PATCH | Ensure access to files in /etc/apt/sources.list.d are configured"
+  when: ubtu24cis_rule_1_2_1_9
+  tags:
+    - level1-server
+    - level2-workstation
+    - automated
+    - patch
+    - rule_1.2.1.9
+    - NIST800-53R5_AC-6
+    - permissions
+  ansible.builtin.shell: |
+    set -o pipefail
+    chown root:root /etc/apt/sources.list.d/* 2>/dev/null
+    chmod u-x,go-wx /etc/apt/sources.list.d/* 2>/dev/null
+    true
+  args:
+    executable: "{{ ubtu24cis_shell_executable }}"
+  changed_when: false
